@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "badge-expired-bg-dark": "#7F1D1D", "background": "#faf8ff", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2e7ff", "badge-active-bg-light": "#DCFCE7", "on-primary-container": "#c1beff", "on-tertiary": "#ffffff", "action-primary-dark": "#A5B4FC", "on-background": "#131b2e", "badge-expired-bg-light": "#FEE2E2", "surface-tint": "#5148d7", "border-dark": "#475569", "badge-neutral-text-dark": "#E2E8F0", "border-light": "#E2E8F0", "on-error": "#ffffff", "on-primary-fixed-variant": "#372abf", "on-secondary-container": "#586377", "badge-active-text-light": "#166534", "surface": "#faf8ff", "surface-container": "#eaedff", "action-text-dark": "#0F172A", "on-surface-variant": "#464554", "action-text-light": "#FFFFFF", "badge-expiring-bg-dark": "#78350F", "outline": "#777586", "on-secondary": "#ffffff", "on-surface": "#131b2e", "badge-neutral-bg-light": "#E2E8F0", "page-bg-dark": "#0F172A", "error": "#ba1a1a", "action-primary-light": "#4338CA", "secondary-container": "#d5e0f8", "primary-container": "#4338ca", "on-primary-fixed": "#100069", "on-primary": "#ffffff", "secondary": "#545f73", "text-secondary-light": "#475569", "on-tertiary-fixed-variant": "#7d2d00", "surface-container-low": "#f2f3ff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "error-container": "#ffdad6", "badge-active-text-dark": "#BBF7D0", "text-secondary-dark": "#CBD5E1", "primary": "#2a14b4", "badge-neutral-bg-dark": "#334155", "badge-expired-text-light": "#991B1B", "badge-expiring-text-light": "#92400E", "primary-fixed": "#e3dfff", "surface-variant": "#dae2fd", "badge-neutral-text-light": "#334155", "badge-expiring-text-dark": "#FDE68A", "on-secondary-fixed": "#111c2d", "surface-dark": "#1E293B", "on-secondary-fixed-variant": "#3c475a", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#ffb597", "inverse-surface": "#283044", "on-tertiary-container": "#ffb393", "tertiary": "#692400", "badge-expired-text-dark": "#FECACA", "tertiary-container": "#8f3400", "text-primary-light": "#0F172A", "text-primary-dark": "#F8FAFC", "surface-light": "#FFFFFF", "on-tertiary-fixed": "#360f00", "inverse-primary": "#c3c0ff", "on-error-container": "#93000a", "secondary-fixed": "#d8e3fb", "secondary-fixed-dim": "#bcc7de", "surface-bright": "#faf8ff", "tertiary-fixed": "#ffdbcd", "primary-fixed-dim": "#c3c0ff", "outline-variant": "#c7c4d7", "badge-expiring-bg-light": "#FEF3C7", "badge-active-bg-dark": "#14532D", "page-bg-light": "#F8FAFC" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.5rem", "gutter": "1.5rem", "margin": "2rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-md": "1rem", "space-2xs": "0.25rem", "space-xl": "2rem", "space-22xl": "3rem", "gutter-mobile": "1rem", "space-xs": "0.5rem" }, "fontFamily": { "label-caption": [ "Inter" ], "headline-page-mobile": [ "Inter" ], "metric-display": [ "Inter" ], "label-badge": [ "Inter" ], "headline-page": [ "Inter" ], "body-compact": [ "Inter" ], "body-compact-semibold": [ "Inter" ], "metric-display-mobile": [ "Inter" ], "title-card": [ "Inter" ], "title-section": [ "Inter" ], "body-default": [ "Inter" ] }, "fontSize": { "label-caption": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" } ], "headline-page-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "metric-display": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-badge": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-page": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-compact": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" } ], "body-compact-semibold": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" } ], "metric-display-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "title-card": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" } ], "title-section": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-default": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-default text-body-default text-on-surface antialiased"><aside class="fixed left-0 top-0 bottom-0 h-full w-[248px] bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-[72px] px-space-md flex flex-col justify-center"><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-body-compact-semibold text-body-compact-semibold">G</div><span class="font-title-section text-title-section text-on-surface tracking-tight">GymFlow</span></div><span class="font-label-caption text-label-caption text-on-surface-variant pl-[36px]">Adama Fitness</span></div><div class="flex-1 overflow-y-auto px-space-xs py-space-sm space-y-space-md"><div class="space-y-space-2xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Operations</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-compact text-body-compact">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="members" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-compact text-body-compact">Members</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="payments" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="font-body-compact text-body-compact">Payments</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="memberships" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-body-compact text-body-compact">Memberships</span></a></nav></div><div class="space-y-space-2xs pt-space-xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Administration</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="membership-plans" href="#"><span class="material-symbols-outlined text-[20px]">card_membership</span><span class="font-body-compact text-body-compact">Membership Plans</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="reports" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-compact text-body-compact">Reports</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="staff-users" href="#"><span class="material-symbols-outlined text-[20px]">manage_accounts</span><span class="font-body-compact text-body-compact">Staff &amp; Users</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div></div><div class="p-space-sm bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] m-space-xs rounded-xl space-y-space-xs"><div class="flex items-center gap-space-xs"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="font-body-compact-semibold text-body-compact-semibold text-on-primary">AD</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Abdi Dawud</span><span class="font-label-caption text-label-caption text-on-surface-variant truncate">Administrator</span></div></div><div class="flex items-center justify-between pt-space-2xs text-on-surface-variant"><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-on-surface py-1 transition-colors" data-path="my-account" href="#">My Account</a><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-error py-1 transition-colors" data-path="login" href="#">Sign Out</a></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-[72px] bg-surface-container-lowest/90 backdrop-blur-xl z-40 px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant pointer-events-none text-[20px]">search</span><input class="w-full h-11 pl-10 pr-16 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search members by name, phone or ID…" type="text"/><kbd class="absolute right-space-sm px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caption text-label-caption rounded pointer-events-none shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div></div><div class="flex items-center gap-space-sm"><button aria-label="Toggle Appearance Mode" class="w-11 h-11 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><div class="flex items-center gap-space-xs pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span></div></div></header><main class="relative pt-[72px] w-full min-h-screen bg-background px-gutter py-margin"><div class="flex flex-col w-full">
+<!-- PAGE HEADER & PRIMARY ACTION -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-space-md mb-space-lg">
+<div>
+<div class="flex items-center gap-space-xs">
+<h1 class="font-headline-page text-headline-page text-on-surface tracking-tight">Memberships</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-badge text-label-badge font-semibold">
+          350 Total
+        </span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-1">
+        Monitor validity and upcoming renewals.
+      </p>
+</div>
+<!-- Quick Actions -->
+<div class="flex items-center gap-space-xs">
+<button class="inline-flex items-center justify-center gap-1.5 h-11 px-4 rounded-lg bg-surface-container-high text-on-surface font-body-compact-semibold text-body-compact-semibold hover:bg-surface-container-highest transition-colors shadow-sm" id="quickRenewBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">autorenew</span>
+<span>Quick Renew</span>
+</button>
+<button class="inline-flex items-center justify-center gap-1.5 h-11 px-4 rounded-lg bg-action-primary-light text-action-text-light font-body-compact-semibold text-body-compact-semibold hover:bg-primary transition-colors shadow-sm" id="openRecordPaymentBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add_card</span>
+<span>+ Record Payment</span>
+</button>
+</div>
+</div>
+<!-- KPI METRIC OVERVIEW CARDS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+<!-- Active Members -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant font-semibold">Active Members</span>
+<span class="w-8 h-8 rounded-lg bg-badge-active-bg-light text-badge-active-text-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-display text-metric-display text-on-surface tracking-tight tabular-nums">287</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-caption text-label-caption mt-1">
+<span class="inline-block w-2 h-2 rounded-full bg-badge-expiring-bg-dark"></span>
+<span>Includes 20 expiring soon</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 82%"></div>
+</div>
+</div>
+<!-- Expiring in 7 Days -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant font-semibold">Expiring in 7 Days</span>
+<span class="w-8 h-8 rounded-lg bg-badge-expiring-bg-light text-badge-expiring-text-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-display text-metric-display text-badge-expiring-text-light tracking-tight tabular-nums">20</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-caption text-label-caption mt-1">
+<span class="font-semibold text-badge-expiring-text-light">Action needed</span>
+<span>• Outreach pending</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-badge-expiring-bg-dark h-full rounded-full" style="width: 32%"></div>
+</div>
+</div>
+<!-- Currently Expired -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant font-semibold">Currently Expired</span>
+<span class="w-8 h-8 rounded-lg bg-badge-expired-bg-light text-badge-expired-text-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-display text-metric-display text-badge-expired-text-light tracking-tight tabular-nums">35</div>
+<div class="text-on-surface-variant font-label-caption text-label-caption mt-1">
+<span>Awaiting renewal or drop</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 14%"></div>
+</div>
+</div>
+<!-- Unpaid Registrations -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant font-semibold">Unpaid Registrations</span>
+<span class="w-8 h-8 rounded-lg bg-badge-neutral-bg-light text-badge-neutral-text-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+</span>
+</div>
+<div class="mt-space-md">
+<div class="font-metric-display text-metric-display text-on-surface tracking-tight tabular-nums">8</div>
+<div class="text-on-surface-variant font-label-caption text-label-caption mt-1">
+<span>No paid period recorded</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 8%"></div>
+</div>
+</div>
+</div>
+<!-- STATUS FILTER TABS -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 mb-space-md" role="tablist">
+<button class="status-tab-btn active px-4 py-2.5 rounded-full bg-primary text-on-primary font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors" data-filter="all" type="button">
+<span>All</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest/20 text-on-primary font-label-badge text-label-badge">350</span>
+</button>
+<button class="status-tab-btn px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors relative group" data-filter="active" type="button">
+<span>Active</span>
+<span class="px-2 py-0.5 rounded-full bg-badge-active-bg-light text-badge-active-text-light font-label-badge text-label-badge">287</span>
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center pointer-events-none z-30">
+<span class="px-2.5 py-1 text-label-caption font-label-caption rounded bg-surface-dark text-text-primary-dark shadow-md whitespace-nowrap">Includes 20 expiring soon</span>
+</div>
+</button>
+<button class="status-tab-btn px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors" data-filter="expiring" type="button">
+<span class="inline-block w-2 h-2 rounded-full bg-badge-expiring-bg-dark"></span>
+<span>Expiring Soon</span>
+<span class="px-2 py-0.5 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-label-badge text-label-badge">20</span>
+</button>
+<button class="status-tab-btn px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors" data-filter="expired" type="button">
+<span>Expired</span>
+<span class="px-2 py-0.5 rounded-full bg-badge-expired-bg-light text-badge-expired-text-light font-label-badge text-label-badge">35</span>
+</button>
+<button class="status-tab-btn px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors" data-filter="scheduled" type="button">
+<span>Scheduled</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-badge text-label-badge">5</span>
+</button>
+<button class="status-tab-btn px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold whitespace-nowrap shadow-sm flex items-center gap-2 transition-colors" data-filter="unpaid" type="button">
+<span>Unpaid</span>
+<span class="px-2 py-0.5 rounded-full bg-badge-neutral-bg-light text-badge-neutral-text-light font-label-badge text-label-badge">8</span>
+</button>
+</div>
+<!-- SEARCH & FILTER BAR -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm mb-space-md">
+<div class="flex flex-col md:flex-row items-stretch md:items-center gap-space-sm justify-between">
+<!-- Search Input -->
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+<input class="w-full h-11 pl-10 pr-4 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact outline-none focus:bg-surface-container-lowest transition-all" id="tableSearchInput" placeholder="Search member name, phone or ID…" type="text"/>
+</div>
+<!-- Plan Dropdown -->
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-space-xs">
+<div class="relative min-w-[150px]">
+<select class="w-full h-11 pl-3 pr-8 rounded-lg bg-surface-container-low text-on-surface font-body-compact text-body-compact appearance-none outline-none cursor-pointer focus:bg-surface-container-lowest transition-all" id="planFilterSelect">
+<option value="all">All Plans</option>
+<option value="Daily Pass">Daily Pass</option>
+<option value="Weekly">Weekly</option>
+<option value="Monthly">Monthly</option>
+<option value="3 Months">3 Months</option>
+<option value="6 Months">6 Months</option>
+<option value="Annual">Annual</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+<!-- Expiry Range Dropdown -->
+<div class="relative min-w-[160px]">
+<select class="w-full h-11 pl-3 pr-8 rounded-lg bg-surface-container-low text-on-surface font-body-compact text-body-compact appearance-none outline-none cursor-pointer focus:bg-surface-container-lowest transition-all" id="expiryFilterSelect">
+<option value="all">All Expiry Dates</option>
+<option value="week">This Week</option>
+<option value="14days">Next 14 Days</option>
+<option value="month">This Month</option>
+<option value="custom">Custom</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+<!-- Clear Filters Button -->
+<button class="h-11 px-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-body-compact-semibold text-body-compact-semibold flex items-center gap-1.5 whitespace-nowrap" id="clearFiltersBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span>Clear Filters</span>
+</button>
+</div>
+</div>
+</div>
+<!-- MEMBERSHIP MONITORING DATA TABLE -->
+<div class="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden mb-space-md">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="membershipsTable">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Member</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Member ID</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Current Plan</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Start Date</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">End Date</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Timeline / Remaining</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold">Status</th>
+<th class="py-3 px-space-md font-label-caption text-label-caption uppercase tracking-wider text-text-secondary-light font-semibold text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface">
+<!-- Row 1: Abebe Kebede -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="Monthly" data-status="active">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  AK
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Abebe Kebede</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0911 234 567</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00124
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Monthly</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">30 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Oct 01, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface font-medium">
+              Oct 30, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+<span class="inline-flex items-center gap-1.5 font-medium text-badge-active-text-light">
+<span class="material-symbols-outlined text-[16px]">hourglass_bottom</span>
+<span>23 days left</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-active-bg-light text-badge-active-text-light font-label-badge text-label-badge">
+                Active
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3 rounded-lg bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00124" data-name="Abebe Kebede" data-plan="Monthly — 30 days" type="button">
+                Renew
+              </button>
+</td>
+</tr>
+<!-- Row 2: Hana Tesfaye -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="3 Months" data-status="expiring">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  HT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Hana Tesfaye</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0922 456 789</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00125
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">3 Months</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">90 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Jul 13, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-badge-expiring-text-light font-semibold">
+              Oct 10, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact">
+<span class="inline-flex items-center gap-1.5 font-semibold text-badge-expiring-text-light">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>3 days left</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-label-badge text-label-badge">
+                Expiring Soon
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-action-primary-light text-action-text-light hover:bg-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00125" data-name="Hana Tesfaye" data-plan="3 Months — 90 days" type="button">
+                Renew
+              </button>
+</td>
+</tr>
+<!-- Row 3: Dawit Bekele -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="Monthly" data-status="expired">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-error-container text-on-error-container font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  DB
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Dawit Bekele</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0933 567 890</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00126
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Monthly</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">30 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Sep 01, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-badge-expired-text-light font-semibold">
+              Sep 30, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact">
+<span class="inline-flex items-center gap-1.5 font-medium text-badge-expired-text-light">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+<span>Ended 7 days ago</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-expired-bg-light text-badge-expired-text-light font-label-badge text-label-badge">
+                Expired
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3 rounded-lg bg-surface-container-high text-badge-expired-text-light hover:bg-error-container hover:text-on-error-container transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00126" data-name="Dawit Bekele" data-plan="Monthly — 30 days" type="button">
+                Renew Membership
+              </button>
+</td>
+</tr>
+<!-- Row 4: Sara Mohammed -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="all" data-status="unpaid">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  SM
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Sara Mohammed</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0944 678 901</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00127
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant">
+              None (—)
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant">
+              —
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant">
+              —
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant">
+              No paid period
+            </td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-neutral-bg-light text-badge-neutral-text-light font-label-badge text-label-badge">
+                Unpaid
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00127" data-name="Sara Mohammed" data-plan="Monthly" type="button">
+                Record First Payment
+              </button>
+</td>
+</tr>
+<!-- Row 5: Meron Alemu -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="Monthly" data-status="scheduled">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  MA
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Meron Alemu</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0955 789 012</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00128
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Monthly</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">30 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface font-medium">
+              Oct 12, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface font-medium">
+              Nov 10, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-primary">
+<span class="inline-flex items-center gap-1.5 font-medium">
+<span class="material-symbols-outlined text-[16px]">event_upcoming</span>
+<span>Starts Oct 12 (in 5 days)</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-badge text-label-badge">
+                Scheduled
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="inline-flex items-center justify-center h-9 px-3 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" type="button">
+                View Profile
+              </button>
+</td>
+</tr>
+<!-- Row 6: Kalkidan Worku -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="3 Months" data-status="active">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-on-secondary-fixed font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  KW
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Kalkidan Worku</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0912 889 001</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00140
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">3 Months</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">90 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Oct 07, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface font-medium">
+              Jan 04, 2027
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-badge-active-text-light">
+<span class="inline-flex items-center gap-1.5 font-medium">
+<span class="material-symbols-outlined text-[16px]">hourglass_bottom</span>
+<span>89 days left</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-active-bg-light text-badge-active-text-light font-label-badge text-label-badge">
+                Active
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3 rounded-lg bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00140" data-name="Kalkidan Worku" data-plan="3 Months — 90 days" type="button">
+                Renew
+              </button>
+</td>
+</tr>
+<!-- Row 7: Natnael Teshome -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="Daily Pass" data-status="expiring">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-tertiary-container text-on-tertiary font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  NT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Natnael Teshome</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0921 556 778</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00142
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Daily Pass</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">1 day</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Oct 07, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-badge-expiring-text-light font-semibold">
+              Oct 07, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact">
+<span class="inline-flex items-center gap-1.5 font-bold text-badge-expiring-text-light">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>Expires today</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-label-badge text-label-badge">
+                Expiring Soon
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-action-primary-light text-action-text-light hover:bg-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00142" data-name="Natnael Teshome" data-plan="Daily Pass — 1 day" type="button">
+                Renew
+              </button>
+</td>
+</tr>
+<!-- Row 8: Bethlehem Assefa -->
+<tr class="hover:bg-surface-container-low/70 transition-colors membership-row" data-plan="Weekly" data-status="expiring">
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-full bg-badge-active-bg-light text-badge-active-text-light font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shrink-0">
+                  BA
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Bethlehem Assefa</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant font-medium">0932 112 334</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface-variant font-mono">
+              GYM-00144
+            </td>
+<td class="py-4 px-space-md">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Weekly</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant block">7 days</span>
+</td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-on-surface">
+              Oct 07, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact text-badge-expiring-text-light font-semibold">
+              Oct 13, 2026
+            </td>
+<td class="py-4 px-space-md font-body-compact text-body-compact">
+<span class="inline-flex items-center gap-1.5 font-medium text-badge-expiring-text-light">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>6 days left</span>
+</span>
+</td>
+<td class="py-4 px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-label-badge text-label-badge">
+                Expiring Soon
+              </span>
+</td>
+<td class="py-4 px-space-md text-right">
+<button class="renew-trigger-btn inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-action-primary-light text-action-text-light hover:bg-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-sm" data-id="GYM-00144" data-name="Bethlehem Assefa" data-plan="Weekly — 7 days" type="button">
+                Renew
+              </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER & PAGINATION -->
+<div class="px-space-md py-3.5 bg-surface-container-low/50 flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant">
+<div class="flex items-center gap-space-md text-label-caption font-label-caption">
+<span>Showing <strong class="text-on-surface font-semibold">1–8</strong> of <strong class="text-on-surface font-semibold">350</strong> members</span>
+<div class="flex items-center gap-1.5">
+<span>Rows:</span>
+<select class="h-8 px-2 rounded bg-surface-container-lowest text-on-surface text-label-caption font-label-caption outline-none cursor-pointer">
+<option>10</option>
+<option>25</option>
+<option>50</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-1 font-body-compact text-body-compact">
+<button class="h-8 px-2.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface flex items-center justify-center disabled:opacity-40 transition-colors shadow-sm" disabled="" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+<span class="font-label-caption">Prev</span>
+</button>
+<button class="h-8 w-8 rounded bg-primary text-on-primary font-body-compact-semibold text-body-compact-semibold flex items-center justify-center shadow-sm" type="button">
+          1
+        </button>
+<button class="h-8 w-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold flex items-center justify-center transition-colors shadow-sm" type="button">
+          2
+        </button>
+<button class="h-8 w-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold flex items-center justify-center transition-colors shadow-sm" type="button">
+          3
+        </button>
+<span class="px-1 text-on-surface-variant">…</span>
+<button class="h-8 w-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container-high font-body-compact-semibold text-body-compact-semibold flex items-center justify-center transition-colors shadow-sm" type="button">
+          35
+        </button>
+<button class="h-8 px-2.5 rounded bg-surface-container-lowest text-on-surface hover:text-primary flex items-center justify-center transition-colors shadow-sm" type="button">
+<span class="font-label-caption">Next</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SLIDE-OVER PAYMENT & RENEWAL DRAWER -->
+<div class="fixed inset-0 bg-page-bg-dark/50 z-50 transition-opacity duration-300 opacity-0 pointer-events-none backdrop-blur-sm" id="paymentDrawerScrim"></div>
+<aside class="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-surface-container-lowest z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col shadow-2xl" id="paymentDrawer">
+<!-- Drawer Header -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col">
+<h2 class="font-title-section text-title-section text-on-surface">Renew Membership</h2>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Process registration &amp; payment</span>
+</div>
+<button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" id="closeDrawerBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto p-space-lg space-y-space-lg">
+<!-- Member Summary Box -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-full bg-primary text-on-primary font-body-compact-semibold text-[16px] flex items-center justify-center shrink-0" id="drawerAvatar">
+          HT
+        </div>
+<div class="min-w-0 flex-1">
+<div class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate" id="drawerMemberName">Hana Tesfaye</div>
+<div class="font-label-caption text-label-caption text-on-surface-variant font-mono" id="drawerMemberId">GYM-00125</div>
+<div class="font-label-caption text-label-caption text-badge-expiring-text-light font-medium" id="drawerCurrentPlan">Plan: 3 Months — 90 days</div>
+</div>
+</div>
+<!-- Plan Selection -->
+<div class="space-y-1.5">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface">Renewing Plan</label>
+<select class="w-full h-11 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-compact text-body-compact outline-none" id="drawerPlanSelect">
+<option data-days="30" value="1500">Monthly — 1,500 ETB (30 days)</option>
+<option data-days="90" selected="" value="4000">3 Months — 4,000 ETB (90 days)</option>
+<option data-days="180" value="7500">6 Months — 7,500 ETB (180 days)</option>
+<option data-days="365" value="13500">Annual — 13,500 ETB (365 days)</option>
+<option data-days="1" value="150">Daily Pass — 150 ETB (1 day)</option>
+</select>
+</div>
+<!-- Dates Confirmation -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant mb-1 font-semibold">Start Date</label>
+<div class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-compact text-body-compact flex items-center font-medium">
+            Oct 08, 2026
+          </div>
+</div>
+<div>
+<label class="block font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant mb-1 font-semibold">New End Date</label>
+<div class="h-10 px-3 rounded-lg bg-surface-container-low text-badge-active-text-light font-body-compact text-body-compact flex items-center font-semibold">
+            Jan 05, 2027
+          </div>
+</div>
+</div>
+<!-- Payment Method -->
+<div class="space-y-1.5">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface">Payment Method</label>
+<div class="grid grid-cols-3 gap-2">
+<button class="pay-method-btn h-11 rounded-lg bg-primary text-on-primary font-body-compact-semibold text-body-compact-semibold flex items-center justify-center text-center shadow-sm" data-method="cash" type="button">
+            Cash
+          </button>
+<button class="pay-method-btn h-11 rounded-lg bg-surface-container-low text-on-surface font-body-compact-semibold text-body-compact-semibold hover:bg-surface-container-high transition-colors flex items-center justify-center text-center shadow-sm" data-method="telebirr" type="button">
+            Telebirr
+          </button>
+<button class="pay-method-btn h-11 rounded-lg bg-surface-container-low text-on-surface font-body-compact-semibold text-body-compact-semibold hover:bg-surface-container-high transition-colors flex items-center justify-center text-center shadow-sm" data-method="cbe" type="button">
+            CBE / Bank
+          </button>
+</div>
+</div>
+<!-- Itemized ETB Currency Breakdown -->
+<div class="p-space-md rounded-xl bg-surface-container-low space-y-2">
+<div class="flex justify-between font-body-compact text-body-compact text-on-surface-variant">
+<span>Membership Fee</span>
+<span class="tabular-nums text-on-surface font-medium">4,000.00 ETB</span>
+</div>
+<div class="flex justify-between font-body-compact text-body-compact text-on-surface-variant">
+<span>Registration / Processing</span>
+<span class="tabular-nums text-on-surface font-medium">0.00 ETB</span>
+</div>
+<div class="pt-2 flex justify-between font-title-card text-title-card text-on-surface">
+<span>Total Payable</span>
+<span class="tabular-nums text-primary font-bold">4,000.00 ETB</span>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-end gap-space-xs">
+<button class="h-11 px-4 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors font-body-compact-semibold text-body-compact-semibold" id="cancelDrawerBtn" type="button">
+        Cancel
+      </button>
+<button class="h-11 px-6 rounded-lg bg-action-primary-light text-action-text-light hover:bg-primary transition-colors font-body-compact-semibold text-body-compact-semibold shadow-md flex items-center gap-1.5" id="confirmRenewPaymentBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">done</span>
+<span>Confirm &amp; Print Receipt</span>
+</button>
+</div>
+</aside>
+<!-- MICRO-INTERACTION LOGIC -->
+<script>
+    (function initMembershipsScreen() {
+      // 1. Tab Filtering
+      const tabs = document.querySelectorAll('.status-tab-btn');
+      const rows = document.querySelectorAll('.membership-row');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => {
+            t.classList.remove('bg-primary', 'text-on-primary');
+            t.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+          });
+          tab.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+          tab.classList.add('bg-primary', 'text-on-primary');
+
+          const filterValue = tab.getAttribute('data-filter');
+          rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (filterValue === 'all' || rowStatus === filterValue) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // 2. Real-time Search input
+      const searchInput = document.getElementById('tableSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.toLowerCase().trim();
+          rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (text.includes(val)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // 3. Clear Filters
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          const planSelect = document.getElementById('planFilterSelect');
+          const expirySelect = document.getElementById('expiryFilterSelect');
+          if (planSelect) planSelect.value = 'all';
+          if (expirySelect) expirySelect.value = 'all';
+          rows.forEach(row => row.style.display = '');
+          // Reset to All tab
+          const allTab = document.querySelector('.status-tab-btn[data-filter="all"]');
+          if (allTab) allTab.click();
+        });
+      }
+
+      // 4. Slide-Over Payment Drawer Interactions
+      const drawer = document.getElementById('paymentDrawer');
+      const drawerScrim = document.getElementById('paymentDrawerScrim');
+      const closeBtn = document.getElementById('closeDrawerBtn');
+      const cancelBtn = document.getElementById('cancelDrawerBtn');
+      const openDrawerBtns = document.querySelectorAll('.renew-trigger-btn');
+      const quickRenewBtn = document.getElementById('quickRenewBtn');
+      const openRecordPaymentBtn = document.getElementById('openRecordPaymentBtn');
+
+      function openDrawer(name = 'Hana Tesfaye', id = 'GYM-00125', plan = '3 Months — 90 days') {
+        const nameEl = document.getElementById('drawerMemberName');
+        const idEl = document.getElementById('drawerMemberId');
+        const planEl = document.getElementById('drawerCurrentPlan');
+        const avatarEl = document.getElementById('drawerAvatar');
+
+        if (nameEl) nameEl.textContent = name;
+        if (idEl) idEl.textContent = id;
+        if (planEl) planEl.textContent = 'Plan: ' + plan;
+        if (avatarEl) {
+          const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2);
+          avatarEl.textContent = initials;
+        }
+
+        drawer.classList.remove('translate-x-full');
+        drawerScrim.classList.remove('opacity-0', 'pointer-events-none');
+        drawerScrim.classList.add('opacity-100');
+      }
+
+      function closeDrawer() {
+        drawer.classList.add('translate-x-full');
+        drawerScrim.classList.remove('opacity-100');
+        drawerScrim.classList.add('opacity-0', 'pointer-events-none');
+      }
+
+      openDrawerBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-name');
+          const id = btn.getAttribute('data-id');
+          const plan = btn.getAttribute('data-plan');
+          openDrawer(name, id, plan);
+        });
+      });
+
+      if (quickRenewBtn) {
+        quickRenewBtn.addEventListener('click', () => openDrawer('Hana Tesfaye', 'GYM-00125', '3 Months — 90 days'));
+      }
+      if (openRecordPaymentBtn) {
+        openRecordPaymentBtn.addEventListener('click', () => openDrawer('Abebe Kebede', 'GYM-00124', 'Monthly — 30 days'));
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeDrawer);
+      if (drawerScrim) drawerScrim.addEventListener('click', closeDrawer);
+
+      // Payment method pill selection
+      const payMethodBtns = document.querySelectorAll('.pay-method-btn');
+      payMethodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          payMethodBtns.forEach(b => {
+            b.classList.remove('bg-primary', 'text-on-primary');
+            b.classList.add('bg-surface-container-low', 'text-on-surface');
+          });
+          btn.classList.remove('bg-surface-container-low', 'text-on-surface');
+          btn.classList.add('bg-primary', 'text-on-primary');
+        });
+      });
+
+      // Confirm button simple notification
+      const confirmBtn = document.getElementById('confirmRenewPaymentBtn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> Recording…';
+          setTimeout(() => {
+            closeDrawer();
+            confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">done</span><span>Confirm & Print Receipt</span>';
+          }, 600);
+        });
+      }
+    })();
+  </script>
+</div></main></div></body></html>

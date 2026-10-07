@@ -1,0 +1,315 @@
+@import "tailwindcss";
+
+/* Dark mode is driven by a class on <html>, set before first paint by the theme init script. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * GymFlow design tokens (design.md §3 + Kinetic Operational SaaS).
+ * Raw values live in --gf-* custom properties so that print and receipt
+ * surfaces can force the light palette regardless of the active theme.
+ */
+:root,
+.theme-light {
+  --gf-canvas: #f8fafc;
+  --gf-surface: #ffffff;
+  --gf-tint: #f4f5ff;
+  --gf-tint-strong: #e9ebff;
+  --gf-row-hover: #f1f5f9;
+  --gf-input: #ffffff;
+
+  --gf-fg: #0f172a;
+  --gf-fg-muted: #475569;
+  --gf-fg-subtle: #64748b;
+  --gf-line: #e2e8f0;
+  --gf-line-strong: #cbd5e1;
+
+  --gf-primary: #4338ca;
+  --gf-primary-hover: #3730a3;
+  --gf-on-primary: #ffffff;
+  --gf-primary-soft: #eef0ff;
+  --gf-primary-soft-fg: #3730a3;
+  --gf-link: #4338ca;
+  --gf-focus: #4338ca;
+
+  --gf-danger: #b91c1c;
+  --gf-danger-hover: #991b1b;
+  --gf-on-danger: #ffffff;
+
+  --gf-success-fg: #166534;
+  --gf-success-bg: #dcfce7;
+  --gf-warning-fg: #92400e;
+  --gf-warning-bg: #fef3c7;
+  --gf-error-fg: #991b1b;
+  --gf-error-bg: #fee2e2;
+  --gf-neutral-fg: #334155;
+  --gf-neutral-bg: #e2e8f0;
+  --gf-info-fg: #3730a3;
+  --gf-info-bg: #e0e7ff;
+
+  /* Chart mark hue, validated with the dataviz palette checks against each surface. */
+  --gf-chart: #4338ca;
+  --gf-chart-fill: rgb(67 56 202 / 0.1);
+  --gf-scrim: rgb(15 23 42 / 0.5);
+
+  color-scheme: light;
+}
+
+.dark {
+  --gf-canvas: #0f172a;
+  --gf-surface: #1e293b;
+  --gf-tint: #243149;
+  --gf-tint-strong: #2d3b57;
+  --gf-row-hover: #273449;
+  --gf-input: #0f172a;
+
+  --gf-fg: #f8fafc;
+  --gf-fg-muted: #cbd5e1;
+  --gf-fg-subtle: #94a3b8;
+  --gf-line: #475569;
+  --gf-line-strong: #64748b;
+
+  --gf-primary: #a5b4fc;
+  --gf-primary-hover: #c7d2fe;
+  --gf-on-primary: #0f172a;
+  --gf-primary-soft: rgb(165 180 252 / 0.16);
+  --gf-primary-soft-fg: #c7d2fe;
+  --gf-link: #a5b4fc;
+  --gf-focus: #a5b4fc;
+
+  --gf-danger: #f87171;
+  --gf-danger-hover: #fca5a5;
+  --gf-on-danger: #0f172a;
+
+  --gf-success-fg: #bbf7d0;
+  --gf-success-bg: #14532d;
+  --gf-warning-fg: #fde68a;
+  --gf-warning-bg: #78350f;
+  --gf-error-fg: #fecaca;
+  --gf-error-bg: #7f1d1d;
+  --gf-neutral-fg: #e2e8f0;
+  --gf-neutral-bg: #334155;
+  --gf-info-fg: #c7d2fe;
+  --gf-info-bg: #312e81;
+
+  --gf-chart: #7b86f0;
+  --gf-chart-fill: rgb(123 134 240 / 0.12);
+  --gf-scrim: rgb(2 6 23 / 0.7);
+
+  color-scheme: dark;
+}
+
+/* Receipts always render on white paper, whatever the theme (design.md §13, §19). */
+.theme-light {
+  color: var(--gf-fg);
+}
+
+@theme {
+  --font-sans:
+    var(--font-inter), var(--font-ethiopic), "Noto Sans Ethiopic", "Nyala", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --text-metric: 2.25rem;
+  --text-metric--line-height: 2.75rem;
+  --text-metric--letter-spacing: -0.02em;
+  --text-metric--font-weight: 700;
+  --text-metric-sm: 1.75rem;
+  --text-metric-sm--line-height: 2.25rem;
+  --text-metric-sm--letter-spacing: -0.01em;
+  --text-metric-sm--font-weight: 700;
+  --text-page: 2rem;
+  --text-page--line-height: 2.5rem;
+  --text-page--letter-spacing: -0.02em;
+  --text-page--font-weight: 700;
+  --text-page-sm: 1.625rem;
+  --text-page-sm--line-height: 2rem;
+  --text-page-sm--letter-spacing: -0.01em;
+  --text-page-sm--font-weight: 700;
+  --text-section: 1.25rem;
+  --text-section--line-height: 1.75rem;
+  --text-section--letter-spacing: -0.01em;
+  --text-section--font-weight: 600;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--letter-spacing: 0.01em;
+
+  --spacing-sidebar: 248px;
+  --spacing-header: 72px;
+  --spacing-drawer: 440px;
+
+  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.05), 0 1px 2px -1px rgb(15 23 42 / 0.05);
+  --shadow-popover: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.05);
+  --shadow-overlay: 0 20px 25px -5px rgb(15 23 42 / 0.12), 0 8px 10px -6px rgb(15 23 42 / 0.08);
+
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-fade-out: fade-out 120ms ease-in;
+  --animate-pop-in: pop-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop-out: pop-out 120ms ease-in;
+  --animate-slide-in-right: slide-in-right 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-out-right: slide-out-right 160ms ease-in;
+  --animate-slide-in-left: slide-in-left 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-out-left: slide-out-left 160ms ease-in;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.98);
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes slide-out-right {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes slide-in-left {
+    from {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes slide-out-left {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--gf-canvas);
+  --color-surface: var(--gf-surface);
+  --color-tint: var(--gf-tint);
+  --color-tint-strong: var(--gf-tint-strong);
+  --color-row-hover: var(--gf-row-hover);
+  --color-input: var(--gf-input);
+  --color-fg: var(--gf-fg);
+  --color-fg-muted: var(--gf-fg-muted);
+  --color-fg-subtle: var(--gf-fg-subtle);
+  --color-line: var(--gf-line);
+  --color-line-strong: var(--gf-line-strong);
+  --color-primary: var(--gf-primary);
+  --color-primary-hover: var(--gf-primary-hover);
+  --color-on-primary: var(--gf-on-primary);
+  --color-primary-soft: var(--gf-primary-soft);
+  --color-primary-soft-fg: var(--gf-primary-soft-fg);
+  --color-link: var(--gf-link);
+  --color-focus: var(--gf-focus);
+  --color-danger: var(--gf-danger);
+  --color-danger-hover: var(--gf-danger-hover);
+  --color-on-danger: var(--gf-on-danger);
+  --color-success-fg: var(--gf-success-fg);
+  --color-success-bg: var(--gf-success-bg);
+  --color-warning-fg: var(--gf-warning-fg);
+  --color-warning-bg: var(--gf-warning-bg);
+  --color-error-fg: var(--gf-error-fg);
+  --color-error-bg: var(--gf-error-bg);
+  --color-neutral-fg: var(--gf-neutral-fg);
+  --color-neutral-bg: var(--gf-neutral-bg);
+  --color-info-fg: var(--gf-info-fg);
+  --color-info-bg: var(--gf-info-bg);
+  --color-chart: var(--gf-chart);
+  --color-chart-fill: var(--gf-chart-fill);
+  --color-scrim: var(--gf-scrim);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--gf-canvas);
+    color: var(--gf-fg);
+    font-feature-settings: "cv11", "ss01";
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background-color: var(--gf-primary-soft);
+    color: var(--gf-fg);
+  }
+
+  /* One consistent, highly visible keyboard focus indicator. */
+  :focus-visible {
+    outline: 2px solid var(--gf-focus);
+    outline-offset: 2px;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.85);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/* Ge'ez script reads best without the letter-spacing used for Latin small caps labels. */
+:lang(am) [class*="tracking-"] {
+  letter-spacing: 0;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gf-line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Printing: only the receipt is printed, always in the light palette (design.md §13). */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  :root,
+  .dark {
+    --gf-canvas: #ffffff;
+    --gf-surface: #ffffff;
+    --gf-fg: #0f172a;
+    --gf-fg-muted: #334155;
+    --gf-line: #cbd5e1;
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+}

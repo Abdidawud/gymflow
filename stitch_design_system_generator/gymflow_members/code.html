@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "badge-expired-bg-dark": "#7F1D1D", "background": "#faf8ff", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2e7ff", "badge-active-bg-light": "#DCFCE7", "on-primary-container": "#c1beff", "on-tertiary": "#ffffff", "action-primary-dark": "#A5B4FC", "on-background": "#131b2e", "badge-expired-bg-light": "#FEE2E2", "surface-tint": "#5148d7", "border-dark": "#475569", "badge-neutral-text-dark": "#E2E8F0", "border-light": "#E2E8F0", "on-error": "#ffffff", "on-primary-fixed-variant": "#372abf", "on-secondary-container": "#586377", "badge-active-text-light": "#166534", "surface": "#faf8ff", "surface-container": "#eaedff", "action-text-dark": "#0F172A", "on-surface-variant": "#464554", "action-text-light": "#FFFFFF", "badge-expiring-bg-dark": "#78350F", "outline": "#777586", "on-secondary": "#ffffff", "on-surface": "#131b2e", "badge-neutral-bg-light": "#E2E8F0", "page-bg-dark": "#0F172A", "error": "#ba1a1a", "action-primary-light": "#4338CA", "secondary-container": "#d5e0f8", "primary-container": "#4338ca", "on-primary-fixed": "#100069", "on-primary": "#ffffff", "secondary": "#545f73", "text-secondary-light": "#475569", "on-tertiary-fixed-variant": "#7d2d00", "surface-container-low": "#f2f3ff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "error-container": "#ffdad6", "badge-active-text-dark": "#BBF7D0", "text-secondary-dark": "#CBD5E1", "primary": "#2a14b4", "badge-neutral-bg-dark": "#334155", "badge-expired-text-light": "#991B1B", "badge-expiring-text-light": "#92400E", "primary-fixed": "#e3dfff", "surface-variant": "#dae2fd", "badge-neutral-text-light": "#334155", "badge-expiring-text-dark": "#FDE68A", "on-secondary-fixed": "#111c2d", "surface-dark": "#1E293B", "on-secondary-fixed-variant": "#3c475a", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#ffb597", "inverse-surface": "#283044", "on-tertiary-container": "#ffb393", "tertiary": "#692400", "badge-expired-text-dark": "#FECACA", "tertiary-container": "#8f3400", "text-primary-light": "#0F172A", "text-primary-dark": "#F8FAFC", "surface-light": "#FFFFFF", "on-tertiary-fixed": "#360f00", "inverse-primary": "#c3c0ff", "on-error-container": "#93000a", "secondary-fixed": "#d8e3fb", "secondary-fixed-dim": "#bcc7de", "surface-bright": "#faf8ff", "tertiary-fixed": "#ffdbcd", "primary-fixed-dim": "#c3c0ff", "outline-variant": "#c7c4d7", "badge-expiring-bg-light": "#FEF3C7", "badge-active-bg-dark": "#14532D", "page-bg-light": "#F8FAFC" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.5rem", "gutter": "1.5rem", "margin": "2rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-md": "1rem", "space-2xs": "0.25rem", "space-xl": "2rem", "space-22xl": "3rem", "gutter-mobile": "1rem", "space-xs": "0.5rem" }, "fontFamily": { "label-caption": [ "Inter" ], "headline-page-mobile": [ "Inter" ], "metric-display": [ "Inter" ], "label-badge": [ "Inter" ], "headline-page": [ "Inter" ], "body-compact": [ "Inter" ], "body-compact-semibold": [ "Inter" ], "metric-display-mobile": [ "Inter" ], "title-card": [ "Inter" ], "title-section": [ "Inter" ], "body-default": [ "Inter" ] }, "fontSize": { "label-caption": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" } ], "headline-page-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "metric-display": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-badge": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-page": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-compact": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" } ], "body-compact-semibold": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" } ], "metric-display-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "title-card": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" } ], "title-section": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-default": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-default text-body-default text-on-surface antialiased"><aside class="fixed left-0 top-0 bottom-0 h-full w-[248px] bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-[72px] px-space-md flex flex-col justify-center"><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-body-compact-semibold text-body-compact-semibold">G</div><span class="font-title-section text-title-section text-on-surface tracking-tight">GymFlow</span></div><span class="font-label-caption text-label-caption text-on-surface-variant pl-[36px]">Adama Fitness</span></div><div class="flex-1 overflow-y-auto px-space-xs py-space-sm space-y-space-md"><div class="space-y-space-2xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Operations</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-compact text-body-compact">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="members" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-compact text-body-compact">Members</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="payments" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="font-body-compact text-body-compact">Payments</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="memberships" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-body-compact text-body-compact">Memberships</span></a></nav></div><div class="space-y-space-2xs pt-space-xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Administration</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="membership-plans" href="#"><span class="material-symbols-outlined text-[20px]">card_membership</span><span class="font-body-compact text-body-compact">Membership Plans</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="reports" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-compact text-body-compact">Reports</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="staff-users" href="#"><span class="material-symbols-outlined text-[20px]">manage_accounts</span><span class="font-body-compact text-body-compact">Staff &amp; Users</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div></div><div class="p-space-sm bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] m-space-xs rounded-xl space-y-space-xs"><div class="flex items-center gap-space-xs"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="font-body-compact-semibold text-body-compact-semibold text-on-primary">AD</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Abdi Dawud</span><span class="font-label-caption text-label-caption text-on-surface-variant truncate">Administrator</span></div></div><div class="flex items-center justify-between pt-space-2xs text-on-surface-variant"><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-on-surface py-1 transition-colors" data-path="my-account" href="#">My Account</a><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-error py-1 transition-colors" data-path="login" href="#">Sign Out</a></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-[72px] bg-surface-container-lowest/90 backdrop-blur-xl z-40 px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant pointer-events-none text-[20px]">search</span><input class="w-full h-11 pl-10 pr-16 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search members by name, phone or ID…" type="text"/><kbd class="absolute right-space-sm px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caption text-label-caption rounded pointer-events-none shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div></div><div class="flex items-center gap-space-sm"><button aria-label="Toggle Appearance Mode" class="w-11 h-11 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><div class="flex items-center gap-space-xs pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span></div></div></header><main class="relative pt-[72px] w-full min-h-screen bg-background px-gutter py-margin"><div class="flex flex-col w-full">
+<script>
+    (function highlightNav() {
+      const navLinks = document.querySelectorAll('aside nav a');
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-path') === 'members') {
+          link.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high', 'hover:text-on-surface');
+          link.classList.add('bg-primary-container', 'text-on-primary', 'font-body-compact-semibold');
+        } else {
+          link.classList.remove('bg-primary-container', 'text-on-primary', 'font-body-compact-semibold');
+          link.classList.add('text-on-surface-variant');
+        }
+      });
+    })();
+  </script>
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-space-md mb-space-lg">
+<div class="space-y-space-2xs">
+<h1 class="font-headline-page text-headline-page text-text-primary-light tracking-tight">Members</h1>
+<p class="font-body-default text-body-compact text-text-secondary-light">Find members and check their membership status.</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center justify-center gap-space-xs h-11 px-space-md bg-action-primary-light text-action-text-light font-body-compact-semibold text-body-compact-semibold rounded-lg shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-action-primary-light focus:ring-offset-2 transition-all cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Add Member</span>
+</button>
+</div>
+</div>
+<!-- Operational Metric Bento Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md mb-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div>
+<p class="font-label-caption text-label-caption text-text-secondary-light uppercase tracking-wider">Total Members</p>
+<p class="font-metric-display text-[28px] leading-8 font-bold text-text-primary-light mt-1">350</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">group</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div>
+<p class="font-label-caption text-label-caption text-text-secondary-light uppercase tracking-wider">Active</p>
+<p class="font-metric-display text-[28px] leading-8 font-bold text-text-primary-light mt-1">284</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-badge-active-bg-light flex items-center justify-center text-badge-active-text-light">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div>
+<p class="font-label-caption text-label-caption text-text-secondary-light uppercase tracking-wider">Expiring in 7d</p>
+<p class="font-metric-display text-[28px] leading-8 font-bold text-badge-expiring-text-light mt-1">19</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-badge-expiring-bg-light flex items-center justify-center text-badge-expiring-text-light">
+<span class="material-symbols-outlined text-[22px]">hourglass_bottom</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div>
+<p class="font-label-caption text-label-caption text-text-secondary-light uppercase tracking-wider">Expired / Unpaid</p>
+<p class="font-metric-display text-[28px] leading-8 font-bold text-error mt-1">47</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-badge-expired-bg-light flex items-center justify-center text-badge-expired-text-light">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</div>
+</div>
+</div>
+<!-- Filter & Search Panel -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md mb-space-lg">
+<div class="flex flex-col lg:flex-row gap-space-sm items-stretch lg:items-center justify-between">
+<!-- Search Field -->
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-text-secondary-light pointer-events-none text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-space-md bg-surface-container-low text-text-primary-light placeholder:text-text-secondary-light font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-action-primary-light transition-all" id="member-search" placeholder="Search by name, phone number or member ID…" type="text"/>
+</div>
+<!-- Filters Row -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Status Dropdown -->
+<div class="relative min-w-[150px]">
+<select class="w-full h-11 pl-space-sm pr-9 bg-surface-container-low text-text-primary-light font-body-compact-semibold text-body-compact rounded-lg appearance-none outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-action-primary-light cursor-pointer transition-all">
+<option value="all">All Statuses</option>
+<option value="active">Active</option>
+<option value="expiring">Expiring Soon</option>
+<option value="expired">Expired</option>
+<option value="scheduled">Scheduled</option>
+<option value="unpaid">Unpaid</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-xs top-1/2 -translate-y-1/2 text-text-secondary-light pointer-events-none text-[20px]">expand_more</span>
+</div>
+<!-- Plan Dropdown -->
+<div class="relative min-w-[170px]">
+<select class="w-full h-11 pl-space-sm pr-9 bg-surface-container-low text-text-primary-light font-body-compact-semibold text-body-compact rounded-lg appearance-none outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-action-primary-light cursor-pointer transition-all">
+<option value="all">All Plans</option>
+<option value="daily">Daily Pass</option>
+<option value="weekly">Weekly</option>
+<option value="monthly">Monthly — 30 days</option>
+<option value="3months">3 Months — 90 days</option>
+<option value="6months">6 Months</option>
+<option value="annual">Annual</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-xs top-1/2 -translate-y-1/2 text-text-secondary-light pointer-events-none text-[20px]">expand_more</span>
+</div>
+<!-- Account Scope Dropdown -->
+<div class="relative min-w-[160px]">
+<select class="w-full h-11 pl-space-sm pr-9 bg-surface-container-low text-text-primary-light font-body-compact-semibold text-body-compact rounded-lg appearance-none outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-action-primary-light cursor-pointer transition-all">
+<option value="current">Current Members</option>
+<option value="archived">Archived Members</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-xs top-1/2 -translate-y-1/2 text-text-secondary-light pointer-events-none text-[20px]">expand_more</span>
+</div>
+<!-- Clear Action -->
+<button class="h-11 px-space-sm text-text-secondary-light hover:text-action-primary-light font-body-compact-semibold text-body-compact rounded-lg transition-colors inline-flex items-center gap-space-2xs cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span>Clear Filters</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Primary Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-text-secondary-light font-body-compact-semibold text-label-caption uppercase tracking-wider select-none">
+<th class="py-space-sm px-space-md" scope="col">Member</th>
+<th class="py-space-sm px-space-md whitespace-nowrap" scope="col">Member ID</th>
+<th class="py-space-sm px-space-md whitespace-nowrap" scope="col">Phone</th>
+<th class="py-space-sm px-space-md" scope="col">Current / Next Plan</th>
+<th class="py-space-sm px-space-md whitespace-nowrap" scope="col">Membership End</th>
+<th class="py-space-sm px-space-md" scope="col">Status</th>
+<th class="py-space-sm px-space-md text-right" scope="col">Actions</th>
+</tr>
+</thead>
+<tbody class="text-body-compact font-body-compact divide-y divide-surface-container-low">
+<!-- Row 1: Abebe Kebede -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-body-compact-semibold text-body-compact shrink-0">
+                  AK
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Abebe Kebede</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">abebe.k@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00124
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0911 234 567
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Monthly — 30 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Oct 30, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-active-bg-light text-badge-active-text-light">
+                Active • 23d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-high hover:bg-surface-variant text-primary font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Abebe Kebede" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Abebe Kebede" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Hana Tesfaye -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  HT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Hana Tesfaye</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">hana.t@outlook.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00125
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0922 456 789
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              3 Months — 90 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Oct 10, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-expiring-bg-light text-badge-expiring-text-light">
+                Expiring Soon • 3d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-action-primary-light hover:opacity-95 text-action-text-light font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Hana Tesfaye" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Hana Tesfaye" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Dawit Bekele -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  DB
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Dawit Bekele</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">dawit.bekele@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00126
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0933 567 890
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Monthly — 30 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Sep 30, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-expired-bg-light text-badge-expired-text-light">
+                Expired
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-action-primary-light hover:opacity-95 text-action-text-light font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Dawit Bekele" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Dawit Bekele" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Sara Mohammed -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  SM
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Sara Mohammed</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">sara.m@yahoo.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00127
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0944 678 901
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light italic whitespace-nowrap">
+              —
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light italic whitespace-nowrap">
+              —
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-neutral-bg-light text-badge-neutral-text-light">
+                Unpaid
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-primary hover:opacity-95 text-on-primary font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Record Payment
+                </button>
+<button aria-label="View member Sara Mohammed" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Sara Mohammed" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Meron Alemu -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  MA
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Meron Alemu</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">meron.a@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00128
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0955 789 012
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Monthly — 30 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Starts Oct 12, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-secondary-container text-primary font-semibold">
+                Scheduled • Oct 12
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-high hover:bg-surface-variant text-text-primary-light font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  View Profile
+                </button>
+<button aria-label="More actions for Meron Alemu" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Kalkidan Worku -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  KW
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Kalkidan Worku</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">kalkidan.w@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00140
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0912 345 678
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              3 Months — 90 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Jan 05, 2027
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-active-bg-light text-badge-active-text-light">
+                Active • 90d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-high hover:bg-surface-variant text-primary font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Kalkidan Worku" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Kalkidan Worku" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Natnael Teshome -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  NT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Natnael Teshome</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">natnael.t@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00142
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0921 987 654
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Daily Pass — 1 day
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Oct 07, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-expiring-bg-light text-badge-expiring-text-light font-semibold">
+                Expiring Soon • Today
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-action-primary-light hover:opacity-95 text-action-text-light font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Natnael Teshome" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Natnael Teshome" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 8: Bethlehem Assefa -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  BA
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Bethlehem Assefa</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">bethy.assefa@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00144
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0931 876 543
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Weekly — 7 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Oct 14, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-active-bg-light text-badge-active-text-light">
+                Active • 7d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-high hover:bg-surface-variant text-primary font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Bethlehem Assefa" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Bethlehem Assefa" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 9: Samuel Bekele -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  SB
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Samuel Bekele</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">samuel.b@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00145
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0941 765 432
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Monthly — 30 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Nov 05, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-active-bg-light text-badge-active-text-light">
+                Active • 29d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-high hover:bg-surface-variant text-primary font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Samuel Bekele" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Samuel Bekele" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 10: Yonas Tadesse -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm min-w-[200px]">
+<div class="w-10 h-10 rounded-full bg-badge-expiring-bg-light text-badge-expiring-text-light font-body-compact-semibold text-body-compact flex items-center justify-center shrink-0">
+                  YT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-text-primary-light truncate group-hover:text-primary transition-colors">Yonas Tadesse</span>
+<span class="font-label-caption text-label-caption text-text-secondary-light truncate">yonas.t@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-mono text-label-caption text-text-secondary-light whitespace-nowrap">
+              GYM-00130
+            </td>
+<td class="py-space-md px-space-md font-mono text-body-compact text-text-primary-light whitespace-nowrap">
+              0911 882 109
+            </td>
+<td class="py-space-md px-space-md text-text-primary-light font-body-compact-semibold whitespace-nowrap">
+              Monthly — 30 days
+            </td>
+<td class="py-space-md px-space-md text-text-secondary-light whitespace-nowrap">
+              Oct 08, 2026
+            </td>
+<td class="py-space-md px-space-md whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-badge font-label-badge bg-badge-expiring-bg-light text-badge-expiring-text-light">
+                Expiring Soon • 1d left
+              </span>
+</td>
+<td class="py-space-md px-space-md text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-action-primary-light hover:opacity-95 text-action-text-light font-body-compact-semibold text-label-caption rounded-lg transition-colors cursor-pointer" type="button">
+                  Renew
+                </button>
+<button aria-label="View member Yonas Tadesse" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button aria-label="More actions for Yonas Tadesse" class="w-9 h-9 flex items-center justify-center text-text-secondary-light hover:text-text-primary-light hover:bg-surface-container rounded-lg transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination & Summary Bar -->
+<div class="px-space-md py-space-sm bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<!-- Showing count -->
+<div class="font-body-compact text-body-compact text-text-secondary-light">
+        Showing <span class="font-body-compact-semibold text-text-primary-light">1–10</span> of <span class="font-body-compact-semibold text-text-primary-light">350</span> members
+      </div>
+<!-- Controls group -->
+<div class="flex items-center gap-space-lg">
+<!-- Rows per page selector -->
+<div class="flex items-center gap-space-xs">
+<label class="font-label-caption text-label-caption text-text-secondary-light" for="rows-per-page">Rows per page:</label>
+<div class="relative">
+<select class="h-9 pl-space-xs pr-7 bg-surface-container-low text-text-primary-light font-body-compact-semibold text-label-caption rounded-lg appearance-none outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-action-primary-light cursor-pointer transition-all" id="rows-per-page">
+<option selected="" value="10">10</option>
+<option value="25">25</option>
+<option value="50">50</option>
+</select>
+<span class="material-symbols-outlined absolute right-1 top-1/2 -translate-y-1/2 text-text-secondary-light pointer-events-none text-[16px]">expand_more</span>
+</div>
+</div>
+<!-- Page switcher -->
+<div class="flex items-center gap-space-xs">
+<span class="font-body-compact text-body-compact text-text-secondary-light mr-space-xs">
+            Page <span class="font-body-compact-semibold text-text-primary-light">1</span> of <span class="font-body-compact-semibold text-text-primary-light">35</span>
+</span>
+<button aria-label="Previous page" class="w-9 h-9 flex items-center justify-center rounded-lg text-text-secondary-light bg-surface-container-low opacity-50 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button aria-label="Next page" class="w-9 h-9 flex items-center justify-center rounded-lg text-text-primary-light bg-surface-container-low hover:bg-surface-container hover:text-primary transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

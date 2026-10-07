@@ -1,0 +1,46 @@
+export const account = {
+  title: "My Account",
+  subtitle: "Your profile, password, language and appearance.",
+  managedNote: "Your name, email and role are managed by a gym administrator.",
+  language: {
+    title: "Language",
+    description: "Used on every screen and on printed receipts. Saved to your account.",
+    hints: { am: "The gym's default language", en: "English interface" },
+  },
+  appearance: {
+    title: "Appearance",
+    description: "Saved to your account.",
+    LIGHT: { label: "Light", description: "Bright reception areas" },
+    DARK: { label: "Dark", description: "Low-light and evening shifts" },
+    SYSTEM: { label: "System", description: "Follow this device" },
+  },
+  signOut: {
+    title: "Sign out",
+    description: "End your session on this device.",
+    button: "Sign Out",
+  },
+  demo: {
+    title: "Demo data",
+    badge: "Demo mode",
+    description: "Restore the sample members, payments and settings. You'll be signed out.",
+    button: "Reset Demo Data",
+    confirmTitle: "Reset demo data?",
+    confirmText: "All changes made in demo mode will be replaced with the original sample data.",
+  },
+  password: {
+    title: "Change password",
+    description: "Use a password you don't use anywhere else.",
+    current: "Current Password",
+    new: "New Password",
+    confirm: "Confirm Password",
+    submit: "Update Password",
+    updating: "Updating…",
+    updated: "Password updated.",
+    updatedHint: "Other devices signed in to your account were signed out.",
+    failed: "Couldn't update the password. Try again.",
+    errors: {
+      current: "Enter your current password.",
+      same: "Choose a password different from the current one.",
+    },
+  },
+} as const;

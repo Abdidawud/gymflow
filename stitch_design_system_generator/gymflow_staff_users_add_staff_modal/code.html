@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "badge-expired-bg-dark": "#7F1D1D", "background": "#faf8ff", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2e7ff", "badge-active-bg-light": "#DCFCE7", "on-primary-container": "#c1beff", "on-tertiary": "#ffffff", "action-primary-dark": "#A5B4FC", "on-background": "#131b2e", "badge-expired-bg-light": "#FEE2E2", "surface-tint": "#5148d7", "border-dark": "#475569", "badge-neutral-text-dark": "#E2E8F0", "border-light": "#E2E8F0", "on-error": "#ffffff", "on-primary-fixed-variant": "#372abf", "on-secondary-container": "#586377", "badge-active-text-light": "#166534", "surface": "#faf8ff", "surface-container": "#eaedff", "action-text-dark": "#0F172A", "on-surface-variant": "#464554", "action-text-light": "#FFFFFF", "badge-expiring-bg-dark": "#78350F", "outline": "#777586", "on-secondary": "#ffffff", "on-surface": "#131b2e", "badge-neutral-bg-light": "#E2E8F0", "page-bg-dark": "#0F172A", "error": "#ba1a1a", "action-primary-light": "#4338CA", "secondary-container": "#d5e0f8", "primary-container": "#4338ca", "on-primary-fixed": "#100069", "on-primary": "#ffffff", "secondary": "#545f73", "text-secondary-light": "#475569", "on-tertiary-fixed-variant": "#7d2d00", "surface-container-low": "#f2f3ff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "error-container": "#ffdad6", "badge-active-text-dark": "#BBF7D0", "text-secondary-dark": "#CBD5E1", "primary": "#2a14b4", "badge-neutral-bg-dark": "#334155", "badge-expired-text-light": "#991B1B", "badge-expiring-text-light": "#92400E", "primary-fixed": "#e3dfff", "surface-variant": "#dae2fd", "badge-neutral-text-light": "#334155", "badge-expiring-text-dark": "#FDE68A", "on-secondary-fixed": "#111c2d", "surface-dark": "#1E293B", "on-secondary-fixed-variant": "#3c475a", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#ffb597", "inverse-surface": "#283044", "on-tertiary-container": "#ffb393", "tertiary": "#692400", "badge-expired-text-dark": "#FECACA", "tertiary-container": "#8f3400", "text-primary-light": "#0F172A", "text-primary-dark": "#F8FAFC", "surface-light": "#FFFFFF", "on-tertiary-fixed": "#360f00", "inverse-primary": "#c3c0ff", "on-error-container": "#93000a", "secondary-fixed": "#d8e3fb", "secondary-fixed-dim": "#bcc7de", "surface-bright": "#faf8ff", "tertiary-fixed": "#ffdbcd", "primary-fixed-dim": "#c3c0ff", "outline-variant": "#c7c4d7", "badge-expiring-bg-light": "#FEF3C7", "badge-active-bg-dark": "#14532D", "page-bg-light": "#F8FAFC" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.5rem", "gutter": "1.5rem", "margin": "2rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-md": "1rem", "space-2xs": "0.25rem", "space-xl": "2rem", "space-22xl": "3rem", "gutter-mobile": "1rem", "space-xs": "0.5rem" }, "fontFamily": { "label-caption": [ "Inter" ], "headline-page-mobile": [ "Inter" ], "metric-display": [ "Inter" ], "label-badge": [ "Inter" ], "headline-page": [ "Inter" ], "body-compact": [ "Inter" ], "body-compact-semibold": [ "Inter" ], "metric-display-mobile": [ "Inter" ], "title-card": [ "Inter" ], "title-section": [ "Inter" ], "body-default": [ "Inter" ] }, "fontSize": { "label-caption": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" } ], "headline-page-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "metric-display": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-badge": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-page": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-compact": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" } ], "body-compact-semibold": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" } ], "metric-display-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "title-card": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" } ], "title-section": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-default": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-default text-body-default text-on-surface antialiased"><aside class="fixed left-0 top-0 bottom-0 h-full w-[248px] bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-[72px] px-space-md flex flex-col justify-center"><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-body-compact-semibold text-body-compact-semibold">G</div><span class="font-title-section text-title-section text-on-surface tracking-tight">GymFlow</span></div><span class="font-label-caption text-label-caption text-on-surface-variant pl-[36px]">Adama Fitness</span></div><div class="flex-1 overflow-y-auto px-space-xs py-space-sm space-y-space-md"><div class="space-y-space-2xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Operations</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-compact text-body-compact">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="members" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-compact text-body-compact">Members</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="payments" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="font-body-compact text-body-compact">Payments</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="memberships" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-body-compact text-body-compact">Memberships</span></a></nav></div><div class="space-y-space-2xs pt-space-xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Administration</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="membership-plans" href="#"><span class="material-symbols-outlined text-[20px]">card_membership</span><span class="font-body-compact text-body-compact">Membership Plans</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="reports" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-compact text-body-compact">Reports</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="staff-users" href="#"><span class="material-symbols-outlined text-[20px]">manage_accounts</span><span class="font-body-compact text-body-compact">Staff &amp; Users</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div></div><div class="p-space-sm bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] m-space-xs rounded-xl space-y-space-xs"><div class="flex items-center gap-space-xs"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="font-body-compact-semibold text-body-compact-semibold text-on-primary">AD</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Abdi Dawud</span><span class="font-label-caption text-label-caption text-on-surface-variant truncate">Administrator</span></div></div><div class="flex items-center justify-between pt-space-2xs text-on-surface-variant"><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-on-surface py-1 transition-colors" data-path="my-account" href="#">My Account</a><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-error py-1 transition-colors" data-path="login" href="#">Sign Out</a></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-[72px] bg-surface-container-lowest/90 backdrop-blur-xl z-40 px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant pointer-events-none text-[20px]">search</span><input class="w-full h-11 pl-10 pr-16 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search members by name, phone or ID…" type="text"/><kbd class="absolute right-space-sm px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caption text-label-caption rounded pointer-events-none shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div></div><div class="flex items-center gap-space-sm"><button aria-label="Toggle Appearance Mode" class="w-11 h-11 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><div class="flex items-center gap-space-xs pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span></div></div></header><main class="relative pt-[72px] w-full min-h-screen bg-background px-gutter py-margin"><div class="flex flex-col w-full">
+<!-- Subtle Header Highlights & Top Canvas Metadata -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+<div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-caption text-label-caption mb-space-2xs uppercase tracking-wider">
+<span>Administration</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-body-compact-semibold text-body-compact-semibold">Staff &amp; Users</span>
+</div>
+<h1 class="font-headline-page text-headline-page text-on-surface tracking-tight">Staff &amp; Users</h1>
+<p class="font-body-default text-body-default text-on-surface-variant mt-1">Manage staff accounts, roles, and administrative access.</p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="inline-flex items-center justify-center gap-space-xs h-11 px-space-md bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg shadow-sm hover:opacity-95 transition-opacity" id="open-add-staff-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span>+ Add Staff</span>
+</button>
+</div>
+</div>
+<!-- Key Operational Metric Panels -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption text-on-surface-variant uppercase tracking-wider">Total Accounts</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="font-metric-display text-metric-display text-on-surface">3</div>
+<div class="font-label-caption text-label-caption text-on-surface-variant mt-0.5">Assigned staff profiles</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption text-on-surface-variant uppercase tracking-wider">System Admins</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="font-metric-display text-metric-display text-on-surface">1</div>
+<div class="font-label-caption text-label-caption text-badge-expiring-text-light font-body-compact-semibold text-body-compact-semibold mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">shield</span> Protected minimum role
+        </div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption text-on-surface-variant uppercase tracking-wider">Active Operators</span>
+<div class="w-8 h-8 rounded-lg bg-badge-active-bg-light flex items-center justify-center text-badge-active-text-light">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="font-metric-display text-metric-display text-on-surface">2</div>
+<div class="font-label-caption text-label-caption text-badge-active-text-light font-body-compact-semibold text-body-compact-semibold mt-0.5">Ready for check-ins &amp; POS</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caption text-label-caption text-on-surface-variant uppercase tracking-wider">Pending Setup</span>
+<div class="w-8 h-8 rounded-lg bg-badge-expiring-bg-light flex items-center justify-center text-badge-expiring-text-light">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</div>
+</div>
+<div class="mt-space-sm">
+<div class="font-metric-display text-metric-display text-on-surface">1</div>
+<div class="font-label-caption text-label-caption text-on-surface-variant mt-0.5">Awaiting initial sign-in</div>
+</div>
+</div>
+</div>
+<!-- Role Governance Information Callout Banner -->
+<div class="bg-surface-container-low rounded-xl p-space-md mb-space-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Protected Last Administrator Policy</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant">The sole active Administrator account cannot be deactivated, preserving unbroken governance of Adama Fitness branch operations.</span>
+</div>
+</div>
+<div class="inline-flex items-center gap-1 font-label-caption text-label-caption text-on-surface-variant bg-surface-container-lowest px-3 py-1.5 rounded-lg shrink-0">
+<span class="material-symbols-outlined text-[16px] text-badge-active-text-light">lock</span>
+<span>Policy Active</span>
+</div>
+</div>
+<!-- Staff Members Data Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Quick Search and Filter Strip -->
+<div class="p-space-md bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="relative w-full max-w-sm">
+<span class="material-symbols-outlined absolute left-space-sm top-3 text-on-surface-variant pointer-events-none text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-space-md bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest transition-all" placeholder="Filter staff by name or email…" type="text"/>
+</div>
+<div class="flex items-center gap-space-xs text-label-caption font-label-caption text-on-surface-variant">
+<span>Showing <strong class="text-on-surface font-body-compact-semibold text-body-compact-semibold">3</strong> staff records</span>
+</div>
+</div>
+<!-- Table Surface -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left font-body-compact text-body-compact">
+<thead>
+<tr class="bg-page-bg-light text-text-secondary-light font-label-caption text-label-caption uppercase tracking-wider">
+<th class="py-space-sm px-space-md">Full Name</th>
+<th class="py-space-sm px-space-md">Email Address</th>
+<th class="py-space-sm px-space-md">Role</th>
+<th class="py-space-sm px-space-md">Account Status</th>
+<th class="py-space-sm px-space-md">Password Status</th>
+<th class="py-space-sm px-space-md">Last Active</th>
+<th class="py-space-sm px-space-md text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- User 1: Abdi Dawud (Protected Admin) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0 text-on-primary font-body-compact-semibold text-body-compact-semibold">
+                  AD
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface flex items-center gap-1.5">
+                    Abdi Dawud
+                    <span class="material-symbols-outlined text-primary text-[16px]" title="Current Session User">verified</span>
+</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Primary System Lead</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-body-compact text-body-compact text-on-surface">
+              abdi.dawud@adamafitness.com
+            </td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container font-body-compact-semibold text-body-compact-semibold text-primary">
+<span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+                Administrator
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full font-label-badge text-label-badge bg-badge-active-bg-light text-badge-active-text-light font-body-compact-semibold text-body-compact-semibold">
+                Active
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-1.5 text-badge-active-text-light">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-body-compact text-body-compact">Password Set</span>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-badge-active-text-light"></span>
+<span class="font-body-compact-semibold text-body-compact-semibold text-badge-active-text-light">Active now</span>
+</div>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-space-xs">
+<button class="h-9 px-space-sm rounded-lg bg-surface-container-high text-primary hover:bg-surface-container font-body-compact-semibold text-body-compact-semibold transition-colors" type="button">
+                  Edit
+                </button>
+<button class="h-9 px-space-sm rounded-lg bg-surface-container-high/60 text-on-surface-variant/40 cursor-not-allowed font-body-compact-semibold text-body-compact-semibold flex items-center gap-1" disabled="" title="Protected: Cannot deactivate the sole active system administrator" type="button">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Deactivate</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User 2: Tigist Haile -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0 text-on-secondary-container font-body-compact-semibold text-body-compact-semibold">
+                  TH
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Tigist Haile</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Reception Front Desk</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-body-compact text-body-compact text-on-surface">
+              tigist@adamafitness.com
+            </td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low font-body-compact-semibold text-body-compact-semibold text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">badge</span>
+                Receptionist
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full font-label-badge text-label-badge bg-badge-active-bg-light text-badge-active-text-light font-body-compact-semibold text-body-compact-semibold">
+                Active
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-1.5 text-badge-active-text-light">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-body-compact text-body-compact">Password Set</span>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant">
+              2 hrs ago
+            </td>
+<td class="py-space-md px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-space-xs">
+<button class="h-9 px-space-sm rounded-lg bg-surface-container-high text-primary hover:bg-surface-container font-body-compact-semibold text-body-compact-semibold transition-colors" type="button">
+                  Edit
+                </button>
+<button class="h-9 px-space-sm rounded-lg bg-badge-expired-bg-light text-badge-expired-text-light hover:opacity-90 font-body-compact-semibold text-body-compact-semibold transition-colors" type="button">
+                  Deactivate
+                </button>
+</div>
+</td>
+</tr>
+<!-- User 3: Dawit Tadesse -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 text-on-surface-variant font-body-compact-semibold text-body-compact-semibold">
+                  DT
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Dawit Tadesse</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Floor Operations Assistant</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md font-body-compact text-body-compact text-on-surface">
+              dawit.tadesse@adamafitness.com
+            </td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low font-body-compact-semibold text-body-compact-semibold text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">badge</span>
+                Receptionist
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full font-label-badge text-label-badge bg-badge-expiring-bg-light text-badge-expiring-text-light font-body-compact-semibold text-body-compact-semibold">
+                Pending First Login
+              </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-1.5 text-badge-expiring-text-light font-body-compact-semibold text-body-compact-semibold">
+<span class="material-symbols-outlined text-[16px]">key</span>
+<span class="font-body-compact text-body-compact">Temporary Password</span>
+</div>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant">
+              Never
+            </td>
+<td class="py-space-md px-space-md text-right">
+<div class="inline-flex items-center justify-end gap-space-xs">
+<button class="h-9 px-space-sm rounded-lg bg-surface-container-high text-primary hover:bg-surface-container font-body-compact-semibold text-body-compact-semibold transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">outgoing_mail</span>
+<span>Resend Invite</span>
+</button>
+<button class="h-9 px-space-sm rounded-lg bg-badge-expired-bg-light text-badge-expired-text-light hover:opacity-90 font-body-compact-semibold text-body-compact-semibold transition-colors" type="button">
+                  Deactivate
+                </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Staff Operations Meta -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs font-label-caption text-label-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Credentials encrypted at rest. Plaintext passwords are never displayed.</span>
+</div>
+<div class="flex items-center gap-space-xs text-label-caption font-label-caption text-on-surface-variant">
+<span>Session: <strong class="text-on-surface font-body-compact-semibold text-body-compact-semibold">Active branch Adama-01</strong></span>
+</div>
+</div>
+</div>
+<!-- Centered Modal Backdrop and Dialog (Open by Default per Specification) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-gutter-mobile sm:p-gutter bg-on-surface/50 backdrop-blur-sm transition-opacity" id="add-staff-modal">
+<div class="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+<!-- Modal Header -->
+<div class="p-space-lg bg-surface-container-lowest flex items-start justify-between">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">person_add</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-title-section text-title-section text-on-surface tracking-tight">Add Staff Member</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+              Create a new staff account. A temporary password will be assigned for first login.
+            </p>
+</div>
+</div>
+<button aria-label="Close dialog" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="close-modal-x" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Form Body -->
+<form class="p-space-lg space-y-space-md" id="add-staff-form">
+<!-- Field 1: Full Name -->
+<div class="space-y-1.5">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface" for="staff-name">
+            Full Name <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+<input class="w-full h-11 pl-10 pr-space-md bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest transition-all" id="staff-name" placeholder="e.g. Tigist Haile" required="" type="text"/>
+</div>
+</div>
+<!-- Field 2: Email Address -->
+<div class="space-y-1.5">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface" for="staff-email">
+            Email Address <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[20px] pointer-events-none">mail</span>
+<input class="w-full h-11 pl-10 pr-space-md bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest transition-all" id="staff-email" placeholder="e.g. tigist@adamafitness.com" required="" type="email"/>
+</div>
+</div>
+<!-- Field 3: Role Selection & Guidance Box -->
+<div class="space-y-1.5">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface" for="staff-role">
+            Role <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[20px] pointer-events-none">shield_person</span>
+<select class="w-full h-11 pl-10 pr-10 bg-surface-container-low text-on-surface font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest appearance-none cursor-pointer transition-all" id="staff-role">
+<option selected="" value="receptionist">Receptionist</option>
+<option value="administrator">Administrator</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-sm text-on-surface-variant text-[20px] pointer-events-none">expand_more</span>
+</div>
+<!-- Dynamic Role Guidance description -->
+<div class="p-space-sm rounded-lg bg-surface-container-low text-on-surface-variant flex items-start gap-space-xs mt-2" id="role-description-box">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-label-caption text-label-caption text-on-surface-variant" id="role-description-text">
+<strong class="text-on-surface font-body-compact-semibold text-body-compact-semibold">Receptionist:</strong> Check validity, record payments, view profiles. No access to financial reports or settings.
+            </p>
+</div>
+</div>
+<!-- Field 4: Temporary Password with Visibility Toggle -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-body-compact-semibold text-body-compact-semibold text-on-surface" for="staff-password">
+              Temporary Password <span class="text-error">*</span>
+</label>
+<span class="font-label-caption text-label-caption text-primary cursor-pointer hover:underline" id="generate-pass-btn">Regenerate</span>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+<input class="w-full h-11 pl-10 pr-12 bg-surface-container-low text-on-surface font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest transition-all" id="staff-password" required="" type="password" value="GymFlow#2026!"/>
+<button aria-label="Toggle password visibility" class="absolute right-space-xs w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" id="toggle-password-visibility" type="button">
+<span class="material-symbols-outlined text-[20px]" id="password-toggle-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Notice & Mandatory First Sign-in Password Policy -->
+<div class="bg-surface-container rounded-lg p-space-sm flex items-start gap-space-xs">
+<div class="pt-0.5">
+<input checked="" class="w-4 h-4 rounded text-primary-container bg-surface-container-lowest cursor-not-allowed" disabled="" id="enforce-password-change" type="checkbox"/>
+</div>
+<label class="font-label-caption text-label-caption text-on-surface cursor-not-allowed" for="enforce-password-change">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Require password change upon first sign-in</span>
+<span class="block text-on-surface-variant mt-0.5">Enforced by branch security policy. The member of staff will be prompted to set a private credential instantly.</span>
+</label>
+</div>
+</form>
+<!-- Modal Footer Action Buttons -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-end gap-space-sm">
+<button class="h-11 px-space-md rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-body-compact-semibold text-body-compact-semibold transition-colors" id="cancel-modal-btn" type="button">
+          Cancel
+        </button>
+<button class="h-11 px-space-md rounded-lg bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold shadow-sm hover:opacity-95 transition-opacity flex items-center gap-space-xs" id="submit-staff-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span>Create Staff Account</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Logic for Modal & Field Behaviors -->
+<script>
+    (function initStaffManagement() {
+      const modal = document.getElementById('add-staff-modal');
+      const openBtn = document.getElementById('open-add-staff-btn');
+      const cancelBtn = document.getElementById('cancel-modal-btn');
+      const closeX = document.getElementById('close-modal-x');
+      const submitBtn = document.getElementById('submit-staff-btn');
+      
+      const roleSelect = document.getElementById('staff-role');
+      const roleDescText = document.getElementById('role-description-text');
+      
+      const passwordInput = document.getElementById('staff-password');
+      const togglePasswordBtn = document.getElementById('toggle-password-visibility');
+      const passwordToggleIcon = document.getElementById('password-toggle-icon');
+      const generatePassBtn = document.getElementById('generate-pass-btn');
+
+      // Modal open/close handlers
+      function openModal() {
+        if (modal) modal.classList.remove('hidden');
+      }
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (closeX) closeX.addEventListener('click', closeModal);
+
+      // Close modal on backdrop click
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+      }
+
+      // Dynamic role description toggle
+      if (roleSelect && roleDescText) {
+        roleSelect.addEventListener('change', function() {
+          if (roleSelect.value === 'administrator') {
+            roleDescText.innerHTML = '<strong class="text-on-surface font-body-compact-semibold text-body-compact-semibold">Administrator:</strong> Full operational and executive privileges. Manages staff, system configurations, memberships, and financial audit logs.';
+          } else {
+            roleDescText.innerHTML = '<strong class="text-on-surface font-body-compact-semibold text-body-compact-semibold">Receptionist:</strong> Check validity, record payments, view profiles. No access to financial reports or settings.';
+          }
+        });
+      }
+
+      // Password toggle visibility
+      if (togglePasswordBtn && passwordInput && passwordToggleIcon) {
+        togglePasswordBtn.addEventListener('click', function() {
+          const isPassword = passwordInput.getAttribute('type') === 'password';
+          passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+          passwordToggleIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        });
+      }
+
+      // Temporary password generator
+      if (generatePassBtn && passwordInput) {
+        generatePassBtn.addEventListener('click', function() {
+          const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789!#@';
+          let generated = 'GymFlow#';
+          for (let i = 0; i < 4; i++) {
+            generated += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          passwordInput.value = generated + '!';
+        });
+      }
+
+      // Simulated Account Creation Feedback
+      if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+          const nameInput = document.getElementById('staff-name');
+          const emailInput = document.getElementById('staff-email');
+
+          if (nameInput && !nameInput.value.trim()) {
+            nameInput.focus();
+            return;
+          }
+          if (emailInput && !emailInput.value.trim()) {
+            emailInput.focus();
+            return;
+          }
+
+          submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span><span>Creating…</span>';
+          setTimeout(function() {
+            closeModal();
+            submitBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">person_add</span><span>Create Staff Account</span>';
+            if (nameInput) nameInput.value = '';
+            if (emailInput) emailInput.value = '';
+          }, 600);
+        });
+      }
+    })();
+  </script>
+</div></main></div></body></html>

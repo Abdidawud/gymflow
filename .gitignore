@@ -1,0 +1,16 @@
+# Dependencies and build output (frontend/.gitignore covers the app itself)
+node_modules/
+.next/
+test-results/
+playwright-report/
+
+# Local environment and secrets
+.env*.local
+*.pem
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

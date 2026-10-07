@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "badge-expired-bg-dark": "#7F1D1D", "background": "#faf8ff", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2e7ff", "badge-active-bg-light": "#DCFCE7", "on-primary-container": "#c1beff", "on-tertiary": "#ffffff", "action-primary-dark": "#A5B4FC", "on-background": "#131b2e", "badge-expired-bg-light": "#FEE2E2", "surface-tint": "#5148d7", "border-dark": "#475569", "badge-neutral-text-dark": "#E2E8F0", "border-light": "#E2E8F0", "on-error": "#ffffff", "on-primary-fixed-variant": "#372abf", "on-secondary-container": "#586377", "badge-active-text-light": "#166534", "surface": "#faf8ff", "surface-container": "#eaedff", "action-text-dark": "#0F172A", "on-surface-variant": "#464554", "action-text-light": "#FFFFFF", "badge-expiring-bg-dark": "#78350F", "outline": "#777586", "on-secondary": "#ffffff", "on-surface": "#131b2e", "badge-neutral-bg-light": "#E2E8F0", "page-bg-dark": "#0F172A", "error": "#ba1a1a", "action-primary-light": "#4338CA", "secondary-container": "#d5e0f8", "primary-container": "#4338ca", "on-primary-fixed": "#100069", "on-primary": "#ffffff", "secondary": "#545f73", "text-secondary-light": "#475569", "on-tertiary-fixed-variant": "#7d2d00", "surface-container-low": "#f2f3ff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "error-container": "#ffdad6", "badge-active-text-dark": "#BBF7D0", "text-secondary-dark": "#CBD5E1", "primary": "#2a14b4", "badge-neutral-bg-dark": "#334155", "badge-expired-text-light": "#991B1B", "badge-expiring-text-light": "#92400E", "primary-fixed": "#e3dfff", "surface-variant": "#dae2fd", "badge-neutral-text-light": "#334155", "badge-expiring-text-dark": "#FDE68A", "on-secondary-fixed": "#111c2d", "surface-dark": "#1E293B", "on-secondary-fixed-variant": "#3c475a", "surface-dim": "#d2d9f4", "tertiary-fixed-dim": "#ffb597", "inverse-surface": "#283044", "on-tertiary-container": "#ffb393", "tertiary": "#692400", "badge-expired-text-dark": "#FECACA", "tertiary-container": "#8f3400", "text-primary-light": "#0F172A", "text-primary-dark": "#F8FAFC", "surface-light": "#FFFFFF", "on-tertiary-fixed": "#360f00", "inverse-primary": "#c3c0ff", "on-error-container": "#93000a", "secondary-fixed": "#d8e3fb", "secondary-fixed-dim": "#bcc7de", "surface-bright": "#faf8ff", "tertiary-fixed": "#ffdbcd", "primary-fixed-dim": "#c3c0ff", "outline-variant": "#c7c4d7", "badge-expiring-bg-light": "#FEF3C7", "badge-active-bg-dark": "#14532D", "page-bg-light": "#F8FAFC" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-mobile": "1.5rem", "gutter": "1.5rem", "margin": "2rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-md": "1rem", "space-2xs": "0.25rem", "space-xl": "2rem", "space-22xl": "3rem", "gutter-mobile": "1rem", "space-xs": "0.5rem" }, "fontFamily": { "label-caption": [ "Inter" ], "headline-page-mobile": [ "Inter" ], "metric-display": [ "Inter" ], "label-badge": [ "Inter" ], "headline-page": [ "Inter" ], "body-compact": [ "Inter" ], "body-compact-semibold": [ "Inter" ], "metric-display-mobile": [ "Inter" ], "title-card": [ "Inter" ], "title-section": [ "Inter" ], "body-default": [ "Inter" ] }, "fontSize": { "label-caption": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" } ], "headline-page-mobile": [ "26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "metric-display": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-badge": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-page": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-compact": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" } ], "body-compact-semibold": [ "14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" } ], "metric-display-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "title-card": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" } ], "title-section": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "body-default": [ "16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-default text-body-default text-on-surface antialiased"><aside class="fixed left-0 top-0 bottom-0 h-full w-[248px] bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-[72px] px-space-md flex flex-col justify-center"><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-body-compact-semibold text-body-compact-semibold">G</div><span class="font-title-section text-title-section text-on-surface tracking-tight">GymFlow</span></div><span class="font-label-caption text-label-caption text-on-surface-variant pl-[36px]">Adama Fitness</span></div><div class="flex-1 overflow-y-auto px-space-xs py-space-sm space-y-space-md"><div class="space-y-space-2xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Operations</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-body-compact text-body-compact">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="members" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-compact text-body-compact">Members</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="payments" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span class="font-body-compact text-body-compact">Payments</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="memberships" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-body-compact text-body-compact">Memberships</span></a></nav></div><div class="space-y-space-2xs pt-space-xs"><div class="px-space-xs font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant">Administration</div><nav class="space-y-space-2xs" data-active-classes="bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="membership-plans" href="#"><span class="material-symbols-outlined text-[20px]">card_membership</span><span class="font-body-compact text-body-compact">Membership Plans</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="reports" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-compact text-body-compact">Reports</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="staff-users" href="#"><span class="material-symbols-outlined text-[20px]">manage_accounts</span><span class="font-body-compact text-body-compact">Staff &amp; Users</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs min-h-[44px] rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div></div><div class="p-space-sm bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] m-space-xs rounded-xl space-y-space-xs"><div class="flex items-center gap-space-xs"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="font-body-compact-semibold text-body-compact-semibold text-on-primary">AD</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-body-compact-semibold text-body-compact-semibold text-on-surface truncate">Abdi Dawud</span><span class="font-label-caption text-label-caption text-on-surface-variant truncate">Administrator</span></div></div><div class="flex items-center justify-between pt-space-2xs text-on-surface-variant"><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-on-surface py-1 transition-colors" data-path="my-account" href="#">My Account</a><a class="font-label-caption text-label-caption text-on-surface-variant hover:text-error py-1 transition-colors" data-path="login" href="#">Sign Out</a></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-[72px] bg-surface-container-lowest/90 backdrop-blur-xl z-40 px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant pointer-events-none text-[20px]">search</span><input class="w-full h-11 pl-10 pr-16 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-compact text-body-compact rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search members by name, phone or ID…" type="text"/><kbd class="absolute right-space-sm px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caption text-label-caption rounded pointer-events-none shadow-[0_1px_8px_rgba(0,0,0,0.04)]">⌘K</kbd></div></div><div class="flex items-center gap-space-sm"><button aria-label="Toggle Appearance Mode" class="w-11 h-11 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">light_mode</span></button><div class="flex items-center gap-space-xs pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span></div></div></header><main class="relative pt-[72px] w-full min-h-screen bg-background px-gutter py-margin"><div class="flex flex-col w-full pb-16">
+<!-- Top Navigation & Breadcrumbs Strip -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div class="flex flex-col gap-1">
+<nav class="flex items-center gap-2 text-on-surface-variant font-label-caption text-label-caption">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">group</span>
+<span>Members</span>
+</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-body-compact-semibold text-body-compact-semibold">Add New Member</span>
+</nav>
+<div class="flex items-baseline gap-3 mt-1">
+<h1 class="font-headline-page text-headline-page text-on-surface tracking-tight">Add New Member</h1>
+<span class="font-label-badge text-label-badge px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">Step 1 of 2</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">Register a gym member, then record their first payment.</p>
+</div>
+<!-- Quick Upper Actions -->
+<div class="flex items-center gap-3 self-start md:self-auto">
+<button class="min-h-[44px] px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-body-compact-semibold text-body-compact-semibold transition-colors flex items-center gap-2 shadow-sm" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Cancel</span>
+</button>
+<button class="min-h-[44px] px-5 rounded-lg bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-2" id="topSaveBtn" onclick="document.getElementById('memberRegForm').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}))" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>Save Member</span>
+</button>
+</div>
+</div>
+<!-- Operational Context Notice Card -->
+<div class="mb-6 p-4 rounded-xl bg-surface-container-low shadow-sm flex items-start sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">info</span>
+</div>
+<div>
+<p class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Registration creates an Unpaid member record</p>
+<p class="font-label-caption text-label-caption text-on-surface-variant">Payment collection, receipt issuance, and active package duration start immediately in the subsequent prompt.</p>
+</div>
+</div>
+<div class="hidden lg:flex items-center gap-2 text-on-surface-variant font-label-caption text-label-caption shrink-0 bg-surface-container-lowest px-3 py-1.5 rounded-lg">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Adama Fitness Registry</span>
+</div>
+</div>
+<!-- Primary Registration Form Card -->
+<form class="w-full bg-surface-container-lowest rounded-xl shadow-md p-6 sm:p-8 md:p-10 flex flex-col gap-10" id="memberRegForm" onsubmit="event.preventDefault(); handleRegistrationSubmit();">
+<!-- 1. System & Identification Banner (Read-only System Metas) -->
+<section class="rounded-xl bg-surface-container-low p-5 sm:p-6 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+<span class="font-title-card text-title-card text-on-surface">System Allocation</span>
+</div>
+<span class="font-label-badge text-label-badge px-2.5 py-0.5 rounded-full bg-badge-neutral-bg-light text-badge-neutral-text-light">Auto-generated</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+<!-- Assigned ID -->
+<div class="bg-surface-container-lowest p-4 rounded-lg shadow-sm flex flex-col">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant mb-1">Generated Member ID</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-display-mobile text-metric-display-mobile text-primary tracking-tight font-bold">GYM-00146</span>
+<span class="font-label-caption text-label-caption text-on-surface-variant">#146</span>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant mt-1">Pre-allocated serial token</span>
+</div>
+<!-- Registration Date -->
+<div class="bg-surface-container-lowest p-4 rounded-lg shadow-sm flex flex-col">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant mb-1">Registration Date</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">calendar_today</span>
+<span class="font-title-card text-title-card text-on-surface">Oct 07, 2026</span>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant mt-1">Ethiopian Cal: Meskerem 27, 2019</span>
+</div>
+<!-- Initial Status Preview -->
+<div class="bg-surface-container-lowest p-4 rounded-lg shadow-sm flex flex-col">
+<span class="font-label-caption text-label-caption uppercase tracking-wider text-on-surface-variant mb-1">Initial Membership Status</span>
+<div class="flex items-center gap-2">
+<span class="font-label-badge text-label-badge px-3 py-1 rounded-full bg-badge-neutral-bg-light text-badge-neutral-text-light inline-flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+              Unpaid
+            </span>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant mt-1">No active plan until payment is recorded</span>
+</div>
+</div>
+</section>
+<!-- 2. Personal Information Section -->
+<section class="flex flex-col gap-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-1">
+<div>
+<h2 class="font-title-section text-title-section text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">person</span>
+            Personal Information
+          </h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant">Primary details for identification and gym access.</p>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">* Indicates required field</span>
+</div>
+<!-- Avatar & Photo Capture Block -->
+<div class="bg-surface-container-low p-5 sm:p-6 rounded-xl flex flex-col sm:flex-row items-center gap-6 shadow-sm">
+<div class="relative w-28 h-28 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden shrink-0 shadow-inner group" id="photoPreviewContainer">
+<img alt="Member Avatar Preview" class="w-full h-full object-cover hidden" data-alt="Portrait photography of an athletic Ethiopian person in clean indoor fitness apparel against soft neutral background" id="avatarImage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsWs4EnyscvUekvEEU-4JBSQ2sLengiXcJBoB3sG7UbsZqT3mitzOMPIpJSkuNM9UonijXpo2rur6wbH6MK6X6r_Di0NNf4nfL1e5hiwRde7b-3JYexIfV-4V2hJUe7lQ7ShZx_h3d-2RDOwKRlR3tHx9w5EBfMimZqkVydd256yj5BtxaPKMXX89NZdgtN0WaAxBNlX_pRE0QhpVbRwYBGLX_WJVFBh89A2CLhw"/>
+<div class="flex flex-col items-center justify-center text-on-surface-variant" id="avatarFallback">
+<span class="material-symbols-outlined text-[40px] text-secondary">account_circle</span>
+<span class="font-label-caption text-label-caption mt-1">No Photo</span>
+</div>
+</div>
+<div class="flex flex-col items-center sm:items-start flex-1 text-center sm:text-left">
+<span class="font-body-compact-semibold text-body-compact-semibold text-on-surface">Upload member photo (optional)</span>
+<p class="font-label-caption text-label-caption text-on-surface-variant mt-0.5 mb-3">Accepts JPEG, PNG or WebP up to 5 MB. Used for front-desk identification.</p>
+<div class="flex items-center gap-3">
+<label class="min-h-[44px] px-4 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-on-surface font-body-compact-semibold text-body-compact-semibold cursor-pointer transition-colors shadow-sm inline-flex items-center gap-2" for="photoUploadInput">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+<span>Upload Photo</span>
+</label>
+<input accept="image/jpeg,image/png,image/webp" class="hidden" id="photoUploadInput" onchange="handlePhotoUpload(this)" type="file"/>
+<button class="min-h-[44px] px-4 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-error font-body-compact-semibold text-body-compact-semibold transition-colors hidden inline-flex items-center gap-1.5" id="removePhotoBtn" onclick="removePhoto()" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+<span>Remove</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Input Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- First Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="firstName">
+            First Name <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="firstName" name="firstName" placeholder="e.g. Almaz" required="" type="text"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Given name as recognized on national or student ID.</span>
+</div>
+<!-- Last Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="lastName">
+            Last Name <span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="lastName" name="lastName" placeholder="e.g. Tadesse" required="" type="text"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Father's / Family name.</span>
+</div>
+<!-- Phone Number -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="phoneNumber">
+            Phone Number <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="absolute left-3.5 font-body-compact text-body-compact text-on-surface-variant font-medium select-none">+251</span>
+<input class="w-full h-11 pl-16 pr-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="phoneNumber" name="phoneNumber" placeholder="0911 234 567" required="" type="tel"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Accepts local (09...) or international (+251...) format. Must be unique per member.</span>
+</div>
+<!-- Email Address -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="email">
+              Email Address
+            </label>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional</span>
+</div>
+<div class="relative">
+<input class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="email" name="email" placeholder="almaz.t@example.com" type="email"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional for digital receipts and expiry renewal notifications.</span>
+</div>
+<!-- Gender Selection -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="gender">Gender</label>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional</span>
+</div>
+<div class="relative">
+<select class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm appearance-none transition-all pr-10 cursor-pointer" id="gender" name="gender">
+<option selected="" value="">Select gender</option>
+<option value="female">Female</option>
+<option value="male">Male</option>
+<option value="prefer_not_to_say">Prefer not to say</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[20px]">arrow_drop_down</span>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Used for locker room assignments and demographic breakdown.</span>
+</div>
+<!-- Date of Birth -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="dateOfBirth">Date of Birth</label>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional</span>
+</div>
+<div class="relative">
+<input class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="dateOfBirth" name="dateOfBirth" type="date"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">For verification and safety eligibility checks.</span>
+</div>
+</div>
+</section>
+<!-- 3. Emergency Contact Section -->
+<section class="flex flex-col gap-6 pt-4">
+<div class="flex flex-col pb-2">
+<h2 class="font-title-section text-title-section text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">emergency</span>
+          Emergency Contact
+        </h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant">Optional contact person in case of gym medical or facility emergencies. If provided, both name and phone are required.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-surface-container-low p-6 rounded-xl shadow-sm">
+<!-- Contact Full Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="emergencyName">Contact Full Name</label>
+<input class="w-full h-11 px-3.5 bg-surface-container-lowest rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="emergencyName" name="emergencyName" placeholder="e.g. Dawit Tadesse" type="text"/>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Primary contact individual</span>
+</div>
+<!-- Contact Phone -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="emergencyPhone">Contact Phone</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 bg-surface-container-lowest rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="emergencyPhone" name="emergencyPhone" placeholder="0922 123 456" type="tel"/>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Immediate mobile or direct line</span>
+</div>
+<!-- Relationship -->
+<div class="flex flex-col gap-1.5">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="emergencyRelationship">Relationship</label>
+<div class="relative">
+<select class="w-full h-11 px-3.5 bg-surface-container-lowest rounded-lg text-on-surface font-body-compact text-body-compact focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm appearance-none transition-all pr-10 cursor-pointer" id="emergencyRelationship" name="emergencyRelationship">
+<option selected="" value="">Select relationship</option>
+<option value="Spouse">Spouse</option>
+<option value="Parent">Parent</option>
+<option value="Sibling">Sibling</option>
+<option value="Friend">Friend</option>
+<option value="Other">Other</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[20px]">arrow_drop_down</span>
+</div>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Kinship or association</span>
+</div>
+</div>
+</section>
+<!-- 4. Additional Information Section -->
+<section class="flex flex-col gap-6 pt-2">
+<div class="flex flex-col pb-2">
+<h2 class="font-title-section text-title-section text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">notes</span>
+          Additional Information
+        </h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant">Optional background details and receptionist observations.</p>
+</div>
+<div class="flex flex-col gap-6">
+<!-- Address / Sub-city -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="address">Address / Sub-city</label>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional</span>
+</div>
+<input class="w-full h-11 px-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all" id="address" name="address" placeholder="e.g. Bole Sub-city, Adama / Kebele 03" type="text"/>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Residential area or physical landmark in Adama</span>
+</div>
+<!-- Staff Notes -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-compact-semibold text-body-compact-semibold text-on-surface" for="staffNotes">Staff &amp; Health Notes</label>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Optional / Internal</span>
+</div>
+<textarea class="w-full p-3.5 bg-surface-container-low rounded-lg text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/70 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm transition-all resize-y" id="staffNotes" name="staffNotes" placeholder="Any relevant health conditions, preferences, or staff notes..." rows="3"></textarea>
+<span class="font-label-caption text-label-caption text-on-surface-variant">Confidential desk notes visible exclusively to trainers and administrators.</span>
+</div>
+</div>
+</section>
+<!-- 5. Form Actions & Next Step Guidance (Bottom Action Bar) -->
+<div class="pt-6 mt-4 flex flex-col md:flex-row items-center justify-between gap-6 bg-surface-container-low -mx-6 sm:-mx-8 md:-mx-10 -mb-6 sm:-mb-8 md:-mb-10 p-6 sm:p-8 rounded-b-xl">
+<!-- Workflow Helper Left Side -->
+<div class="flex items-center gap-3 text-on-surface-variant max-w-xl">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface">
+<strong class="font-body-compact-semibold text-body-compact-semibold">Next step:</strong> After saving, you will be redirected to the member profile with the option to <span class="text-primary font-medium">Record First Payment</span>.
+        </p>
+</div>
+<!-- Action Buttons Right Side -->
+<div class="flex items-center gap-3 w-full md:w-auto justify-end">
+<button class="min-h-[44px] px-5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-compact-semibold text-body-compact-semibold transition-colors flex items-center justify-center gap-2 shadow-sm min-w-[100px]" onclick="history.back()" type="button">
+<span>Cancel</span>
+</button>
+<button class="min-h-[44px] px-6 rounded-lg bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold hover:opacity-95 transition-all shadow-md flex items-center justify-center gap-2" id="saveMemberSubmit" type="submit">
+<span class="material-symbols-outlined text-[20px]" id="saveIcon">check</span>
+<span id="saveText">Save Member</span>
+</button>
+</div>
+</div>
+</form>
+<!-- Interactive Mock Toast Modal (Demonstrating Post-Save Transition flow) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" id="successModal">
+<div class="bg-surface-container-lowest rounded-xl max-w-md w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 mx-4 flex flex-col items-center text-center">
+<div class="w-14 h-14 rounded-full bg-badge-active-bg-light text-badge-active-text-light flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[32px]">check_circle</span>
+</div>
+<h3 class="font-title-section text-title-section text-on-surface mb-1">Member Registered Successfully</h3>
+<p class="font-body-compact text-body-compact text-on-surface-variant mb-6">
+<strong class="text-on-surface font-body-compact-semibold" id="createdMemberName">Almaz Tadesse</strong> (GYM-00146) has been registered. Initial status is <span class="font-label-badge text-label-badge px-2 py-0.5 rounded-full bg-badge-neutral-bg-light text-badge-neutral-text-light">Unpaid</span>.
+      </p>
+<div class="w-full flex flex-col gap-2.5">
+<button class="w-full min-h-[44px] px-4 rounded-lg bg-primary-container text-on-primary font-body-compact-semibold text-body-compact-semibold hover:opacity-95 transition-colors flex items-center justify-center gap-2 shadow-sm" onclick="closeSuccessDialog()" type="button">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span>Record First Payment Now</span>
+</button>
+<button class="w-full min-h-[44px] px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-body-compact-semibold text-body-compact-semibold transition-colors flex items-center justify-center" onclick="closeSuccessDialog()" type="button">
+<span>Go to Member Profile</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function handlePhotoUpload(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const avatarImage = document.getElementById('avatarImage');
+        const avatarFallback = document.getElementById('avatarFallback');
+        const removeBtn = document.getElementById('removePhotoBtn');
+        
+        avatarImage.src = e.target.result;
+        avatarImage.classList.remove('hidden');
+        avatarFallback.classList.add('hidden');
+        removeBtn.classList.remove('hidden');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function removePhoto() {
+    const avatarImage = document.getElementById('avatarImage');
+    const avatarFallback = document.getElementById('avatarFallback');
+    const removeBtn = document.getElementById('removePhotoBtn');
+    const input = document.getElementById('photoUploadInput');
+
+    input.value = '';
+    avatarImage.src = 'placeholder';
+    avatarImage.classList.add('hidden');
+    avatarFallback.classList.remove('hidden');
+    removeBtn.classList.add('hidden');
+  }
+
+  function handleRegistrationSubmit() {
+    const form = document.getElementById('memberRegForm');
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const phone = document.getElementById('phoneNumber').value.trim();
+    const emergencyName = document.getElementById('emergencyName').value.trim();
+    const emergencyPhone = document.getElementById('emergencyPhone').value.trim();
+
+    // Required checks
+    if (!firstName || !lastName || !phone) {
+      alert('Please fill out the required First Name, Last Name, and Phone Number fields.');
+      return;
+    }
+
+    // Emergency mutual requirement
+    if ((emergencyName && !emergencyPhone) || (!emergencyName && emergencyPhone)) {
+      alert('If providing an emergency contact, please supply both their Full Name and Phone Number.');
+      return;
+    }
+
+    // UI Loading state
+    const submitBtn = document.getElementById('saveMemberSubmit');
+    const saveIcon = document.getElementById('saveIcon');
+    const saveText = document.getElementById('saveText');
+    
+    submitBtn.disabled = true;
+    saveIcon.textContent = 'hourglass_empty';
+    saveText.textContent = 'Registering...';
+
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      saveIcon.textContent = 'check';
+      saveText.textContent = 'Save Member';
+
+      // Show confirmation dialog with member details
+      document.getElementById('createdMemberName').textContent = firstName + ' ' + lastName;
+      const modal = document.getElementById('successModal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.querySelector('.transform').classList.remove('scale-95');
+      modal.querySelector('.transform').classList.add('scale-100');
+    }, 600);
+  }
+
+  function closeSuccessDialog() {
+    const modal = document.getElementById('successModal');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.querySelector('.transform').classList.remove('scale-100');
+    modal.querySelector('.transform').classList.add('scale-95');
+  }
+</script></main></div></body></html>
