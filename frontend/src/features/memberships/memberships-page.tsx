@@ -9,7 +9,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState, LoadError } from "@/components/ui/feedback";
-import { Input, Select } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
+import { Select } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchField } from "@/components/ui/search-field";
@@ -18,9 +19,9 @@ import { Table, TableSkeletonRows, TD, TH, THead, TR } from "@/components/ui/tab
 import { useI18n, type I18n } from "@/i18n/provider";
 import type { MessageKey } from "@/i18n/types";
 import { api } from "@/lib/api/client";
-import type { MembershipCounts, MembershipStatus, MemberSummary } from "@/lib/api/types";
-import { addDays, daysBetween, isDateOnly, type DateOnly } from "@/lib/domain/dates";
-import { formatPhone } from "@/lib/domain/phone";
+import type { MembershipCounts, MembershipStatus, MemberSummary } from "@gymflow/shared/api/types";
+import { addDays, daysBetween, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { toInt, useUrlState } from "@/lib/url-state";
 import { cn } from "@/lib/utils";
@@ -246,24 +247,30 @@ export function MembershipsPage() {
             </Select>
             {state.ends === "custom" ? (
               <div className="grid grid-cols-2 gap-2">
-                <label className="text-caption text-fg-muted flex flex-col gap-1 font-semibold">
-                  {t("common.from")}
-                  <Input
-                    type="date"
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span id="ends-from-label" className="text-caption text-fg-muted font-semibold">
+                    {t("common.from")}
+                  </span>
+                  <DateInput
                     value={state.from}
-                    onChange={(e) => setState({ from: e.target.value, page: "1" })}
+                    today={gym.today}
+                    aria-labelledby="ends-from-label"
+                    onChange={(date) => setState({ from: date, page: "1" })}
                     aria-invalid={range.error ? true : undefined}
                   />
-                </label>
-                <label className="text-caption text-fg-muted flex flex-col gap-1 font-semibold">
-                  {t("common.to")}
-                  <Input
-                    type="date"
+                </div>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span id="ends-to-label" className="text-caption text-fg-muted font-semibold">
+                    {t("common.to")}
+                  </span>
+                  <DateInput
                     value={state.to}
-                    onChange={(e) => setState({ to: e.target.value, page: "1" })}
+                    today={gym.today}
+                    aria-labelledby="ends-to-label"
+                    onChange={(date) => setState({ to: date, page: "1" })}
                     aria-invalid={range.error ? true : undefined}
                   />
-                </label>
+                </div>
                 {range.error ? (
                   <p role="alert" className="text-caption text-danger col-span-2 font-medium">
                     {t("common.validation.fromAfterTo")}

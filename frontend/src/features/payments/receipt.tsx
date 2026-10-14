@@ -1,8 +1,8 @@
 "use client";
 
 import { useI18n } from "@/i18n/provider";
-import type { Receipt } from "@/lib/api/types";
-import { formatPhone } from "@/lib/domain/phone";
+import type { Receipt } from "@gymflow/shared/api/types";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { cn } from "@/lib/utils";
 
 function Line({ label, children, strong }: { label: string; children: React.ReactNode; strong?: boolean }) {
@@ -54,7 +54,7 @@ export function ReceiptLayout({ receipt, className }: { receipt: Receipt; classN
         <Line label={t("payments.receipt.receiptId")}>
           <span className="font-mono">{payment.paymentCode}</span>
         </Line>
-        <Line label={t("payments.receipt.date")}>{f.date(payment.receivedDate)}</Line>
+        <Line label={t("payments.receipt.date")}>{f.longDate(payment.receivedDate)}</Line>
         <Line label={t("payments.receipt.member")}>{payment.member.fullName}</Line>
         <Line label={t("payments.receipt.memberId")}>
           <span className="font-mono">{payment.member.memberCode}</span>
@@ -66,8 +66,8 @@ export function ReceiptLayout({ receipt, className }: { receipt: Receipt; classN
           <Line label={t("payments.receipt.plan")}>
             {f.plan(payment.membership.planName, payment.membership.durationDays)}
           </Line>
-          <Line label={t("payments.receipt.from")}>{f.date(payment.membership.startDate)}</Line>
-          <Line label={t("payments.receipt.through")}>{f.date(payment.membership.endDate)}</Line>
+          <Line label={t("payments.receipt.from")}>{f.longDate(payment.membership.startDate)}</Line>
+          <Line label={t("payments.receipt.through")}>{f.longDate(payment.membership.endDate)}</Line>
           <Line label={t("payments.receipt.method")}>
             {t(`labels.methods.${payment.method}.label`)}
             {payment.reference ? (

@@ -21,9 +21,14 @@ import { useI18n } from "@/i18n/provider";
 import type { Translator } from "@/i18n/translator";
 import { api } from "@/lib/api/client";
 import { ApiError, errorMessage } from "@/lib/api/errors";
-import { PAYMENT_METHODS, type GymSettings, type GymSettingsUpdate, type PaymentMethod } from "@/lib/api/types";
-import { addDays } from "@/lib/domain/dates";
-import { formatPhone, normalizeEthiopianPhone } from "@/lib/domain/phone";
+import {
+  PAYMENT_METHODS,
+  type GymSettings,
+  type GymSettingsUpdate,
+  type PaymentMethod,
+} from "@gymflow/shared/api/types";
+import { addDays } from "@gymflow/shared/domain/dates";
+import { formatPhone, normalizeEthiopianPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { useUnsavedChangesGuard } from "@/lib/use-unsaved-changes";
 import { cn } from "@/lib/utils";

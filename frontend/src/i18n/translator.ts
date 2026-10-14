@@ -4,29 +4,37 @@
  * real backend does from the Accept-Language header.
  */
 
-import { toDayNumber, type DateOnly } from "@/lib/domain/dates";
-import { formatAmount, type Money } from "@/lib/domain/money";
+import type { DateOnly } from "@gymflow/shared/domain/dates";
+import type { EthiopianMonth } from "@gymflow/shared/domain/ethiopian-calendar";
+import { formatAmount, type Money } from "@gymflow/shared/domain/money";
+import * as calendar from "@gymflow/shared/i18n/format";
 import { INTL_LOCALES, type Locale } from "./config";
 import { am } from "./messages/am";
 import { en } from "./messages/en";
 import type { MessageKey, Messages, MessageValues, Plural } from "./types";
 
 const CATALOGS: Record<Locale, Messages> = { am, en };
-const GYM_TIMEZONE = "Africa/Addis_Ababa";
-const MS_PER_DAY = 86_400_000;
 
+/**
+ * Display formatters. Dates are shown in the Ethiopian calendar in both
+ * languages; times use Ethiopian time in Amharic and the 24-hour clock in English.
+ */
 export interface Formatters {
-  /** "Oct 07, 2026" / "ኦክቶ 07, 2026" */
+  /** "መስከረም 27, 2019" / "Meskerem 27, 2019" */
   date(date: DateOnly): string;
-  /** "Oct 07" */
+  /** With the era, for headings and receipts: "መስከረም 27, 2019 ዓ.ም" / "Meskerem 27, 2019 E.C." */
+  longDate(date: DateOnly): string;
+  /** Chart axes: "መስከረም 27" / "Mes 27" */
   shortDate(date: DateOnly): string;
-  /** "Wednesday" / "ረቡዕ" */
+  /** "መስከረም 2019" / "Meskerem 2019" */
+  monthYear(month: EthiopianMonth): string;
+  /** "ረቡዕ" / "Wednesday" */
   weekday(date: DateOnly): string;
-  /** "Oct 01 – Oct 30, 2026" */
+  /** "መስከረም 21 – ጥቅምት 20, 2019" */
   dateRange(from: DateOnly, to: DateOnly): string;
-  /** Instant in the gym timezone: "Oct 07, 2026 · 14:20" */
+  /** Instant at the gym: "መስከረም 27, 2019 · ከቀኑ 8:20" / "Meskerem 27, 2019 · 14:20" */
   timestamp(iso: string): string;
-  /** "14:20" in the gym timezone */
+  /** "ከቀኑ 8:20" / "14:20" */
   time(iso: string): string;
   /** "1,500.00 ETB" / "1,500.00 ብር" */
   money(value: Money): string;
@@ -70,63 +78,16 @@ function interpolate(template: string, values?: MessageValues): string {
   });
 }
 
-function utc(date: DateOnly): Date {
-  return new Date(toDayNumber(date) * MS_PER_DAY);
-}
-
 function createFormatters(locale: Locale, t: Translator["t"]): Formatters {
-  const intl = INTL_LOCALES[locale];
-  const dateFormat = new Intl.DateTimeFormat(intl, {
-    timeZone: "UTC",
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  });
-  const weekdayFormat = new Intl.DateTimeFormat(intl, { timeZone: "UTC", weekday: "long" });
-  const instantFormat = new Intl.DateTimeFormat(intl, {
-    timeZone: GYM_TIMEZONE,
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  });
-  const timeFormat = new Intl.DateTimeFormat("en-GB", {
-    timeZone: GYM_TIMEZONE,
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
-  // One consistent "Mon DD, YYYY" layout in both languages.
-  function parts(format: Intl.DateTimeFormat, instant: Date) {
-    const found = Object.fromEntries(format.formatToParts(instant).map((p) => [p.type, p.value]));
-    return { month: found.month ?? "", day: found.day ?? "", year: found.year ?? "" };
-  }
-
   const formatters: Formatters = {
-    date(date) {
-      const p = parts(dateFormat, utc(date));
-      return `${p.month} ${p.day}, ${p.year}`;
-    },
-    shortDate(date) {
-      const p = parts(dateFormat, utc(date));
-      return `${p.month} ${p.day}`;
-    },
-    weekday(date) {
-      return weekdayFormat.format(utc(date));
-    },
-    dateRange(from, to) {
-      return from.slice(0, 4) === to.slice(0, 4)
-        ? `${formatters.shortDate(from)} – ${formatters.date(to)}`
-        : `${formatters.date(from)} – ${formatters.date(to)}`;
-    },
-    timestamp(iso) {
-      const instant = new Date(iso);
-      const p = parts(instantFormat, instant);
-      return `${p.month} ${p.day}, ${p.year} · ${timeFormat.format(instant)}`;
-    },
-    time(iso) {
-      return timeFormat.format(new Date(iso));
-    },
+    date: (date) => calendar.formatDate(date, locale),
+    longDate: (date) => calendar.formatDate(date, locale, { era: true }),
+    shortDate: (date) => calendar.formatShortDate(date, locale),
+    monthYear: (month) => calendar.formatMonthYear(month, locale),
+    weekday: (date) => calendar.formatWeekday(date, locale),
+    dateRange: (from, to) => calendar.formatDateRange(from, to, locale),
+    timestamp: (iso) => calendar.formatTimestamp(iso, locale),
+    time: (iso) => calendar.formatTime(iso, locale),
     money(value) {
       return `${formatAmount(value)} ${t("common.currency")}`;
     },

@@ -1,7 +1,9 @@
 # GymFlow — Frontend
 
 Staff-facing web app for gym membership and payment tracking (Version 1), built with **Next.js 16 (App Router)**,
-**React 19**, **TypeScript** and **Tailwind CSS 4**. The interface is bilingual: **Amharic (default) and English**.
+**React 19**, **TypeScript** and **Tailwind CSS 4**. The interface is bilingual — **Amharic (default) and English** —
+and uses the **Ethiopian calendar** for every date. The API lives in [`../backend`](../backend); business rules and the
+API contract are shared with it through [`../packages/shared`](../packages/shared).
 
 Sources of truth (in `../stitch_design_system_generator/` and `..`):
 
@@ -19,11 +21,14 @@ When a Stitch mockup and `design.md` disagree, `design.md` wins (see [Design dec
 # Node 20.9+ (Node 24 LTS recommended). This machine uses nvm:
 source ~/.nvm/nvm.sh
 
-npm install
-npm run dev          # http://localhost:3000
+npm install          # at the repo root (npm workspaces)
+npm run dev          # in frontend/: http://localhost:3000 on the in-browser mock API
+# or, at the repo root, the full stack with the real API and PostgreSQL:
+# npm run dev
 ```
 
-The app runs against an **in-browser mock backend** by default (`NEXT_PUBLIC_API_MODE=mock`), so no server is needed.
+On its own the app runs against an **in-browser mock backend** (`NEXT_PUBLIC_API_MODE=mock`), so no server is
+needed; it implements the same rules as the real API, on the same demo data.
 Demo accounts (also listed on the sign-in screen in demo mode):
 
 | Role                                   | Email                     | Password       |
@@ -32,7 +37,7 @@ Demo accounts (also listed on the sign-in screen in demo mode):
 | Receptionist                           | `tigist@adamafitness.com` | `GymFlow#2026` |
 | First sign-in (forced password change) | `selam@adamafitness.com`  | `Welcome#2026` |
 
-The mock's "today" is frozen at the design fixture date, **Oct 07, 2026** (Africa/Addis_Ababa), so the data matches
+The demo's "today" is frozen at the design fixture date, **Meskerem 27, 2019 E.C.** (Oct 07, 2026, Africa/Addis_Ababa), so the data matches
 the spec: Abebe Kebede GYM-00124 is Active with 23 days left, Hana Tesfaye is Expiring Soon, and so on.
 Demo changes are saved in `localStorage`; **My Account → Reset Demo Data** restores the original data set.
 
@@ -51,13 +56,14 @@ Demo changes are saved in `localStorage`; **My Account → Reset Demo Data** res
 
 Set in `.env` (committed defaults) or override in `.env.local` / the deployment environment.
 
-| Variable                       | Default      | Purpose                                                           |
-| ------------------------------ | ------------ | ----------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_MODE`         | `mock`       | `mock` = in-browser demo backend; `http` = real backend           |
-| `NEXT_PUBLIC_API_BASE_URL`     | `/api/v1`    | Backend base URL (same-origin path or absolute URL)               |
-| `NEXT_PUBLIC_CSRF_COOKIE_NAME` | `gf_csrf`    | Readable cookie whose value is echoed in `X-CSRF-Token` on writes |
-| `NEXT_PUBLIC_MOCK_TODAY`       | fixture date | Mock only: `live` follows the real gym date, or set `YYYY-MM-DD`  |
-| `NEXT_PUBLIC_DEFAULT_LOCALE`   | `am`         | Language before anyone chooses one: `am` (Amharic) or `en`        |
+| Variable                       | Default      | Purpose                                                                    |
+| ------------------------------ | ------------ | -------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_MODE`         | `mock`       | `mock` = in-browser demo backend; `http` = real backend                    |
+| `NEXT_PUBLIC_API_BASE_URL`     | `/api/v1`    | Backend base URL (same-origin path or absolute URL)                        |
+| `NEXT_PUBLIC_CSRF_COOKIE_NAME` | `gf_csrf`    | Readable cookie whose value is echoed in `X-CSRF-Token` on writes          |
+| `NEXT_PUBLIC_MOCK_TODAY`       | fixture date | Mock only: `live` follows the real gym date, or set `YYYY-MM-DD`           |
+| `NEXT_PUBLIC_DEFAULT_LOCALE`   | `am`         | Language before anyone chooses one: `am` (Amharic) or `en`                 |
+| `API_PROXY_TARGET`             | —            | Build/dev time: forward `/api/v1` to the API, e.g. `http://127.0.0.1:4000` |
 
 In mock mode the sidebar shows a **"Demo mode · sample data"** badge, so a deployment can't be mistaken for live data.
 **Before going live, set `NEXT_PUBLIC_API_MODE=http`.**
@@ -77,10 +83,15 @@ src/
   features/<area>/        screens and feature components (members, payments, plans, …)
   i18n/                   translator, formatters, locale provider; messages/{en,am}/<namespace>.ts
   lib/
-    api/                  contract.ts (API surface), types.ts (DTOs), http-client.ts, errors.ts
-      mock/               mock backend: deterministic seed + business rules
-    domain/               pure rules shared by UI and mock: dates, money, phone, membership status
+    api/                  contract.ts (API surface), http-client.ts, errors.ts
+      mock/               in-browser mock backend (demo data from packages/shared)
   providers/              React Query client, auth/session, theme
+
+../packages/shared/src/   used by this app and by the API
+  api/                    DTO types (the contract) and error codes
+  domain/                 dates, Ethiopian calendar, money, phone, membership status, member lists, permissions
+  i18n/                   languages and Ethiopian date/time formatting
+  demo/                   deterministic demo gym (mock database and backend seed)
 ```
 
 Key behaviors:
@@ -88,7 +99,7 @@ Key behaviors:
 - **Auth**: cookie session (`credentials: "include"`), `GET /auth/me` on load, any 401 clears cached data and returns
   to sign-in with a safe `next` path and the "Your session expired" message. Temporary passwords force `/change-password`.
 - **Permissions**: navigation and actions follow `account.permissions`; admin screens render "You don't have permission
-  to view this page" for receptionists. The backend must enforce the same rules.
+  to view this page" for receptionists. The backend enforces the same rules on every request.
 - **Payments**: one shared drawer (`usePaymentDrawer()`); `POST /payments/preview` drives the dates shown; confirmation
   sends the preview fingerprint and an `Idempotency-Key`. The key is reused on retries; a lost response shows an
   "uncertain" state that re-checks with the same key, so a payment is never recorded twice.
@@ -101,27 +112,34 @@ Key behaviors:
 
 ## Connecting the real backend
 
-1. Implement the endpoints in `src/lib/api/contract.ts` (each method names its endpoint), returning the DTOs in
-   `src/lib/api/types.ts`. The mock (`src/lib/api/mock/mock-api.ts`) is a working reference for every rule.
-2. Set `NEXT_PUBLIC_API_MODE=http` (and `NEXT_PUBLIC_API_BASE_URL` if the API is on another origin; add that origin to
-   CORS with credentials and it's automatically allowed by the CSP).
-3. Run `npm run test:e2e`; the flows should pass unchanged against seeded backend data.
+The API is in [`../backend`](../backend). In http mode the app calls `/api/v1` on its own origin and Next.js forwards
+it to the API (`API_PROXY_TARGET`, read when the app is built or `next dev` starts), so session cookies stay
+first-party and no CORS is needed:
 
-Contract details beyond `backend-database-system-design.md` that the backend needs to match:
+```bash
+NEXT_PUBLIC_API_MODE=http API_PROXY_TARGET=http://127.0.0.1:4000 npm run dev    # or `npm run dev` at the repo root
+```
 
-| Item                               | Shape / behavior                                                                                                                                                                                                                                      |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /auth/me`, `POST /auth/login` | `{ account, gym }`. `gym` = `{ name, currency, timezone, today, expirationWarningDays, enabledPaymentMethods, hasPlans }` — operational context receptionists need without `/settings` access; `today` is the gym-timezone date                       |
-| Error envelope                     | `{ error: { code, message, fieldErrors?, details?, requestId } }`; codes in `src/lib/api/errors.ts` (e.g. `DUPLICATE_PHONE` with `details.member`, `DATE_CONFLICT`, `STALE_PREVIEW`, `IDEMPOTENCY_CONFLICT`, `LAST_ADMINISTRATOR`, `SESSION_EXPIRED`) |
-| `GET /members`                     | Also accepts `phone` (exact match after normalization, used for duplicate warnings), `archived=true`, `sort=name\|memberCode\|endDate\|registrationDate`, `order`                                                                                     |
-| `GET /members/{id}`                | Includes `upcoming[]`, `paymentCount`, `membershipCount`, `permittedActions`                                                                                                                                                                          |
-| `GET /memberships`                 | Includes `counts` for the status tabs (Active includes Expiring Soon)                                                                                                                                                                                 |
-| `GET /payments`                    | Includes `summary: { totalRevenue, transactions }` for administrators, `null` otherwise                                                                                                                                                               |
-| `POST /payments`                   | `201 { payment }` when recorded, `200 { payment }` for a replay of the same key and body                                                                                                                                                              |
-| `GET /plans`                       | Each plan includes `activeMemberCount` and `isReferenced`                                                                                                                                                                                             |
-| `POST /settings/logo`              | Multipart upload of the optional gym logo (validated like member photos)                                                                                                                                                                              |
-| `Accept-Language`                  | Sent on every request (`am` or `en`); `message` and `fieldErrors` should be in that language. `src/i18n/messages/*/api.ts` lists the messages the mock returns                                                                                        |
-| Account `language`                 | `account.language` (`"am"`\|`"en"`) in `/auth/me`; saved with `PATCH /account/preferences { language }` alongside `appearance`                                                                                                                        |
+To serve the app and the API from different origins instead, set `NEXT_PUBLIC_API_BASE_URL` to the API's absolute URL
+(the CSP allows it automatically) and add the app's origin to the API's `ALLOWED_ORIGINS`.
+
+`E2E_API_MODE=http npx playwright test` runs the end-to-end tests against the real API and a freshly seeded database.
+
+Contract details beyond `backend-database-system-design.md` (DTOs in `packages/shared/src/api/types.ts`):
+
+| Item                               | Shape / behavior                                                                                                                                                                                                                                                  |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /auth/me`, `POST /auth/login` | `{ account, gym }`. `gym` = `{ name, currency, timezone, today, expirationWarningDays, enabledPaymentMethods, hasPlans }` — operational context receptionists need without `/settings` access; `today` is the gym-timezone date                                   |
+| Error envelope                     | `{ error: { code, message, fieldErrors?, details?, requestId } }`; codes in `packages/shared/src/api/errors.ts` (e.g. `DUPLICATE_PHONE` with `details.member`, `DATE_CONFLICT`, `STALE_PREVIEW`, `IDEMPOTENCY_CONFLICT`, `LAST_ADMINISTRATOR`, `SESSION_EXPIRED`) |
+| `GET /members`                     | Also accepts `phone` (exact match after normalization, used for duplicate warnings), `archived=true`, `sort=name\|memberCode\|endDate\|registrationDate`, `order`                                                                                                 |
+| `GET /members/{id}`                | Includes `upcoming[]`, `paymentCount`, `membershipCount`, `permittedActions`                                                                                                                                                                                      |
+| `GET /memberships`                 | Includes `counts` for the status tabs (Active includes Expiring Soon)                                                                                                                                                                                             |
+| `GET /payments`                    | Includes `summary: { totalRevenue, transactions }` for administrators, `null` otherwise                                                                                                                                                                           |
+| `POST /payments`                   | `201 { payment }` when recorded, `200 { payment }` for a replay of the same key and body                                                                                                                                                                          |
+| `GET /plans`                       | Each plan includes `activeMemberCount` and `isReferenced`                                                                                                                                                                                                         |
+| `POST /settings/logo`              | Multipart upload of the optional gym logo (validated like member photos)                                                                                                                                                                                          |
+| `Accept-Language`                  | Sent on every request (`am` or `en`); `message` and `fieldErrors` are in that language, worded like the forms; dates use the Ethiopian calendar                                                                                                                   |
+| Account `language`                 | `account.language` (`"am"`\|`"en"`) in `/auth/me`; saved with `PATCH /account/preferences { language }` alongside `appearance`                                                                                                                                    |
 
 ## Languages
 
@@ -139,8 +157,24 @@ How it works:
   every Amharic message keeps the English `{placeholders}` and `<b>`/`<link>` tags.
 - **Plurals** use `{ one, other }` with `Intl.PluralRules`; `rich()` renders `<b>` and `<link>` tags as React nodes so
   translators can reorder sentences freely.
-- **Formatting**: `f.date`, `f.money`, `f.days`, … in `src/i18n/translator.ts`. Dates keep one layout in both languages
-  ("ኦክቶ 07, 2026" / "Oct 07, 2026") on the Gregorian calendar the backend uses; amounts show "ብር" in Amharic.
+- **Formatting**: `f.date`, `f.money`, `f.days`, … in `src/i18n/translator.ts`, built on
+  `packages/shared/src/i18n/format.ts` so the API's messages and emails read the same. Amounts show "ብር" in Amharic.
+
+### Ethiopian calendar
+
+Every date is shown and picked in the Ethiopian calendar, in both languages: "መስከረም 27, 2019" / "Meskerem 27, 2019"
+(with "ዓ.ም" / "E.C." on headings and receipts). Times use Ethiopian time of day in Amharic ("ከቀኑ 8:20" = 14:20) and
+the 24-hour clock in English.
+
+- **Storage stays ISO.** The API, database and forms carry `YYYY-MM-DD` values; the calendar is presentation. Day
+  arithmetic, sorting and "Monthly = 30 days" are therefore exact, and nothing depends on the display calendar.
+- **Conversion** lives in `packages/shared/src/domain/ethiopian-calendar.ts` (13 months; Pagume has 5 days, 6 in
+  leap years). A unit test compares it with ICU's Ethiopic calendar for every day from 1900 to 2100.
+- **Date picker**: `src/components/ui/date-input.tsx` replaces the browser's Gregorian date input everywhere. It shows
+  Ethiopian months (with Pagume), highlights today, respects min/max, and supports the keyboard (arrows, Page Up/Down
+  for months, Shift for years, Home/End).
+- **"This month"** (dashboard revenue, report and filter presets) is the current Ethiopian month.
+
 - **Font**: Noto Sans Ethiopic is loaded for Ethiopic text, and letter-spacing is turned off for Amharic.
 - **Page titles** are set on the client in the current language.
 - **Data stays as entered.** Plan names, member names and notes are not translated.
@@ -170,4 +204,3 @@ add it to the catalogs in `src/i18n/translator.ts`.
 
 - The unsaved-changes prompt covers in-app links, Cancel and closing/reloading the tab, but not the browser Back button.
 - Demo data lives per browser; it syncs between tabs but not between devices.
-- Dates use the Gregorian calendar in both languages; an Ethiopian-calendar display is not included.

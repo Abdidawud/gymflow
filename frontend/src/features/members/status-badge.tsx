@@ -4,8 +4,8 @@ import { Archive } from "lucide-react";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { detailOf, detailText } from "@/i18n/membership";
 import { useI18n } from "@/i18n/provider";
-import type { MembershipState } from "@/lib/api/types";
-import type { MembershipStatus } from "@/lib/domain/membership";
+import type { MembershipState } from "@gymflow/shared/api/types";
+import type { MembershipStatus } from "@gymflow/shared/domain/membership";
 
 export const STATUS_TONE: Record<MembershipStatus, BadgeTone> = {
   ACTIVE: "success",

@@ -15,18 +15,29 @@
  *   window.__gymflowMock.reset()                            // restore the demo dataset
  */
 
-import { addDays, daysBetween, eachDay, isDateOnly, startOfMonth, type DateOnly } from "@/lib/domain/dates";
+import { addDays, daysBetween, eachDay, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { startOfEthiopianMonth } from "@gymflow/shared/domain/ethiopian-calendar";
 import {
   evaluateMembership,
   findOverlap,
   membershipEndDate,
   proposeStartDate,
-  type MembershipStatus,
-} from "@/lib/domain/membership";
-import { averageMoney, fromCents, parsePriceInput, sumMoney, toCents } from "@/lib/domain/money";
-import { meetsPasswordPolicy } from "@/lib/domain/password";
-import { ROLE_PERMISSIONS, type Permission } from "@/lib/domain/permissions";
-import { normalizeEthiopianPhone, phoneSearchDigits } from "@/lib/domain/phone";
+} from "@gymflow/shared/domain/membership";
+import { averageMoney, fromCents, parsePriceInput, sumMoney, toCents } from "@gymflow/shared/domain/money";
+import { meetsPasswordPolicy } from "@gymflow/shared/domain/password";
+import { ROLE_PERMISSIONS, type Permission } from "@gymflow/shared/domain/permissions";
+
+const countStatuses = (rows: MemberSummary[]) => countStatusList(rows.map((row) => row.membership.status));
+import {
+  compareByAttention,
+  countStatuses as countStatusList,
+  displayPeriod,
+  matchesMemberSearch,
+  matchesStatusFilter as matchesStatus,
+  paginate,
+  sortMembers,
+} from "@gymflow/shared/domain/member-list";
+import { normalizeEthiopianPhone } from "@gymflow/shared/domain/phone";
 import type { GymFlowApi } from "../contract";
 import { ApiError, type ApiErrorCode } from "../errors";
 import {
@@ -38,11 +49,9 @@ import {
   type MemberDetail,
   type MemberInput,
   type MemberMembershipHistoryItem,
-  type MembershipCounts,
   type MembershipPeriod,
   type MembershipState,
   type MemberSummary,
-  type Paginated,
   type PaymentDetail,
   type PaymentMethod,
   type PaymentPreview,
@@ -54,13 +63,14 @@ import {
   type RevenuePoint,
   type Session,
   type StaffAccount,
-} from "../types";
+} from "@gymflow/shared/api/types";
 import { isLocale, readStoredLocale } from "@/i18n/config";
 import { getTranslator } from "@/i18n/translator";
 import type { MessageKey, MessageValues } from "@/i18n/types";
 import { mockNow, mockToday } from "./clock";
 import {
   clearSavedDatabase,
+  createDatabase,
   loadDatabase,
   onExternalChange,
   saveDatabase,
@@ -71,7 +81,6 @@ import {
   type PlanRecord,
   type StaffRecord,
 } from "./db";
-import { generateDatabase } from "./seed";
 
 const SESSION_STORAGE_KEY = "gymflow:mock-session";
 const SESSION_MAX_MS = 12 * 60 * 60 * 1000;
@@ -79,7 +88,6 @@ const SESSION_IDLE_MS = 30 * 60 * 1000;
 const RESET_TOKEN_MS = 30 * 60 * 1000;
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const LOGIN_MAX_FAILURES = 5;
-const MAX_PAGE_SIZE = 100;
 const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 
 export interface MockControls {
@@ -160,9 +168,8 @@ function latency(min = 160, max = 420): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, min + Math.random() * (max - min)));
 }
 
-function newId(prefix: string): string {
-  const uuid = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Math.random());
-  return `${prefix}_${uuid}`;
+function newId(): string {
+  return crypto.randomUUID();
 }
 
 function newToken(): string {
@@ -195,14 +202,6 @@ function cleanMultiline(value: string | null | undefined): string | null {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-function paginate<T>(items: T[], page = 1, pageSize = 10): Paginated<T> {
-  const size = Math.min(Math.max(1, Math.floor(pageSize)), MAX_PAGE_SIZE);
-  const total = items.length;
-  const lastPage = Math.max(1, Math.ceil(total / size));
-  const current = Math.min(Math.max(1, Math.floor(page)), lastPage);
-  return { items: items.slice((current - 1) * size, current * size), total, page: current, pageSize: size };
-}
 
 function readToken(): string | null {
   try {
@@ -254,7 +253,7 @@ async function readImage(file: File): Promise<string> {
 // ---------------------------------------------------------------------------
 
 export function createMockApi(): GymFlowApi {
-  let db: MockDatabase = loadDatabase() ?? generateDatabase();
+  let db: MockDatabase = loadDatabase() ?? createDatabase();
   let index = buildIndex(db);
   saveDatabase(db);
 
@@ -263,7 +262,7 @@ export function createMockApi(): GymFlowApi {
     reset() {
       clearSavedDatabase();
       writeToken(null);
-      db = generateDatabase();
+      db = createDatabase();
       index = buildIndex(db);
       saveDatabase(db);
       // A full reload guarantees no cached data from the old dataset survives.
@@ -459,82 +458,6 @@ export function createMockApi(): GymFlowApi {
     const member = index.memberById.get(id);
     if (!member) fail(404, "NOT_FOUND", msg("api.notFound"));
     return member;
-  }
-
-  /** Plan shown in "Current / Next Plan": current, else next, else last. */
-  function displayPeriod(state: MembershipState): MembershipPeriod | null {
-    return state.current ?? state.next ?? state.last;
-  }
-
-  function matchesStatus(status: MembershipStatus, filter: MembershipStatus | undefined): boolean {
-    if (!filter) return true;
-    // "Active" includes Expiring Soon everywhere (design.md §8, §14).
-    if (filter === "ACTIVE") return status === "ACTIVE" || status === "EXPIRING_SOON";
-    return status === filter;
-  }
-
-  function matchesMemberSearch(member: MemberRecord, raw: string | undefined): boolean {
-    const query = (raw ?? "").trim().replace(/\s+/g, " ").toLowerCase();
-    if (!query) return true;
-
-    const code = /^(?:gym)?[\s-]?0*(\d+)$/i.exec(query.replace(/\s/g, ""));
-    if (code && query.startsWith("gym")) return Number(member.memberCode.slice(4)) === Number(code[1]);
-    if (code && Number(member.memberCode.slice(4)) === Number(code[1])) return true;
-
-    const digits = phoneSearchDigits(query);
-    if (digits && member.phone.slice(4).includes(digits)) return true;
-
-    const haystack = `${member.firstName} ${member.lastName} ${member.email ?? ""}`.toLowerCase();
-    return query.split(" ").every((token) => haystack.includes(token));
-  }
-
-  function countStatuses(rows: MemberSummary[]): MembershipCounts {
-    const counts: MembershipCounts = {
-      all: rows.length,
-      active: 0,
-      expiringSoon: 0,
-      expired: 0,
-      scheduled: 0,
-      unpaid: 0,
-    };
-    for (const row of rows) {
-      switch (row.membership.status) {
-        case "ACTIVE":
-          counts.active++;
-          break;
-        case "EXPIRING_SOON":
-          counts.active++;
-          counts.expiringSoon++;
-          break;
-        case "EXPIRED":
-          counts.expired++;
-          break;
-        case "SCHEDULED":
-          counts.scheduled++;
-          break;
-        case "UNPAID":
-          counts.unpaid++;
-          break;
-      }
-    }
-    return counts;
-  }
-
-  /** Monitoring order: expiring soonest, recently expired, active by end date, scheduled, unpaid. */
-  function attentionRank(row: MemberSummary): [number, string] {
-    const m = row.membership;
-    switch (m.status) {
-      case "EXPIRING_SOON":
-        return [0, m.coverageEnd ?? ""];
-      case "EXPIRED":
-        return [1, String(99999999 - Number((m.last?.endDate ?? "0").replace(/-/g, "")))];
-      case "ACTIVE":
-        return [2, m.coverageEnd ?? ""];
-      case "SCHEDULED":
-        return [3, m.next?.startDate ?? ""];
-      case "UNPAID":
-        return [4, String(99999999 - Number(row.registrationDate.replace(/-/g, "")))];
-    }
   }
 
   // ----- Payments DTOs -----------------------------------------------------------
@@ -970,17 +893,7 @@ export function createMockApi(): GymFlowApi {
           .filter((row) => matchesStatus(row.membership.status, query.status))
           .filter((row) => !query.planId || displayPeriod(row.membership)?.planId === query.planId);
 
-        const direction = query.order === "desc" ? -1 : 1;
-        const endKey = (row: MemberSummary) =>
-          row.membership.coverageEnd ?? row.membership.last?.endDate ?? "9999-12-31";
-        const sorters: Record<string, (a: MemberSummary, b: MemberSummary) => number> = {
-          name: (a, b) => a.fullName.localeCompare(b.fullName) || a.memberCode.localeCompare(b.memberCode),
-          memberCode: (a, b) => a.memberCode.localeCompare(b.memberCode),
-          endDate: (a, b) => endKey(a).localeCompare(endKey(b)) || a.fullName.localeCompare(b.fullName),
-          registrationDate: (a, b) =>
-            a.registrationDate.localeCompare(b.registrationDate) || a.memberCode.localeCompare(b.memberCode),
-        };
-        rows = rows.sort((a, b) => direction * sorters[query.sort ?? "name"](a, b));
+        rows = sortMembers(rows, query.sort, query.order);
         return paginate(rows, query.page, query.pageSize);
       },
 
@@ -1008,7 +921,7 @@ export function createMockApi(): GymFlowApi {
         db.counters.member += 1;
         const timestamp = mockNow();
         const member: MemberRecord = {
-          id: newId("mem"),
+          id: newId(),
           memberCode: `GYM-${String(db.counters.member).padStart(5, "0")}`,
           ...data,
           photoUrl: null,
@@ -1115,13 +1028,7 @@ export function createMockApi(): GymFlowApi {
           .filter(inEndRange);
 
         const counts = countStatuses(base);
-        const rows = base
-          .filter((row) => matchesStatus(row.membership.status, query.status))
-          .sort((a, b) => {
-            const [ra, ka] = attentionRank(a);
-            const [rb, kb] = attentionRank(b);
-            return ra - rb || ka.localeCompare(kb) || a.fullName.localeCompare(b.fullName);
-          });
+        const rows = base.filter((row) => matchesStatus(row.membership.status, query.status)).sort(compareByAttention);
         return { ...paginate(rows, query.page, query.pageSize), counts };
       },
     },
@@ -1143,7 +1050,7 @@ export function createMockApi(): GymFlowApi {
         requirePermission(staff, "plans.manage");
         const data = validatePlan(input);
         const timestamp = mockNow();
-        const plan: PlanRecord = { id: newId("plan"), ...data, createdAt: timestamp, updatedAt: timestamp };
+        const plan: PlanRecord = { id: newId(), ...data, createdAt: timestamp, updatedAt: timestamp };
         db.plans.push(plan);
         commit();
         return planDto(plan);
@@ -1227,7 +1134,7 @@ export function createMockApi(): GymFlowApi {
         // One atomic write: membership + payment + idempotency record.
         const timestamp = mockNow();
         const membership: MembershipRecord = {
-          id: newId("ms"),
+          id: newId(),
           memberId: input.memberId,
           planId: preview.planRecord.id,
           planNameSnapshot: preview.planRecord.name,
@@ -1240,7 +1147,7 @@ export function createMockApi(): GymFlowApi {
         };
         db.counters.payment += 1;
         const payment: PaymentRecord = {
-          id: newId("pay"),
+          id: newId(),
           paymentCode: `PAY-${String(db.counters.payment).padStart(5, "0")}`,
           memberId: input.memberId,
           membershipId: membership.id,
@@ -1352,7 +1259,8 @@ export function createMockApi(): GymFlowApi {
         let revenue: Dashboard["revenue"] = null;
         if (permissionsOf(staff).includes("revenue.view")) {
           const todayPayments = paymentsInRange(t, t);
-          const monthFrom = startOfMonth(t);
+          // "This month" is the current Ethiopian month.
+          const monthFrom = startOfEthiopianMonth(t);
           const monthPayments = paymentsInRange(monthFrom, t);
           revenue = {
             today: { amount: sumMoney(todayPayments.map((p) => p.amount)), transactions: todayPayments.length },
@@ -1492,7 +1400,7 @@ export function createMockApi(): GymFlowApi {
         }
         const timestamp = mockNow();
         const record: StaffRecord = {
-          id: newId("staff"),
+          id: newId(),
           fullName: fullName!,
           email,
           password: input.temporaryPassword,

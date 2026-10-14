@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDocumentTitle, useI18n } from "@/i18n/provider";
 import { api } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
-import { meetsPasswordPolicy } from "@/lib/domain/password";
+import { meetsPasswordPolicy } from "@gymflow/shared/domain/password";
 import { queryKeys } from "@/lib/query-keys";
 import { useAuth } from "@/providers/auth-provider";
 import { PasswordRequirements } from "./password-fields";

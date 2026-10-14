@@ -1,0 +1,19 @@
+{
+  "name": "@gymflow/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GymFlow business rules, API contract, Ethiopian calendar and demo data shared by the web app and the backend.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "vitest": "^5.0.3"
+  }
+}

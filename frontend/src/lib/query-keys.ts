@@ -5,7 +5,7 @@ import type {
   PageQuery,
   PaymentListQuery,
   PaymentPreviewRequest,
-} from "@/lib/api/types";
+} from "@gymflow/shared/api/types";
 
 /** Query key factory: one place to keep cache keys and invalidation consistent. */
 export const queryKeys = {

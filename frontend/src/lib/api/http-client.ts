@@ -13,7 +13,7 @@ import { readStoredLocale } from "@/i18n/config";
 import { getTranslator } from "@/i18n/translator";
 import type { GymFlowApi } from "./contract";
 import { ApiError, type ApiErrorCode } from "./errors";
-import type { Paginated, PaymentList, RecordPaymentResult } from "./types";
+import type { Paginated, PaymentList, RecordPaymentResult } from "@gymflow/shared/api/types";
 
 const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/v1").replace(/\/$/, "");
 const CSRF_COOKIE = process.env.NEXT_PUBLIC_CSRF_COOKIE_NAME ?? "gf_csrf";

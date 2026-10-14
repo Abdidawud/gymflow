@@ -2,8 +2,8 @@
 
 import { CalendarRange } from "lucide-react";
 import { useI18n } from "@/i18n/provider";
-import type { PaymentMethod, PaymentPreview } from "@/lib/api/types";
-import type { DateOnly } from "@/lib/domain/dates";
+import type { PaymentMethod, PaymentPreview } from "@gymflow/shared/api/types";
+import type { DateOnly } from "@gymflow/shared/domain/dates";
 import { cn } from "@/lib/utils";
 
 function Row({ label, children, strong }: { label: string; children: React.ReactNode; strong?: boolean }) {

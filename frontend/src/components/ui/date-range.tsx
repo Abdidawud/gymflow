@@ -1,10 +1,13 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
+import { useId } from "react";
 import { useI18n } from "@/i18n/provider";
 import type { MessageKey } from "@/i18n/types";
-import { addDays, isDateOnly, startOfMonth, type DateOnly } from "@/lib/domain/dates";
-import { Input, Select } from "./input";
+import { addDays, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { startOfEthiopianMonth } from "@gymflow/shared/domain/ethiopian-calendar";
+import { DateInput } from "./date-input";
+import { Select } from "./input";
 
 export type RangePreset = "all" | "today" | "7d" | "30d" | "month" | "custom";
 
@@ -24,7 +27,7 @@ export interface ResolvedRange {
   error?: "fromAfterTo";
 }
 
-/** Inclusive gym-date range for a preset; "Last 7 days" includes today. */
+/** Inclusive gym-date range for a preset; "Last 7 days" includes today, "This month" is the Ethiopian month. */
 export function resolveRange(preset: RangePreset, today: DateOnly, from?: string, to?: string): ResolvedRange {
   switch (preset) {
     case "all":
@@ -36,7 +39,7 @@ export function resolveRange(preset: RangePreset, today: DateOnly, from?: string
     case "30d":
       return { from: addDays(today, -29), to: today };
     case "month":
-      return { from: startOfMonth(today), to: today };
+      return { from: startOfEthiopianMonth(today), to: today };
     case "custom": {
       const f = from && isDateOnly(from) ? from : undefined;
       const t = to && isDateOnly(to) ? to : undefined;
@@ -65,6 +68,8 @@ export function DateRangeFilter({
   error?: string;
 }) {
   const { t } = useI18n();
+  const fromLabel = useId();
+  const toLabel = useId();
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <Select
@@ -87,26 +92,32 @@ export function DateRangeFilter({
       </Select>
       {preset === "custom" ? (
         <div className="grid grid-cols-2 gap-2">
-          <label className="text-caption text-fg-muted flex flex-col gap-1 font-semibold">
-            {t("common.from")}
-            <Input
-              type="date"
+          <div className="flex min-w-0 flex-col gap-1">
+            <span id={fromLabel} className="text-caption text-fg-muted font-semibold">
+              {t("common.from")}
+            </span>
+            <DateInput
               value={from}
               max={today}
+              today={today}
+              aria-labelledby={fromLabel}
               aria-invalid={error ? true : undefined}
-              onChange={(event) => onChange({ preset, from: event.target.value, to })}
+              onChange={(date) => onChange({ preset, from: date, to })}
             />
-          </label>
-          <label className="text-caption text-fg-muted flex flex-col gap-1 font-semibold">
-            {t("common.to")}
-            <Input
-              type="date"
+          </div>
+          <div className="flex min-w-0 flex-col gap-1">
+            <span id={toLabel} className="text-caption text-fg-muted font-semibold">
+              {t("common.to")}
+            </span>
+            <DateInput
               value={to}
               max={today}
+              today={today}
+              aria-labelledby={toLabel}
               aria-invalid={error ? true : undefined}
-              onChange={(event) => onChange({ preset, from, to: event.target.value })}
+              onChange={(date) => onChange({ preset, from, to: date })}
             />
-          </label>
+          </div>
           {error ? (
             <p role="alert" className="text-caption text-danger col-span-2 font-medium">
               {error}

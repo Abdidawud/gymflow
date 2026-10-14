@@ -1,5 +1,5 @@
-import type { MembershipState } from "@/lib/api/types";
-import { statusDetail, type StatusDetail } from "@/lib/domain/membership";
+import type { MembershipState } from "@gymflow/shared/api/types";
+import { statusDetail, type StatusDetail } from "@gymflow/shared/domain/membership";
 import type { Translator } from "./translator";
 
 type Words = Pick<Translator, "t" | "f">;

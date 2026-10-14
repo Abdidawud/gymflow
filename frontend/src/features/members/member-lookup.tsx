@@ -10,7 +10,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/lib/api/client";
 import { useI18n } from "@/i18n/provider";
-import { formatPhone } from "@/lib/domain/phone";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { useDebouncedValue } from "@/lib/hooks";
 import { queryKeys } from "@/lib/query-keys";
 import { StatusBadge } from "./status-badge";

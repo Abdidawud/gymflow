@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type { MemberDetail, MemberInput, MemberListQuery } from "@/lib/api/types";
+import type { MemberDetail, MemberInput, MemberListQuery } from "@gymflow/shared/api/types";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useMembers(query: MemberListQuery) {

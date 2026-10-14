@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { MessageKey } from "@/i18n/types";
-import type { Permission } from "@/lib/domain/permissions";
+import type { Permission } from "@gymflow/shared/domain/permissions";
 
 export interface NavItem {
   href: string;

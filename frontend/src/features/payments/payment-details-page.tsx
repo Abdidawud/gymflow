@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/i18n/provider";
 import { api } from "@/lib/api/client";
 import { isApiError } from "@/lib/api/errors";
-import { formatPhone } from "@/lib/domain/phone";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { listReturnUrl } from "@/lib/url-state";
 import { ArchivedBadge, PaidBadge } from "@/features/members/status-badge";

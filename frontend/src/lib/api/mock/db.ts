@@ -4,86 +4,17 @@
  * changes survive a reload.
  */
 
-import type { DateOnly } from "@/lib/domain/dates";
-import type { Money } from "@/lib/domain/money";
-import type { Role } from "@/lib/domain/permissions";
-import type { Appearance, Gender, Locale, PaymentMethod } from "../types";
+import type { DemoDataset } from "@gymflow/shared/demo/records";
+import { generateDemoData } from "@gymflow/shared/demo/seed";
 
-export interface StaffRecord {
-  id: string;
-  fullName: string;
-  email: string;
-  /** Mock only. A real backend stores a memory-hard hash, never the password. */
-  password: string;
-  role: Role;
-  isActive: boolean;
-  mustChangePassword: boolean;
-  appearance: Appearance;
-  language: Locale;
-  lastSignInAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface MemberRecord {
-  id: string;
-  memberCode: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string | null;
-  gender: Gender | null;
-  photoUrl: string | null;
-  emergencyName: string | null;
-  emergencyPhone: string | null;
-  emergencyRelationship: string | null;
-  address: string | null;
-  notes: string | null;
-  isArchived: boolean;
-  archivedAt: string | null;
-  registrationDate: DateOnly;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PlanRecord {
-  id: string;
-  name: string;
-  price: Money;
-  durationDays: number;
-  description: string | null;
-  isEnabled: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface MembershipRecord {
-  id: string;
-  memberId: string;
-  planId: string;
-  planNameSnapshot: string;
-  priceSnapshot: Money;
-  durationDaysSnapshot: number;
-  startDate: DateOnly;
-  endDate: DateOnly;
-  isRenewal: boolean;
-  createdAt: string;
-}
-
-export interface PaymentRecord {
-  id: string;
-  paymentCode: string;
-  memberId: string;
-  membershipId: string;
-  amount: Money;
-  currency: "ETB";
-  method: PaymentMethod;
-  receivedDate: DateOnly;
-  reference: string | null;
-  notes: string | null;
-  recordedBy: string;
-  createdAt: string;
-}
+export type {
+  MemberRecord,
+  MembershipRecord,
+  PaymentRecord,
+  PlanRecord,
+  SettingsRecord,
+  StaffRecord,
+} from "@gymflow/shared/demo/records";
 
 export interface IdempotencyRecord {
   staffId: string;
@@ -91,18 +22,6 @@ export interface IdempotencyRecord {
   fingerprint: string;
   paymentId: string;
   createdAt: string;
-}
-
-export interface SettingsRecord {
-  gymName: string;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  logoUrl: string | null;
-  expirationWarningDays: number;
-  enabledPaymentMethods: PaymentMethod[];
-  updatedAt: string;
-  updatedBy: string | null;
 }
 
 export interface SessionRecord {
@@ -120,23 +39,28 @@ export interface ResetTokenRecord {
   consumedAt: number | null;
 }
 
-export interface MockDatabase {
+export interface MockDatabase extends DemoDataset {
   version: number;
-  staff: StaffRecord[];
-  members: MemberRecord[];
-  plans: PlanRecord[];
-  memberships: MembershipRecord[];
-  payments: PaymentRecord[];
   idempotency: IdempotencyRecord[];
-  settings: SettingsRecord;
   sessions: SessionRecord[];
   resetTokens: ResetTokenRecord[];
   failedLogins: { email: string; at: number }[];
-  counters: { member: number; payment: number };
 }
 
 /** Bump when the seed or schema changes so stale browser copies are replaced. */
-export const MOCK_DB_VERSION = 5;
+export const MOCK_DB_VERSION = 6;
+
+/** A fresh mock database holding the shared demo gym (the same data the backend seed inserts). */
+export function createDatabase(): MockDatabase {
+  return {
+    ...generateDemoData(),
+    version: MOCK_DB_VERSION,
+    idempotency: [],
+    sessions: [],
+    resetTokens: [],
+    failedLogins: [],
+  };
+}
 const STORAGE_KEY = "gymflow:mock-db";
 
 export function loadDatabase(): MockDatabase | null {

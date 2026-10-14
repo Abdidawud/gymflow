@@ -2,7 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 
 /**
  * Critical Version 1 flows (design.md §23 acceptance checklist), run against
- * the mock API with the frozen design date Oct 07, 2026.
+ * the demo data with the frozen design date Oct 07, 2026 = Meskerem 27, 2019 E.C.
+ * Dates on screen are in the Ethiopian calendar.
  */
 
 async function signIn(page: Page, email: string, password = "GymFlow#2026") {
@@ -11,6 +12,9 @@ async function signIn(page: Page, email: string, password = "GymFlow#2026") {
   await page.locator("#login-password").fill(password);
   await page.getByRole("button", { name: "Sign In" }).click();
 }
+
+/** Demo member URL by member code (fixed demo UUIDs, see packages/shared/src/demo/ids.ts). */
+const member = (code: number) => `/members/00000000-0000-4000-8200-${String(code).padStart(12, "0")}`;
 
 const ADMIN = "abdi@adamafitness.com";
 const RECEPTIONIST = "tigist@adamafitness.com";
@@ -37,28 +41,50 @@ test("dashboard counts reconcile and expose admin revenue", async ({ page }) => 
   await expect(page.getByRole("group", { name: /Daily revenue/ })).toBeVisible();
 });
 
-test("active renewal continues without gaps (Oct 31 – Nov 29) and records once on retry", async ({ page }) => {
+test("active renewal continues without gaps (Tekemt 21 – Hedar 20) and records once on retry", async ({ page }) => {
   await signIn(page, ADMIN);
   await page.waitForURL(/dashboard/);
-  await page.goto("/members/mem_00124");
+  await page.goto(member(124));
   await page.getByRole("button", { name: "Renew Membership" }).first().click();
 
   const drawer = page.getByRole("dialog");
   await drawer.getByText("Monthly", { exact: true }).click();
   const preview = drawer.locator("section[aria-labelledby=payment-preview-heading]");
-  await expect(preview).toContainText("Oct 31, 2026");
-  await expect(preview).toContainText("Nov 29, 2026");
+  // Oct 31 – Nov 29, 2026 in the Ethiopian calendar.
+  await expect(preview).toContainText("Tekemt 21, 2019");
+  await expect(preview).toContainText("Hedar 20, 2019");
 
   await drawer.getByText("Bank Transfer", { exact: true }).click();
   await drawer.getByRole("button", { name: /Confirm Payment/ }).click();
   await expect(drawer.getByText("Enter the transaction reference for this payment method.")).toBeVisible();
   await drawer.getByLabel("Transaction Reference").fill("FT2628012345");
 
-  const count = () => page.evaluate(() => JSON.parse(localStorage.getItem("gymflow:mock-db") ?? "{}").payments.length);
+  // Simulate a response lost after the server recorded the payment.
+  const http = process.env.E2E_API_MODE === "http";
+  const count = http
+    ? () =>
+        page.evaluate(() =>
+          fetch("/api/v1/payments?pageSize=1", { credentials: "include" })
+            .then((r) => r.json())
+            .then((d: { total: number }) => d.total),
+        )
+    : () => page.evaluate(() => JSON.parse(localStorage.getItem("gymflow:mock-db") ?? "{}").payments.length);
   const before = await count();
-  await page.evaluate(() => {
-    window.__gymflowMock!.failNextPayment = "after-commit";
-  });
+  if (http) {
+    await page.route(
+      "**/api/v1/payments",
+      async (route) => {
+        if (route.request().method() !== "POST") return route.fallback();
+        await route.fetch(); // the server commits the payment…
+        await route.abort("connectionreset"); // …but the browser never sees the answer
+      },
+      { times: 1 },
+    );
+  } else {
+    await page.evaluate(() => {
+      window.__gymflowMock!.failNextPayment = "after-commit";
+    });
+  }
   await drawer.getByRole("button", { name: /Confirm Payment/ }).click();
   await expect(drawer.getByText("We couldn't confirm whether this payment was recorded")).toBeVisible();
   await drawer.getByRole("button", { name: "Check again" }).click();
@@ -72,22 +98,33 @@ test("active renewal continues without gaps (Oct 31 – Nov 29) and records once
 test("expired and unpaid purchases start today and can be rescheduled", async ({ page }) => {
   await signIn(page, ADMIN);
   await page.waitForURL(/dashboard/);
-  await page.goto("/members/mem_00126");
-  await expect(page.getByText("Membership expired on Sep 30, 2026")).toBeVisible();
-  await page.goto("/members/mem_00127");
+  await page.goto(member(126));
+  await expect(page.getByText("Membership expired on Meskerem 20, 2019")).toBeVisible();
+  await page.goto(member(127));
   await expect(page.getByText("No paid membership yet")).toBeVisible();
   await page.getByRole("button", { name: "Record First Payment" }).first().click();
   const drawer = page.getByRole("dialog");
   await drawer.getByText("Weekly", { exact: true }).click();
-  await expect(drawer.getByLabel("Membership Start")).toHaveValue("2026-10-07");
+  const start = drawer.getByRole("button", { name: /Membership Start/ });
+  await expect(start).toHaveAttribute("data-value", "2026-10-07");
+  await expect(start).toContainText("Meskerem 27, 2019");
+
+  // Reschedule with the Ethiopian date picker: next month, Tekemt 2 (Oct 12, 2026).
+  await start.click();
+  const calendar = page.getByRole("dialog", { name: "Calendar" });
+  await calendar.getByRole("button", { name: "Next month" }).click();
+  await calendar.getByRole("button", { name: "Monday, Tekemt 2, 2019" }).click();
+  await expect(start).toHaveAttribute("data-value", "2026-10-12");
+  const preview = drawer.locator("section[aria-labelledby=payment-preview-heading]");
+  await expect(preview).toContainText("Tekemt 8, 2019");
 });
 
 test("scheduled member is never presented as valid", async ({ page }) => {
   await signIn(page, ADMIN);
   await page.waitForURL(/dashboard/);
-  await page.goto("/members/mem_00128");
-  await expect(page.getByText("Membership starts on Oct 12, 2026")).toBeVisible();
-  await expect(page.getByText("Scheduled · Starts Oct 12").first()).toBeVisible();
+  await page.goto(member(128));
+  await expect(page.getByText("Membership starts on Tekemt 2, 2019")).toBeVisible();
+  await expect(page.getByText("Scheduled · Starts Tek 2").first()).toBeVisible();
 });
 
 test("member lookup finds by phone and opens the profile", async ({ page }) => {
@@ -97,7 +134,7 @@ test("member lookup finds by phone and opens the profile", async ({ page }) => {
   await page.getByPlaceholder("Search members by name, phone or ID…").last().fill("0922 456");
   await expect(page.getByRole("option", { name: /Hana Tesfaye/ })).toBeVisible();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/members\/mem_00125/);
+  await expect(page).toHaveURL(new RegExp(member(125)));
 });
 
 test("registration validates fields and warns about a duplicate phone", async ({ page }) => {

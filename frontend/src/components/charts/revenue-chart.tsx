@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { useI18n } from "@/i18n/provider";
-import type { Money } from "@/lib/domain/money";
+import type { Money } from "@gymflow/shared/domain/money";
 import { cn } from "@/lib/utils";
 
 export interface ChartPoint {

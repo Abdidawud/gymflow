@@ -4,7 +4,7 @@ import { Check, Circle } from "lucide-react";
 import { z } from "zod";
 import { useI18n } from "@/i18n/provider";
 import type { Translator } from "@/i18n/translator";
-import { meetsPasswordPolicy, PASSWORD_MAX_LENGTH, PASSWORD_REQUIREMENTS } from "@/lib/domain/password";
+import { meetsPasswordPolicy, PASSWORD_MAX_LENGTH, PASSWORD_REQUIREMENTS } from "@gymflow/shared/domain/password";
 import { cn } from "@/lib/utils";
 
 /** Requirements shown before submission and ticked live (design.md §7). */

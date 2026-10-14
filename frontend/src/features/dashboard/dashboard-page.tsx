@@ -31,9 +31,9 @@ import { SegmentedControl } from "@/components/ui/tabs";
 import { Table, TD, TH, THead, TR } from "@/components/ui/table";
 import { useI18n, type I18n } from "@/i18n/provider";
 import { api } from "@/lib/api/client";
-import type { Dashboard, MemberSummary, PaymentSummary, RevenuePoint } from "@/lib/api/types";
-import { sumMoney, toCents } from "@/lib/domain/money";
-import { formatPhone } from "@/lib/domain/phone";
+import type { Dashboard, MemberSummary, PaymentSummary, RevenuePoint } from "@gymflow/shared/api/types";
+import { sumMoney, toCents } from "@gymflow/shared/domain/money";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/providers/auth-provider";
@@ -54,7 +54,7 @@ export function DashboardPage() {
         <>
           {t("dashboard.subtitle")}{" "}
           <span className="text-fg font-medium">
-            {f.weekday(gym.today)}, {f.date(gym.today)}
+            {f.weekday(gym.today)}, {f.longDate(gym.today)}
           </span>
         </>
       }

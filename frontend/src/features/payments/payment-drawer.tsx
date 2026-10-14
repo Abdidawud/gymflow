@@ -5,12 +5,13 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { CircleCheck, Info, Lock, ReceiptText, RefreshCw, Tag, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Avatar } from "@/components/ui/avatar";
 import { Button, IconButton } from "@/components/ui/button";
 import { DialogDescription, DialogTitle, Sheet, SheetContent } from "@/components/ui/dialog";
 import { Alert, EmptyState } from "@/components/ui/feedback";
+import { DateInput } from "@/components/ui/date-input";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,9 +21,9 @@ import type { MessageKey } from "@/i18n/types";
 import type { Translator } from "@/i18n/translator";
 import { api } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
-import type { PaymentDetail, PaymentMethod, RecordPaymentRequest } from "@/lib/api/types";
-import { isDateOnly, type DateOnly } from "@/lib/domain/dates";
-import { formatPhone } from "@/lib/domain/phone";
+import type { PaymentDetail, PaymentMethod, RecordPaymentRequest } from "@gymflow/shared/api/types";
+import { addDays, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/providers/auth-provider";
@@ -443,7 +444,22 @@ export function PaymentDrawer({ open, onOpenChange, initialMemberId }: PaymentDr
                     error={errors.receivedDate?.message}
                     hint={t("payments.drawer.dateHint")}
                   >
-                    {(control) => <Input {...control} type="date" max={gym.today} {...form.register("receivedDate")} />}
+                    {(control) => (
+                      <Controller
+                        control={form.control}
+                        name="receivedDate"
+                        render={({ field }) => (
+                          <DateInput
+                            {...control}
+                            value={field.value}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            max={gym.today}
+                            today={gym.today}
+                          />
+                        )}
+                      />
+                    )}
                   </Field>
 
                   {/* 6. Reference */}
@@ -487,13 +503,23 @@ export function PaymentDrawer({ open, onOpenChange, initialMemberId }: PaymentDr
                     hint={t("payments.drawer.startHint")}
                   >
                     {(control) => (
-                      <Input
-                        {...control}
-                        type="date"
-                        min={previewData?.minStartDate ?? gym.today}
-                        {...form.register("requestedStartDate", {
-                          onChange: () => setStartTouched(true),
-                        })}
+                      <Controller
+                        control={form.control}
+                        name="requestedStartDate"
+                        render={({ field }) => (
+                          <DateInput
+                            {...control}
+                            value={field.value}
+                            onChange={(date) => {
+                              setStartTouched(true);
+                              field.onChange(date);
+                            }}
+                            onBlur={field.onBlur}
+                            min={previewData?.minStartDate ?? gym.today}
+                            max={addDays(gym.today, 365)}
+                            today={gym.today}
+                          />
+                        )}
                       />
                     )}
                   </Field>

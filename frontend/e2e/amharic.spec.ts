@@ -16,10 +16,13 @@ async function signInAmharic(page: Page) {
 test("the app opens in Amharic by default", async ({ page }) => {
   await signInAmharic(page);
   await expect(page.getByRole("heading", { level: 1, name: "ዳሽቦርድ" })).toBeVisible();
+  // Ethiopian calendar: Oct 07, 2026 is Meskerem 27, 2019.
+  await expect(page.getByText("ረቡዕ, መስከረም 27, 2019 ዓ.ም")).toBeVisible();
   await expect(page).toHaveTitle("ዳሽቦርድ · GymFlow");
   await expect(page.getByRole("link", { name: "አባላት" }).first()).toBeVisible();
-  await page.goto("/members/mem_00126");
+  await page.goto("/members/00000000-0000-4000-8200-000000000126");
   await expect(page.getByText("ጊዜው ያለፈበት").first()).toBeVisible();
+  await expect(page.getByText("መስከረም 20, 2019").first()).toBeVisible();
 });
 
 test("the language preference is saved to the account and follows the user", async ({ page }) => {

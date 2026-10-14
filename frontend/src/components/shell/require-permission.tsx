@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { StatusScreen } from "@/components/ui/feedback";
-import type { Permission } from "@/lib/domain/permissions";
+import type { Permission } from "@gymflow/shared/domain/permissions";
 import { useSession } from "@/providers/auth-provider";
 
 /**

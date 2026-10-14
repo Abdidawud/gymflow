@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/i18n/provider";
 import type { MessageKey } from "@/i18n/types";
-import type { MemberSummary } from "@/lib/api/types";
-import { formatPhone } from "@/lib/domain/phone";
+import type { MemberSummary } from "@gymflow/shared/api/types";
+import { formatPhone } from "@gymflow/shared/domain/phone";
 import { useSession } from "@/providers/auth-provider";
 import { usePaymentDrawer } from "@/features/payments/payment-drawer-provider";
 import { useArchiveMember } from "./queries";

@@ -43,7 +43,7 @@ export function Field({ label, required, optional, hint, error, labelAside, clas
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       <div className="flex items-end justify-between gap-3">
-        <label htmlFor={controlId} className="text-fg text-sm font-semibold">
+        <label id={`${controlId}-label`} htmlFor={controlId} className="text-fg text-sm font-semibold">
           {label}
           {required ? (
             <span aria-hidden className="text-danger ml-0.5">

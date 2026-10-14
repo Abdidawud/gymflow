@@ -2,7 +2,7 @@
 
 import { Banknote, CreditCard, Landmark, Smartphone, type LucideIcon } from "lucide-react";
 import { useI18n } from "@/i18n/provider";
-import type { PaymentMethod } from "@/lib/api/types";
+import type { PaymentMethod } from "@gymflow/shared/api/types";
 import { cn } from "@/lib/utils";
 
 /** Icons per recording method; labels and hints live in the label catalog (labels.methods.*). */

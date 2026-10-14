@@ -33,6 +33,14 @@ export const common: Messages["common"] = {
   disabledSuffix: " (ታግዷል)",
   you: "(እርስዎ)",
   breadcrumb: "የገጽ ዱካ",
+  datePicker: {
+    label: "የቀን መቁጠሪያ",
+    choose: "ቀን ይምረጡ",
+    previousMonth: "ያለፈው ወር",
+    nextMonth: "የሚቀጥለው ወር",
+    month: "ወር",
+    year: "ዓመት",
+  },
   pagination: {
     label: "የገጽ ማሰሻ",
     showing: "ከ<b>{total}</b> {noun} ውስጥ <b>{from}–{to}</b> እየታዩ ነው",

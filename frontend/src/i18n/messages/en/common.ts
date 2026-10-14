@@ -31,6 +31,14 @@ export const common = {
   disabledSuffix: " (disabled)",
   you: "(you)",
   breadcrumb: "Breadcrumb",
+  datePicker: {
+    label: "Calendar",
+    choose: "Choose a date",
+    previousMonth: "Previous month",
+    nextMonth: "Next month",
+    month: "Month",
+    year: "Year",
+  },
   pagination: {
     label: "Pagination",
     showing: "Showing <b>{from}–{to}</b> of <b>{total}</b> {noun}",

@@ -47,11 +47,15 @@ describe("translator", () => {
     expect(enT.t("common.validation.maxLength", { max: 1000 })).toBe("Use 1,000 characters or fewer.");
   });
 
-  it("formats money, dates and plans consistently", () => {
+  it("formats money, Ethiopian dates and plans consistently", () => {
     expect(enT.f.money("1500.00")).toBe("1,500.00 ETB");
     expect(amT.f.money("1500.00")).toBe("1,500.00 ብር");
-    expect(enT.f.date("2026-10-07")).toBe("Oct 07, 2026");
-    expect(amT.f.date("2026-10-07")).toMatch(/^\S+ 07, 2026$/);
+    // Ethiopian calendar in both languages; Ethiopian time of day in Amharic.
+    expect(enT.f.date("2026-10-07")).toBe("Meskerem 27, 2019");
+    expect(amT.f.date("2026-10-07")).toBe("መስከረም 27, 2019");
+    expect(amT.f.longDate("2026-10-07")).toBe("መስከረም 27, 2019 ዓ.ም");
+    expect(amT.f.time("2026-10-07T11:20:00Z")).toBe("ከቀኑ 8:20");
+    expect(enT.f.time("2026-10-07T11:20:00Z")).toBe("14:20");
     expect(enT.f.plan("Monthly", 30)).toBe("Monthly — 30 days");
     expect(enT.f.compact(12_500)).toBe("12.5k");
   });

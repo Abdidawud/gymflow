@@ -30,7 +30,7 @@ import {
   type PaymentSortField,
   type PaymentSummary,
   type SortOrder,
-} from "@/lib/api/types";
+} from "@gymflow/shared/api/types";
 import { queryKeys } from "@/lib/query-keys";
 import { toInt, useUrlState } from "@/lib/url-state";
 import { cn } from "@/lib/utils";

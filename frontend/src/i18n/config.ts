@@ -3,8 +3,9 @@
  * the default; English is available from the language switcher.
  */
 
-export const LOCALES = ["am", "en"] as const;
-export type Locale = (typeof LOCALES)[number];
+import { isLocale, LOCALES, type Locale } from "@gymflow/shared/i18n/locales";
+
+export { isLocale, LOCALES, type Locale };
 
 export const DEFAULT_LOCALE: Locale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE === "en" ? "en" : "am";
 
@@ -13,12 +14,8 @@ export const LOCALE_STORAGE_KEY = "gymflow-locale";
 /** Each language is named in itself in the switcher. */
 export const LOCALE_LABELS: Record<Locale, string> = { am: "አማርኛ", en: "English" };
 
-/** BCP 47 tags for Intl formatting (Gregorian calendar in both languages). */
+/** BCP 47 tags for Intl formatting (plural rules, numbers). Dates use the Ethiopian calendar (shared/i18n/format). */
 export const INTL_LOCALES: Record<Locale, string> = { am: "am-ET", en: "en-US" };
-
-export function isLocale(value: unknown): value is Locale {
-  return value === "am" || value === "en";
-}
 
 /** The language chosen on this device; the default during server rendering. */
 export function readStoredLocale(): Locale {

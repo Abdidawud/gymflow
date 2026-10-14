@@ -1,7 +1,7 @@
-import { dateInTimeZone, isDateOnly, type DateOnly } from "@/lib/domain/dates";
+import { SEED_TODAY } from "@gymflow/shared/demo/clock";
+import { dateInTimeZone, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
 
-/** The design fixtures are frozen at Oct 07, 2026 (design.md §5). */
-export const SEED_TODAY: DateOnly = "2026-10-07";
+export { SEED_TODAY };
 
 const configured = process.env.NEXT_PUBLIC_MOCK_TODAY;
 
@@ -22,9 +22,4 @@ export function mockNow(): string {
   const eat = new Date(now.getTime() + 3 * 3_600_000);
   const time = eat.toISOString().slice(11, 19);
   return new Date(`${mockToday()}T${time}+03:00`).toISOString();
-}
-
-/** ISO timestamp for a gym-local date and time ("HH:MM"). */
-export function gymTimestamp(date: DateOnly, time: string): string {
-  return new Date(`${date}T${time}:00+03:00`).toISOString();
 }

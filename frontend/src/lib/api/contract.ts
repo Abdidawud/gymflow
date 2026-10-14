@@ -43,7 +43,7 @@ import type {
   Session,
   StaffAccount,
   UpdateStaffRequest,
-} from "./types";
+} from "@gymflow/shared/api/types";
 
 export interface GymFlowApi {
   auth: {

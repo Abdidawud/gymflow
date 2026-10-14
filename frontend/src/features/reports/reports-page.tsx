@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { resolveRange } from "@/components/ui/date-range";
 import { EmptyState, LoadError } from "@/components/ui/feedback";
-import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard, StatCardSkeleton } from "@/components/ui/stat-card";
@@ -18,9 +18,9 @@ import { Table, TD, TH, THead, TR } from "@/components/ui/table";
 import { useI18n } from "@/i18n/provider";
 import type { Translator } from "@/i18n/translator";
 import { api } from "@/lib/api/client";
-import type { MembershipReport, RevenuePoint, RevenueReport } from "@/lib/api/types";
-import { daysBetween, isDateOnly, type DateOnly } from "@/lib/domain/dates";
-import { fromCents, toCents } from "@/lib/domain/money";
+import type { MembershipReport, RevenuePoint, RevenueReport } from "@gymflow/shared/api/types";
+import { daysBetween, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { fromCents, toCents } from "@gymflow/shared/domain/money";
 import { queryKeys } from "@/lib/query-keys";
 import { useUrlState } from "@/lib/url-state";
 import { cn } from "@/lib/utils";
@@ -201,31 +201,31 @@ function DateSelector({
         />
         <div className="flex flex-wrap items-end gap-3">
           <div className="flex flex-col gap-1">
-            <label htmlFor={fromId} className="text-caption text-fg-muted font-semibold">
+            <label id={`${fromId}-label`} htmlFor={fromId} className="text-caption text-fg-muted font-semibold">
               {t("common.from")}
             </label>
-            <Input
+            <DateInput
               id={fromId}
-              type="date"
               max={today}
+              today={today}
               value={draft.from || from}
               aria-invalid={error ? true : undefined}
-              onChange={(e) => setDraft({ from: e.target.value, to: draft.to || to })}
-              className="w-44"
+              onChange={(date) => setDraft({ from: date, to: draft.to || to })}
+              className="w-52"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor={toId} className="text-caption text-fg-muted font-semibold">
+            <label id={`${toId}-label`} htmlFor={toId} className="text-caption text-fg-muted font-semibold">
               {t("common.to")}
             </label>
-            <Input
+            <DateInput
               id={toId}
-              type="date"
               max={today}
+              today={today}
               value={draft.to || to}
               aria-invalid={error ? true : undefined}
-              onChange={(e) => setDraft({ from: draft.from || from, to: e.target.value })}
-              className="w-44"
+              onChange={(date) => setDraft({ from: draft.from || from, to: date })}
+              className="w-52"
             />
           </div>
           <Button type="submit">{t("common.apply")}</Button>

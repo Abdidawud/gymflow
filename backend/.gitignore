@@ -1,0 +1,9 @@
+node_modules/
+dist/
+var/
+.env
+.env.test
+.env.e2e
+.env.*.local
+*.log
+coverage/
