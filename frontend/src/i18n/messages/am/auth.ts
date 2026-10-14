@@ -34,10 +34,6 @@ export const auth: Messages["auth"] = {
     reasonDeactivated: "ይህ መለያ እንዳይሰራ ተደርጓል። ለእርዳታ የጂሙን አስተዳዳሪ ያነጋግሩ።",
     reasonReset: "የይለፍ ቃሉ ተቀይሯል። በአዲሱ የይለፍ ቃል ይግቡ።",
     staffNote: "የሠራተኛ መለያዎች የሚፈጠሩት በጂሙ አስተዳዳሪ ነው። መዳረሻ ከፈለጉ አስተዳዳሪዎን ይጠይቁ።",
-    demoTitle: "የሙከራ መለያዎች (ናሙና መረጃ)",
-    demoAdmin: "አስተዳዳሪ",
-    demoReception: "እንግዳ ተቀባይ",
-    demoFirstSignIn: "የመጀመሪያ መግቢያ",
   },
   forgot: {
     pageTitle: "የይለፍ ቃል ዳግም ማስጀመሪያ",

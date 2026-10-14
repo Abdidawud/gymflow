@@ -13,6 +13,7 @@ import type { Config } from "../config";
 import type { Db } from "../db";
 import type { Clock } from "../lib/clock";
 import type { Translate } from "../lib/i18n";
+import type { MailTransport } from "../services/mail";
 import type { FileStorage } from "../services/storage";
 
 /** Long-lived dependencies, created once at startup. */
@@ -22,6 +23,13 @@ export interface Env {
   pool: pg.Pool;
   clock: Clock;
   storage: FileStorage;
+  mail: MailTransport;
+  /**
+   * Runs work after the response is sent (e.g. delivering a queued email).
+   * The standalone server runs it in the background; on Vercel it uses
+   * waitUntil so the function stays alive until it finishes.
+   */
+  defer: (task: () => Promise<unknown>) => void;
   log: FastifyBaseLogger;
 }
 
@@ -33,6 +41,7 @@ export interface Actor {
   appearance: Appearance;
   language: Locale;
   mustChangePassword: boolean;
+  isSuperAdmin: boolean;
   permissions: readonly Permission[];
 }
 
@@ -45,6 +54,8 @@ export interface RequestContext {
   sessionId: string | null;
   /** Remote address as seen through the trusted proxy. */
   ip: string;
+  /** Runs work after this request's response is sent (see Env.defer). */
+  defer: (task: () => Promise<unknown>) => void;
 }
 
 /**
@@ -65,8 +76,7 @@ declare module "fastify" {
 
 /** The signed-in staff member of a route that requires one. */
 export function actorOf(ctx: RequestContext): Actor {
-  if (!ctx.actor)
-    throw new Error("Route requires an authenticated actor but none was set.");
+  if (!ctx.actor) throw new Error("Route requires an authenticated actor but none was set.");
   return ctx.actor;
 }
 

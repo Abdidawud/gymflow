@@ -20,12 +20,7 @@ export type Timestamp = string;
 export type Currency = "ETB";
 export type Appearance = "LIGHT" | "DARK" | "SYSTEM";
 
-export const PAYMENT_METHODS = [
-  "CASH",
-  "BANK_TRANSFER",
-  "CARD",
-  "MOBILE_PAYMENT",
-] as const;
+export const PAYMENT_METHODS = ["CASH", "BANK_TRANSFER", "CARD", "MOBILE_PAYMENT"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export type SortOrder = "asc" | "desc";
@@ -72,6 +67,8 @@ export interface CurrentAccount {
   /** Interface language, saved per staff account. */
   language: Locale;
   mustChangePassword: boolean;
+  /** The gym owner's account: always an active administrator; only its owner can change it. */
+  isSuperAdmin: boolean;
   permissions: Permission[];
 }
 
@@ -214,8 +211,7 @@ export interface MemberInput {
 /** Status filter; "ACTIVE" includes Expiring Soon (design.md §14). */
 export type MembershipStatusFilter = MembershipStatus;
 
-export type MemberSortField =
-  "name" | "memberCode" | "endDate" | "registrationDate";
+export type MemberSortField = "name" | "memberCode" | "endDate" | "registrationDate";
 
 export interface MemberListQuery extends PageQuery {
   search?: string;
@@ -447,6 +443,7 @@ export interface StaffAccount {
   role: Role;
   isActive: boolean;
   mustChangePassword: boolean;
+  isSuperAdmin: boolean;
   lastSignInAt: Timestamp | null;
   createdAt: Timestamp;
 }
@@ -480,12 +477,6 @@ export interface GymSettings {
 export type GymSettingsUpdate = Partial<
   Pick<
     GymSettings,
-    | "gymName"
-    | "phone"
-    | "email"
-    | "address"
-    | "logoUrl"
-    | "expirationWarningDays"
-    | "enabledPaymentMethods"
+    "gymName" | "phone" | "email" | "address" | "logoUrl" | "expirationWarningDays" | "enabledPaymentMethods"
   >
 >;

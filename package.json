@@ -9,7 +9,7 @@
     "frontend"
   ],
   "scripts": {
-    "dev": "node scripts/dev.mjs",
+    "dev": "npm run dev -w frontend",
     "dev:api": "npm run dev -w backend",
     "dev:web": "npm run dev -w frontend",
     "build": "npm run build -w backend && npm run build -w frontend",

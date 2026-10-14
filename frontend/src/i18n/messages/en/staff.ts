@@ -19,6 +19,7 @@ export const staff = {
   activate: "Activate",
   cantDeactivateSelf: "You can't deactivate your own account.",
   cantDeactivateLastAdmin: "The last active administrator can't be deactivated.",
+  superAdminProtected: "Only the super administrator can change this account.",
   activated: "{name} can sign in again.",
   deactivateTitle: "Deactivate {name}?",
   deactivateText:
@@ -49,6 +50,7 @@ export const staff = {
   update: {
     title: "Edit Staff Member",
     lastAdminHint: "This is the last active administrator, so the role can't be changed.",
+    superAdminHint: "The super administrator always stays an administrator.",
     note: "Email can't be changed. Role changes take effect immediately and sign the person out.",
     updated: "Staff account updated.",
     failed: "Couldn't update the account. Try again.",

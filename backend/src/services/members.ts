@@ -6,12 +6,7 @@
  * uses (packages/shared/src/domain/membership.ts).
  */
 
-import type {
-  MemberDetail,
-  MembershipPeriod,
-  MembershipState,
-  MemberSummary,
-} from "@gymflow/shared/api/types";
+import type { MemberDetail, MembershipPeriod, MembershipState, MemberSummary } from "@gymflow/shared/api/types";
 import type { DateOnly } from "@gymflow/shared/domain/dates";
 import { evaluateMembership } from "@gymflow/shared/domain/membership";
 import { sql } from "kysely";
@@ -44,9 +39,7 @@ export function selectMembers(db: Db | Tx) {
   return db.selectFrom("members").select(MEMBER_COLUMNS);
 }
 
-export type MemberRow = Awaited<
-  ReturnType<ReturnType<typeof selectMembers>["executeTakeFirstOrThrow"]>
->;
+export type MemberRow = Awaited<ReturnType<ReturnType<typeof selectMembers>["executeTakeFirstOrThrow"]>>;
 
 export interface PeriodRow {
   id: string;
@@ -94,15 +87,10 @@ export async function loadRelevantPeriods(
   memberIds?: readonly string[],
 ): Promise<Map<string, PeriodRow[]>> {
   if (memberIds && memberIds.length === 0) return new Map();
-  const forMembers = memberIds
-    ? sql<boolean>`m.member_id = any(${[...memberIds]}::uuid[])`
-    : sql<boolean>`true`;
+  const forMembers = memberIds ? sql<boolean>`m.member_id = any(${[...memberIds]}::uuid[])` : sql<boolean>`true`;
 
   const [upcoming, lastEnded] = await Promise.all([
-    periodQuery(db)
-      .where("m.end_date", ">=", today)
-      .where(forMembers)
-      .execute(),
+    periodQuery(db).where("m.end_date", ">=", today).where(forMembers).execute(),
     periodQuery(db)
       .where("m.end_date", "<", today)
       .where(forMembers)
@@ -118,20 +106,13 @@ export async function loadRelevantPeriods(
     list.push(row);
     byMember.set(row.member_id, list);
   }
-  for (const list of byMember.values())
-    list.sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
+  for (const list of byMember.values()) list.sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
   return byMember;
 }
 
 /** Every period of one member, oldest first, locked when called inside a payment transaction. */
-export async function loadAllPeriods(
-  db: Db | Tx,
-  memberId: string,
-): Promise<PeriodRow[]> {
-  return periodQuery(db)
-    .where("m.member_id", "=", memberId)
-    .orderBy("m.start_date")
-    .execute();
+export async function loadAllPeriods(db: Db | Tx, memberId: string): Promise<PeriodRow[]> {
+  return periodQuery(db).where("m.member_id", "=", memberId).orderBy("m.start_date").execute();
 }
 
 export function periodDto(p: PeriodRow): MembershipPeriod {
@@ -150,11 +131,7 @@ export function periodDto(p: PeriodRow): MembershipPeriod {
   };
 }
 
-export function membershipState(
-  periods: readonly PeriodRow[],
-  today: DateOnly,
-  warningDays: number,
-): MembershipState {
+export function membershipState(periods: readonly PeriodRow[], today: DateOnly, warningDays: number): MembershipState {
   const e = evaluateMembership(
     periods.map((p) => ({
       ...p,
@@ -177,19 +154,13 @@ export function membershipState(
 }
 
 /** Authenticated photo URL; the version busts browser caches after a change. */
-export function photoUrl(
-  env: Env,
-  member: Pick<MemberRow, "id" | "photo_updated_at">,
-): string | null {
+export function photoUrl(env: Env, member: Pick<MemberRow, "id" | "photo_updated_at">): string | null {
   return member.photo_updated_at
     ? `${env.config.publicApiPath}/members/${member.id}/photo?v=${member.photo_updated_at.getTime()}`
     : null;
 }
 
-export function fullName(member: {
-  first_name: string;
-  last_name: string;
-}): string {
+export function fullName(member: { first_name: string; last_name: string }): string {
   return `${member.first_name} ${member.last_name}`;
 }
 

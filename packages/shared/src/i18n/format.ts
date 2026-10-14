@@ -19,21 +19,7 @@ import type { Locale } from "./locales";
 
 /** Month names (CLDR spellings), Meskerem first; index 12 is Pagume. */
 export const ETHIOPIAN_MONTH_NAMES: Record<Locale, readonly string[]> = {
-  am: [
-    "መስከረም",
-    "ጥቅምት",
-    "ኅዳር",
-    "ታኅሣሥ",
-    "ጥር",
-    "የካቲት",
-    "መጋቢት",
-    "ሚያዝያ",
-    "ግንቦት",
-    "ሰኔ",
-    "ሐምሌ",
-    "ነሐሴ",
-    "ጳጉሜን",
-  ],
+  am: ["መስከረም", "ጥቅምት", "ኅዳር", "ታኅሣሥ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን"],
   en: [
     "Meskerem",
     "Tekemt",
@@ -54,35 +40,13 @@ export const ETHIOPIAN_MONTH_NAMES: Record<Locale, readonly string[]> = {
 /** Compact month names for chart axes; Amharic names are already short. */
 const SHORT_MONTH_NAMES: Record<Locale, readonly string[]> = {
   am: ETHIOPIAN_MONTH_NAMES.am,
-  en: [
-    "Mes",
-    "Tek",
-    "Hed",
-    "Tah",
-    "Ter",
-    "Yek",
-    "Meg",
-    "Mia",
-    "Gen",
-    "Sen",
-    "Ham",
-    "Neh",
-    "Pag",
-  ],
+  en: ["Mes", "Tek", "Hed", "Tah", "Ter", "Yek", "Meg", "Mia", "Gen", "Sen", "Ham", "Neh", "Pag"],
 };
 
 /** Weekday names, Sunday first. */
 export const WEEKDAY_NAMES: Record<Locale, readonly string[]> = {
   am: ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሐሙስ", "ዓርብ", "ቅዳሜ"],
-  en: [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ],
+  en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 };
 
 /** Column headers for calendar grids, Sunday first. */
@@ -117,11 +81,7 @@ export function formatMonthDay(date: DateOnly, locale: Locale): string {
 }
 
 /** "መስከረም 27, 2019" — with `era`: "መስከረም 27, 2019 ዓ.ም" / "Meskerem 27, 2019 E.C." */
-export function formatDate(
-  date: DateOnly,
-  locale: Locale,
-  options: { era?: boolean } = {},
-): string {
+export function formatDate(date: DateOnly, locale: Locale, options: { era?: boolean } = {}): string {
   const e = toEthiopian(date);
   const text = `${monthName(e.month, locale)} ${e.day}, ${e.year}`;
   return options.era ? `${text} ${ERA_LABEL[locale]}` : text;
@@ -134,10 +94,7 @@ export function formatShortDate(date: DateOnly, locale: Locale): string {
 }
 
 /** "መስከረም 2019" / "Meskerem 2019" */
-export function formatMonthYear(
-  { year, month }: EthiopianMonth,
-  locale: Locale,
-): string {
+export function formatMonthYear({ year, month }: EthiopianMonth, locale: Locale): string {
   return `${monthName(month, locale)} ${year}`;
 }
 
@@ -147,17 +104,11 @@ export function formatWeekday(date: DateOnly, locale: Locale): string {
 }
 
 /** "መስከረም 1 – 27, 2019", "መስከረም 21 – ጥቅምት 20, 2019", with both years when they differ. */
-export function formatDateRange(
-  from: DateOnly,
-  to: DateOnly,
-  locale: Locale,
-): string {
+export function formatDateRange(from: DateOnly, to: DateOnly, locale: Locale): string {
   const a = toEthiopian(from);
   const b = toEthiopian(to);
-  if (a.year !== b.year)
-    return `${formatDate(from, locale)} – ${formatDate(to, locale)}`;
-  if (a.month === b.month)
-    return `${monthName(a.month, locale)} ${a.day} – ${b.day}, ${b.year}`;
+  if (a.year !== b.year) return `${formatDate(from, locale)} – ${formatDate(to, locale)}`;
+  if (a.month === b.month) return `${monthName(a.month, locale)} ${a.day} – ${b.day}, ${b.year}`;
   return `${formatMonthDay(from, locale)} – ${formatDate(to, locale)}`;
 }
 
@@ -177,9 +128,7 @@ export function gymClock(iso: string): {
   hour: number;
   minute: number;
 } {
-  const parts = Object.fromEntries(
-    gymClockFormat.formatToParts(new Date(iso)).map((p) => [p.type, p.value]),
-  );
+  const parts = Object.fromEntries(gymClockFormat.formatToParts(new Date(iso)).map((p) => [p.type, p.value]));
   return {
     date: `${parts.year}-${parts.month}-${parts.day}`,
     hour: Number(parts.hour) % 24,

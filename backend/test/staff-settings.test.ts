@@ -32,9 +32,7 @@ describe("staff management", () => {
       email: "meseret@adamafitness.com",
       password: "Start#2026",
     });
-    expect((await login.get("/members")).body.error.code).toBe(
-      "PASSWORD_CHANGE_REQUIRED",
-    );
+    expect((await login.get("/members")).body.error.code).toBe("PASSWORD_CHANGE_REQUIRED");
   });
 
   it("never removes the last active administrator", async () => {
@@ -45,12 +43,12 @@ describe("staff management", () => {
     });
     expect(demote.status).toBe(409);
     expect(demote.body.error.code).toBe("LAST_ADMINISTRATOR");
-    expect((await admin.post(`/users/${ADMIN.id}/deactivate`)).status).toBe(
-      403,
-    );
+    expect((await admin.post(`/users/${ADMIN.id}/deactivate`)).status).toBe(403);
   });
 
   it("keeps at least one administrator when two demote each other at the same time", async () => {
+    // Without a super administrator, only the lock protects the last administrator.
+    await h.owner.updateTable("staff").set({ is_super_admin: false }).execute();
     const abdi = await h.signIn(ADMIN);
     const promoted = await abdi.patch(`/users/${RECEPTIONIST.id}`, {
       fullName: "Tigist Haile",
@@ -81,14 +79,40 @@ describe("staff management", () => {
   it("deactivation ends live sessions immediately", async () => {
     const desk = await h.signIn(RECEPTIONIST);
     const admin = await h.signIn(ADMIN);
-    expect(
-      (await admin.post(`/users/${RECEPTIONIST.id}/deactivate`)).body.isActive,
-    ).toBe(false);
+    expect((await admin.post(`/users/${RECEPTIONIST.id}/deactivate`)).body.isActive).toBe(false);
     const res = await desk.get("/members");
     expect(res.status).toBe(401);
-    expect(
-      (await admin.post(`/users/${RECEPTIONIST.id}/activate`)).body.isActive,
-    ).toBe(true);
+    expect((await admin.post(`/users/${RECEPTIONIST.id}/activate`)).body.isActive).toBe(true);
+  });
+});
+
+describe("super administrator", () => {
+  it("is reported on the account and listed first", async () => {
+    const admin = await h.signIn(ADMIN);
+    expect((await admin.get("/auth/me")).body.account.isSuperAdmin).toBe(true);
+    const staff = (await admin.get("/users")).body;
+    expect(staff[0]).toMatchObject({ id: ADMIN.id, isSuperAdmin: true });
+  });
+
+  it("can only be changed by its owner and always stays an active administrator", async () => {
+    const abdi = await h.signIn(ADMIN);
+    await abdi.patch(`/users/${RECEPTIONIST.id}`, { fullName: "Tigist Haile", role: "ADMINISTRATOR" });
+    const tigist = await h.signIn(RECEPTIONIST);
+
+    const rename = await tigist.patch(`/users/${ADMIN.id}`, { fullName: "Someone Else", role: "ADMINISTRATOR" });
+    expect(rename.status).toBe(403);
+    expect(rename.body.error.message).toBe("Only the super administrator can change this account.");
+    expect((await tigist.post(`/users/${ADMIN.id}/deactivate`)).status).toBe(403);
+
+    const selfDemote = await abdi.patch(`/users/${ADMIN.id}`, { fullName: "Abdi Dawud", role: "RECEPTIONIST" });
+    expect(selfDemote.status).toBe(409);
+    expect((await abdi.patch(`/users/${ADMIN.id}`, { fullName: "Abdi D.", role: "ADMINISTRATOR" })).body.fullName).toBe(
+      "Abdi D.",
+    );
+    // The database refuses it too.
+    await expect(
+      h.owner.updateTable("staff").set({ is_active: false }).where("id", "=", ADMIN.id).execute(),
+    ).rejects.toThrow(/staff_super_admin_active/);
   });
 });
 
@@ -100,10 +124,7 @@ describe("gym settings", () => {
       enabledPaymentMethods: [],
     });
     expect(bad.status).toBe(422);
-    expect(Object.keys(bad.body.error.fieldErrors).sort()).toEqual([
-      "enabledPaymentMethods",
-      "expirationWarningDays",
-    ]);
+    expect(Object.keys(bad.body.error.fieldErrors).sort()).toEqual(["enabledPaymentMethods", "expirationWarningDays"]);
     const res = await admin.patch("/settings", {
       gymName: "Adama Fitness Center",
       phone: "022 111 8920",
@@ -127,18 +148,12 @@ describe("gym settings", () => {
     })
       .png()
       .toBuffer();
-    const res = await admin.request(
-      "POST",
-      "/settings/logo",
-      multipart("logo", "logo.png", "image/png", png),
-    );
+    const res = await admin.request("POST", "/settings/logo", multipart("logo", "logo.png", "image/png", png));
     expect(res.body.logoUrl).toMatch(/^\/api\/v1\/settings\/logo\?v=\d+$/);
     const desk = await h.signIn(RECEPTIONIST);
     const logo = await desk.get("/settings/logo");
     expect(logo.headers["content-type"]).toBe("image/png");
-    expect(
-      (await admin.patch("/settings", { logoUrl: null })).body.logoUrl,
-    ).toBeNull();
+    expect((await admin.patch("/settings", { logoUrl: null })).body.logoUrl).toBeNull();
     expect(
       (
         await admin.patch("/settings", {

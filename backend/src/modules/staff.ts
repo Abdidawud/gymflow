@@ -40,6 +40,7 @@ const STAFF_COLUMNS = [
   "role",
   "is_active",
   "must_change_password",
+  "is_super_admin",
   "last_sign_in_at",
   "created_at",
 ] as const;
@@ -51,6 +52,7 @@ type StaffRow = {
   role: Role;
   is_active: boolean;
   must_change_password: boolean;
+  is_super_admin: boolean;
   last_sign_in_at: Date | null;
   created_at: Date;
 };
@@ -63,13 +65,13 @@ function staffDto(row: StaffRow): StaffAccount {
     role: row.role,
     isActive: row.is_active,
     mustChangePassword: row.must_change_password,
+    isSuperAdmin: row.is_super_admin,
     lastSignInAt: row.last_sign_in_at?.toISOString() ?? null,
     createdAt: row.created_at.toISOString(),
   };
 }
 
-const isRole = (value: string): value is Role =>
-  (ROLES as readonly string[]).includes(value);
+const isRole = (value: string): value is Role => (ROLES as readonly string[]).includes(value);
 
 async function lockAdministrators(tx: Tx): Promise<number> {
   await sql`SELECT pg_advisory_xact_lock(${ADMIN_LOCK_ID})`.execute(tx);
@@ -82,17 +84,8 @@ async function lockAdministrators(tx: Tx): Promise<number> {
   return Number(row.count);
 }
 
-async function getStaff(
-  tx: Tx,
-  ctx: RequestContext,
-  id: string,
-): Promise<StaffRow> {
-  const row = await tx
-    .selectFrom("staff")
-    .select(STAFF_COLUMNS)
-    .where("id", "=", id)
-    .forUpdate()
-    .executeTakeFirst();
+async function getStaff(tx: Tx, ctx: RequestContext, id: string): Promise<StaffRow> {
+  const row = await tx.selectFrom("staff").select(STAFF_COLUMNS).where("id", "=", id).forUpdate().executeTakeFirst();
   if (!row) notFound(ctx.t);
   return row;
 }
@@ -104,6 +97,7 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
     const rows = await env.db
       .selectFrom("staff")
       .select(STAFF_COLUMNS)
+      .orderBy("is_super_admin", "desc")
       .orderBy("is_active", "desc")
       .orderBy("full_name")
       .execute();
@@ -118,23 +112,15 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
     const fullName = clean(body.fullName);
     const email = normalizeEmail(body.email);
     if (!fullName) errors.add("fullName", t("fullName"));
-    else if (fullName.length > 80)
-      errors.add("fullName", t("maxLength", { max: 80 }));
+    else if (fullName.length > 80) errors.add("fullName", t("maxLength", { max: 80 }));
     if (!isEmail(email)) errors.add("email", t("emailInvalid"));
     if (!isRole(body.role)) errors.add("role", t("chooseRole"));
-    if (
-      !meetsPasswordPolicy(body.temporaryPassword) ||
-      body.temporaryPassword.length > 128
-    ) {
+    if (!meetsPasswordPolicy(body.temporaryPassword) || body.temporaryPassword.length > 128) {
       errors.add("temporaryPassword", t("passwordPolicy"));
     }
     errors.throwIfAny();
 
-    const existing = await env.db
-      .selectFrom("staff")
-      .select("id")
-      .where("email", "=", email)
-      .executeTakeFirst();
+    const existing = await env.db.selectFrom("staff").select("id").where("email", "=", email).executeTakeFirst();
     if (existing)
       fail(409, "DUPLICATE_EMAIL", t("duplicateEmail"), {
         fieldErrors: { email: t("duplicateEmail") },
@@ -158,14 +144,7 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
         })
         .returning(STAFF_COLUMNS)
         .executeTakeFirstOrThrow();
-      await audit(
-        tx,
-        ctx,
-        "staff.create",
-        { type: "staff", id: created.id },
-        { role: created.role },
-        now,
-      );
+      await audit(tx, ctx, "staff.create", { type: "staff", id: created.id }, { role: created.role }, now);
       return created;
     });
     return reply.code(201).send(staffDto(row));
@@ -180,8 +159,7 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
     const errors = new FieldErrors(t);
     const fullName = clean(body.fullName);
     if (!fullName) errors.add("fullName", t("fullName"));
-    else if (fullName.length > 80)
-      errors.add("fullName", t("maxLength", { max: 80 }));
+    else if (fullName.length > 80) errors.add("fullName", t("maxLength", { max: 80 }));
     if (!isRole(body.role)) errors.add("role", t("chooseRole"));
     errors.throwIfAny();
     const role = body.role as Role;
@@ -189,10 +167,12 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
     const row = await env.db.transaction().execute(async (tx) => {
       const activeAdmins = await lockAdministrators(tx);
       const target = await getStaff(tx, ctx, id);
-      const demoting =
-        target.role === "ADMINISTRATOR" &&
-        role !== "ADMINISTRATOR" &&
-        target.is_active;
+      // The owner's account can only be changed by the owner, and never loses the administrator role.
+      if (target.is_super_admin && target.id !== actor.id) fail(403, "FORBIDDEN", t("superAdminProtected"));
+      if (target.is_super_admin && role !== "ADMINISTRATOR") {
+        fail(409, "LAST_ADMINISTRATOR", t("superAdminRole"), { fieldErrors: { role: t("superAdminRole") } });
+      }
+      const demoting = target.role === "ADMINISTRATOR" && role !== "ADMINISTRATOR" && target.is_active;
       if (demoting && activeAdmins <= 1) {
         fail(409, "LAST_ADMINISTRATOR", t("lastAdmin"), {
           fieldErrors: { role: t("lastAdminField") },
@@ -208,23 +188,9 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
       if (target.role !== role) {
         // New permissions take effect immediately: the person signs in again.
         if (target.id !== actor.id) await revokeSessions(tx, target.id);
-        await audit(
-          tx,
-          ctx,
-          "staff.update",
-          { type: "staff", id },
-          { role: { from: target.role, to: role } },
-          now,
-        );
+        await audit(tx, ctx, "staff.update", { type: "staff", id }, { role: { from: target.role, to: role } }, now);
       } else if (target.full_name !== fullName) {
-        await audit(
-          tx,
-          ctx,
-          "staff.update",
-          { type: "staff", id },
-          { fullName: true },
-          now,
-        );
+        await audit(tx, ctx, "staff.update", { type: "staff", id }, { fullName: true }, now);
       }
       return updated;
     });
@@ -239,13 +205,9 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
     const row = await env.db.transaction().execute(async (tx) => {
       const activeAdmins = await lockAdministrators(tx);
       const target = await getStaff(tx, ctx, id);
-      if (target.id === actor.id)
-        fail(403, "FORBIDDEN", t("cantDeactivateSelf"));
-      if (
-        target.role === "ADMINISTRATOR" &&
-        target.is_active &&
-        activeAdmins <= 1
-      ) {
+      if (target.id === actor.id) fail(403, "FORBIDDEN", t("cantDeactivateSelf"));
+      if (target.is_super_admin) fail(403, "FORBIDDEN", t("superAdminProtected"));
+      if (target.role === "ADMINISTRATOR" && target.is_active && activeAdmins <= 1) {
         fail(409, "LAST_ADMINISTRATOR", t("lastAdminShort"));
       }
       if (!target.is_active) return target;
@@ -258,14 +220,7 @@ export async function staffRoutes(app: FastifyInstance, env: Env) {
         .executeTakeFirstOrThrow();
       // Access ends immediately, including on devices already signed in.
       await revokeSessions(tx, id);
-      await audit(
-        tx,
-        ctx,
-        "staff.deactivate",
-        { type: "staff", id },
-        null,
-        now,
-      );
+      await audit(tx, ctx, "staff.deactivate", { type: "staff", id }, null, now);
       return updated;
     });
     return staffDto(row);

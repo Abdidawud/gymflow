@@ -12,8 +12,7 @@ function toAppError(error: z.ZodError, t: Translate): AppError {
   const fieldErrors: Record<string, string> = {};
   for (const issue of error.issues) {
     if (issue.code === "unrecognized_keys") {
-      for (const key of issue.keys)
-        fieldErrors[[...issue.path, key].join(".")] = t("unknownField");
+      for (const key of issue.keys) fieldErrors[[...issue.path, key].join(".")] = t("unknownField");
       continue;
     }
     const path = issue.path.join(".") || "body";
@@ -24,11 +23,7 @@ function toAppError(error: z.ZodError, t: Translate): AppError {
   });
 }
 
-export function parse<S extends z.ZodType>(
-  schema: S,
-  value: unknown,
-  t: Translate,
-): z.infer<S> {
+export function parse<S extends z.ZodType>(schema: S, value: unknown, t: Translate): z.infer<S> {
   const result = schema.safeParse(value ?? {});
   if (!result.success) throw toAppError(result.error, t);
   return result.data;

@@ -3,10 +3,7 @@
  * archive/reactivate, payment and period histories, and private photos.
  */
 
-import type {
-  MemberInput,
-  MemberMembershipHistoryItem,
-} from "@gymflow/shared/api/types";
+import type { MemberInput, MemberMembershipHistoryItem } from "@gymflow/shared/api/types";
 import {
   displayPeriod,
   matchesMemberSearch,
@@ -44,9 +41,7 @@ const ListQuery = z.strictObject({
   planId: z.string().max(64).optional(),
   archived: z.enum(["true", "false", "any"]).optional(),
   phone: z.string().max(40).optional(),
-  sort: z
-    .enum(["name", "memberCode", "endDate", "registrationDate"])
-    .optional(),
+  sort: z.enum(["name", "memberCode", "endDate", "registrationDate"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
   page: z.coerce.number().int().min(1).max(1_000_000).optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
@@ -82,11 +77,9 @@ async function validateMember(
   const firstName = clean(input.firstName);
   const lastName = clean(input.lastName);
   if (!firstName) errors.add("firstName", t("firstName"));
-  else if (firstName.length > 60)
-    errors.add("firstName", t("maxLength", { max: 60 }));
+  else if (firstName.length > 60) errors.add("firstName", t("maxLength", { max: 60 }));
   if (!lastName) errors.add("lastName", t("lastName"));
-  else if (lastName.length > 60)
-    errors.add("lastName", t("maxLength", { max: 60 }));
+  else if (lastName.length > 60) errors.add("lastName", t("maxLength", { max: 60 }));
 
   const phone = normalizeEthiopianPhone(input.phone ?? "");
   if (!phone) errors.add("phone", t("mobileInvalid"));
@@ -96,32 +89,19 @@ async function validateMember(
 
   const emergencyName = clean(input.emergencyName);
   const emergencyPhoneRaw = clean(input.emergencyPhone);
-  const emergencyPhone = emergencyPhoneRaw
-    ? normalizeEthiopianPhone(emergencyPhoneRaw, "any")
-    : null;
-  if (emergencyName && !emergencyPhoneRaw)
-    errors.add("emergencyPhone", t("emergencyPhone"));
-  if (emergencyPhoneRaw && !emergencyName)
-    errors.add("emergencyName", t("emergencyName"));
-  if (emergencyPhoneRaw && !emergencyPhone)
-    errors.add("emergencyPhone", t("phoneInvalid"));
-  if (emergencyName && emergencyName.length > 80)
-    errors.add("emergencyName", t("maxLength", { max: 80 }));
+  const emergencyPhone = emergencyPhoneRaw ? normalizeEthiopianPhone(emergencyPhoneRaw, "any") : null;
+  if (emergencyName && !emergencyPhoneRaw) errors.add("emergencyPhone", t("emergencyPhone"));
+  if (emergencyPhoneRaw && !emergencyName) errors.add("emergencyName", t("emergencyName"));
+  if (emergencyPhoneRaw && !emergencyPhone) errors.add("emergencyPhone", t("phoneInvalid"));
+  if (emergencyName && emergencyName.length > 80) errors.add("emergencyName", t("maxLength", { max: 80 }));
 
   const relationship = clean(input.emergencyRelationship);
-  if (relationship && relationship.length > 40)
-    errors.add("emergencyRelationship", t("maxLength", { max: 40 }));
+  if (relationship && relationship.length > 40) errors.add("emergencyRelationship", t("maxLength", { max: 40 }));
   const address = clean(input.address);
-  if (address && address.length > 200)
-    errors.add("address", t("maxLength", { max: 200 }));
+  if (address && address.length > 200) errors.add("address", t("maxLength", { max: 200 }));
   const notes = cleanMultiline(input.notes);
-  if (notes && notes.length > 1000)
-    errors.add("notes", t("maxLength", { max: 1000 }));
-  if (
-    input.gender !== null &&
-    input.gender !== "MALE" &&
-    input.gender !== "FEMALE"
-  ) {
+  if (notes && notes.length > 1000) errors.add("notes", t("maxLength", { max: 1000 }));
+  if (input.gender !== null && input.gender !== "MALE" && input.gender !== "FEMALE") {
     errors.add("gender", t("validOption"));
   }
   errors.throwIfAny();
@@ -180,12 +160,7 @@ function columnsOf(values: MemberValues) {
   };
 }
 
-export async function getMemberRow(
-  db: Db | Tx,
-  ctx: RequestContext,
-  id: string,
-  lock = false,
-): Promise<MemberRow> {
+export async function getMemberRow(db: Db | Tx, ctx: RequestContext, id: string, lock = false): Promise<MemberRow> {
   let query = selectMembers(db).where("members.id", "=", id);
   if (lock) query = query.forUpdate();
   const member = await query.executeTakeFirst();
@@ -195,10 +170,7 @@ export async function getMemberRow(
 
 export async function memberRoutes(app: FastifyInstance, env: Env) {
   async function detail(db: Db | Tx, ctx: RequestContext, member: MemberRow) {
-    const [settings, hasPlans] = await Promise.all([
-      readSettings(db),
-      hasEnabledPlans(db),
-    ]);
+    const [settings, hasPlans] = await Promise.all([readSettings(db), hasEnabledPlans(db)]);
     return memberDetailDto(env, db, member, {
       today: env.clock.today(),
       warningDays: settings.expirationWarningDays,
@@ -214,8 +186,7 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
     const settings = await readSettings(env.db);
 
     let rows = selectMembers(env.db);
-    if (query.archived !== "any")
-      rows = rows.where("members.is_archived", "=", query.archived === "true");
+    if (query.archived !== "any") rows = rows.where("members.is_archived", "=", query.archived === "true");
 
     // Exact phone lookup (after normalization) for duplicate warnings on the form.
     if (query.phone !== undefined) {
@@ -242,26 +213,10 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
       members.map((m) => m.id),
     );
     const summaries = members
-      .map((m) =>
-        memberSummaryDto(
-          env,
-          m,
-          periods.get(m.id) ?? [],
-          today,
-          settings.expirationWarningDays,
-        ),
-      )
+      .map((m) => memberSummaryDto(env, m, periods.get(m.id) ?? [], today, settings.expirationWarningDays))
       .filter((row) => matchesStatusFilter(row.membership.status, query.status))
-      .filter(
-        (row) =>
-          !query.planId ||
-          displayPeriod(row.membership)?.planId === query.planId,
-      );
-    return paginate(
-      sortMembers(summaries, query.sort, query.order),
-      query.page,
-      query.pageSize,
-    );
+      .filter((row) => !query.planId || displayPeriod(row.membership)?.planId === query.planId);
+    return paginate(sortMembers(summaries, query.sort, query.order), query.page, query.pageSize);
   });
 
   app.post("/members", async (request, reply) => {
@@ -285,11 +240,7 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
 
   app.get("/members/:id", async (request) => {
     const ctx = request.ctx;
-    return detail(
-      env.db,
-      ctx,
-      await getMemberRow(env.db, ctx, idParam(request.params, ctx.t)),
-    );
+    return detail(env.db, ctx, await getMemberRow(env.db, ctx, idParam(request.params, ctx.t)));
   });
 
   app.patch("/members/:id", async (request) => {
@@ -307,39 +258,35 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
   });
 
   for (const action of ["archive", "reactivate"] as const) {
-    app.post(
-      `/members/:id/${action}`,
-      { config: { permission: "members.archive" } },
-      async (request) => {
-        const ctx = request.ctx;
-        const id = idParam(request.params, ctx.t);
-        return env.db.transaction().execute(async (tx) => {
-          const member = await getMemberRow(tx, ctx, id, true);
-          const archive = action === "archive";
-          if (member.is_archived !== archive) {
-            const now = env.clock.now();
-            await tx
-              .updateTable("members")
-              .set({
-                is_archived: archive,
-                archived_at: archive ? now : null,
-                updated_at: now,
-              })
-              .where("id", "=", id)
-              .execute();
-            await audit(
-              tx,
-              ctx,
-              archive ? "member.archive" : "member.reactivate",
-              { type: "member", id },
-              { memberCode: member.member_code },
-              now,
-            );
-          }
-          return detail(tx, ctx, await getMemberRow(tx, ctx, id));
-        });
-      },
-    );
+    app.post(`/members/:id/${action}`, { config: { permission: "members.archive" } }, async (request) => {
+      const ctx = request.ctx;
+      const id = idParam(request.params, ctx.t);
+      return env.db.transaction().execute(async (tx) => {
+        const member = await getMemberRow(tx, ctx, id, true);
+        const archive = action === "archive";
+        if (member.is_archived !== archive) {
+          const now = env.clock.now();
+          await tx
+            .updateTable("members")
+            .set({
+              is_archived: archive,
+              archived_at: archive ? now : null,
+              updated_at: now,
+            })
+            .where("id", "=", id)
+            .execute();
+          await audit(
+            tx,
+            ctx,
+            archive ? "member.archive" : "member.reactivate",
+            { type: "member", id },
+            { memberCode: member.member_code },
+            now,
+          );
+        }
+        return detail(tx, ctx, await getMemberRow(tx, ctx, id));
+      });
+    });
   }
 
   app.get("/members/:id/payments", async (request) => {
@@ -380,9 +327,7 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
       .innerJoin("payments as p", "p.membership_id", "m.id")
       .where("m.member_id", "=", id);
     const [{ count }, rows] = await Promise.all([
-      base
-        .select((eb) => eb.fn.countAll<string>().as("count"))
-        .executeTakeFirstOrThrow(),
+      base.select((eb) => eb.fn.countAll<string>().as("count")).executeTakeFirstOrThrow(),
       base
         .select([
           "m.id",
@@ -405,12 +350,7 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
     ]);
     const items: MemberMembershipHistoryItem[] = rows.map((row) => ({
       ...periodDto(row),
-      periodStatus:
-        row.start_date > today
-          ? "UPCOMING"
-          : row.end_date < today
-            ? "ENDED"
-            : "CURRENT",
+      periodStatus: row.start_date > today ? "UPCOMING" : row.end_date < today ? "ENDED" : "CURRENT",
     }));
     return { items, total: Number(count), page, pageSize };
   });
@@ -419,46 +359,37 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
     const ctx = request.ctx;
     const id = idParam(request.params, ctx.t);
     await getMemberRow(env.db, ctx, id);
-    const image = await processPhoto(
-      await readUpload(request, "photo", ctx.t),
-      ctx.t,
-    );
-    const key = env.storage.newKey("members", id, "jpg");
-    await env.storage.put(key, image);
+    const image = await processPhoto(await readUpload(request, "photo", ctx.t), ctx.t);
 
-    const previous = await env.db.transaction().execute(async (tx) => {
+    // The new image, the member's reference and removal of the old image commit together.
+    await env.db.transaction().execute(async (tx) => {
       const member = await getMemberRow(tx, ctx, id, true);
+      const key = env.storage.newKey("members", id, "jpg");
+      await env.storage.put(tx, key, { contentType: "image/jpeg", data: image });
       const now = env.clock.now();
       await tx
         .updateTable("members")
         .set({ photo_storage_key: key, photo_updated_at: now, updated_at: now })
         .where("id", "=", id)
         .execute();
-      return member.photo_storage_key;
+      if (member.photo_storage_key) await env.storage.delete(tx, member.photo_storage_key);
     });
-    if (previous) await env.storage.delete(previous).catch(() => {});
     return detail(env.db, ctx, await getMemberRow(env.db, ctx, id));
   });
 
   app.delete("/members/:id/photo", async (request) => {
     const ctx = request.ctx;
     const id = idParam(request.params, ctx.t);
-    const previous = await env.db.transaction().execute(async (tx) => {
+    await env.db.transaction().execute(async (tx) => {
       const member = await getMemberRow(tx, ctx, id, true);
-      if (member.photo_storage_key) {
-        await tx
-          .updateTable("members")
-          .set({
-            photo_storage_key: null,
-            photo_updated_at: null,
-            updated_at: env.clock.now(),
-          })
-          .where("id", "=", id)
-          .execute();
-      }
-      return member.photo_storage_key;
+      if (!member.photo_storage_key) return;
+      await tx
+        .updateTable("members")
+        .set({ photo_storage_key: null, photo_updated_at: null, updated_at: env.clock.now() })
+        .where("id", "=", id)
+        .execute();
+      await env.storage.delete(tx, member.photo_storage_key);
     });
-    if (previous) await env.storage.delete(previous).catch(() => {});
     return detail(env.db, ctx, await getMemberRow(env.db, ctx, id));
   });
 
@@ -466,19 +397,13 @@ export async function memberRoutes(app: FastifyInstance, env: Env) {
   app.get("/members/:id/photo", async (request, reply) => {
     const ctx = request.ctx;
     actorOf(ctx);
-    const member = await getMemberRow(
-      env.db,
-      ctx,
-      idParam(request.params, ctx.t),
-    );
-    const data = member.photo_storage_key
-      ? await env.storage.get(member.photo_storage_key)
-      : null;
-    if (!data) notFound(ctx.t);
+    const member = await getMemberRow(env.db, ctx, idParam(request.params, ctx.t));
+    const file = member.photo_storage_key ? await env.storage.get(env.db, member.photo_storage_key) : null;
+    if (!file) notFound(ctx.t);
     return reply
-      .header("Content-Type", "image/jpeg")
+      .header("Content-Type", file.contentType)
       .header("Cache-Control", "private, max-age=31536000, immutable")
       .header("Content-Disposition", "inline")
-      .send(data);
+      .send(file.data);
   });
 }

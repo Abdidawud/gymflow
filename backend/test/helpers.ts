@@ -4,9 +4,6 @@
  * owner connection for resetting data and inspecting tables.
  */
 
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { DEMO_STAFF_IDS, demoMemberId } from "@gymflow/shared/demo/ids";
 import { DEMO_PASSWORD } from "@gymflow/shared/demo/seed";
@@ -58,17 +55,20 @@ export interface Harness {
   /** Application-role connection, exactly what the API uses. */
   appDb: Db;
   reset(): Promise<void>;
+  /** Emails "sent" by the capturing mail transport. */
+  sentMail: { to: string; subject: string; text: string }[];
+  /** Work the API deferred until after its responses; run it with runDeferred(). */
+  runDeferred(): Promise<void>;
   client(locale?: "am" | "en"): TestClient;
-  signIn(
-    user: { email: string; password: string },
-    locale?: "am" | "en",
-  ): Promise<TestClient>;
+  signIn(user: { email: string; password: string }, locale?: "am" | "en"): Promise<TestClient>;
 }
 
-export function useHarness(
-  options: { env?: Record<string, string> } = {},
-): Harness {
-  const harness = {} as Harness;
+export function useHarness(options: { env?: Record<string, string> } = {}): Harness {
+  const harness = { sentMail: [] } as unknown as Harness;
+  const deferred: (() => Promise<unknown>)[] = [];
+  harness.runDeferred = async () => {
+    for (const task of deferred.splice(0)) await task();
+  };
   let ownerPool: ReturnType<typeof createPool>;
   let appPool: ReturnType<typeof createPool>;
 
@@ -83,7 +83,6 @@ export function useHarness(
       MAIL_TRANSPORT: "log",
       LOG_LEVEL: "silent",
       AUTH_RATE_LIMIT_PER_MINUTE: "10000",
-      STORAGE_DIR: mkdtempSync(join(tmpdir(), "gymflow-test-")),
       ...options.env,
     });
     ownerPool = createPool({ url: ownerUrl, poolMax: 2 });
@@ -96,7 +95,15 @@ export function useHarness(
         db: harness.appDb,
         pool: appPool,
         clock: createClock(TODAY),
-        storage: new FileStorage(config.storageDir),
+        storage: new FileStorage(),
+        mail: {
+          async send(message) {
+            harness.sentMail.push({ to: message.to, subject: message.subject, text: message.text });
+          },
+        },
+        defer: (task) => {
+          deferred.push(task);
+        },
       },
       { logger: process.env.TEST_LOG ? { level: "error" } : false },
     );
@@ -109,9 +116,7 @@ export function useHarness(
         password: user.password,
       });
       if (res.status !== 200)
-        throw new Error(
-          `sign-in failed for ${user.email}: ${res.status} ${JSON.stringify(res.body)}`,
-        );
+        throw new Error(`sign-in failed for ${user.email}: ${res.status} ${JSON.stringify(res.body)}`);
       return client;
     };
     await harness.reset();
@@ -158,40 +163,28 @@ export class TestClient {
     const headers: Record<string, string> = {
       "accept-language": this.locale,
       origin: ORIGIN,
-      ...(this.cookies.size
-        ? { cookie: [...this.cookies].map(([k, v]) => `${k}=${v}`).join("; ") }
-        : {}),
-      ...(options.csrf !== false && this.csrf && method !== "GET"
-        ? { "x-csrf-token": this.csrf }
-        : {}),
-      ...(options.body !== undefined
-        ? { "content-type": "application/json" }
-        : {}),
+      ...(this.cookies.size ? { cookie: [...this.cookies].map(([k, v]) => `${k}=${v}`).join("; ") } : {}),
+      ...(options.csrf !== false && this.csrf && method !== "GET" ? { "x-csrf-token": this.csrf } : {}),
+      ...(options.body !== undefined ? { "content-type": "application/json" } : {}),
       ...options.headers,
     };
     const res = await this.app.inject({
       method,
       url: `/api/v1${url}`,
       headers,
-      payload:
-        options.body !== undefined
-          ? JSON.stringify(options.body)
-          : options.payload,
+      payload: options.body !== undefined ? JSON.stringify(options.body) : options.payload,
     });
     for (const cookie of res.cookies as {
       name: string;
       value: string;
       expires?: Date;
     }[]) {
-      const expired =
-        cookie.value === "" ||
-        (cookie.expires && cookie.expires.getTime() < Date.now());
+      const expired = cookie.value === "" || (cookie.expires && cookie.expires.getTime() < Date.now());
       if (expired) this.cookies.delete(cookie.name);
       else this.cookies.set(cookie.name, cookie.value);
     }
     let body: unknown = null;
-    if (res.body && String(res.headers["content-type"] ?? "").includes("json"))
-      body = JSON.parse(res.body);
+    if (res.body && String(res.headers["content-type"] ?? "").includes("json")) body = JSON.parse(res.body);
     else if (res.body) body = res.rawPayload;
     return { status: res.statusCode, body: body as T, headers: res.headers };
   }
@@ -211,12 +204,7 @@ export class TestClient {
 }
 
 /** Multipart body with one file field, as a browser sends it. */
-export function multipart(
-  field: string,
-  filename: string,
-  type: string,
-  data: Buffer,
-) {
+export function multipart(field: string, filename: string, type: string, data: Buffer) {
   const boundary = `----gymflow${Math.random().toString(16).slice(2)}`;
   const payload = Buffer.concat([
     Buffer.from(

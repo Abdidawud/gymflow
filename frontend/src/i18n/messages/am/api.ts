@@ -13,7 +13,7 @@ export const api: Messages["api"] = {
   validDates: "ትክክለኛ ቀኖችን ይምረጡ።",
   validOption: "ትክክለኛ አማራጭ ይምረጡ።",
   photoType: "JPEG፣ PNG ወይም WebP ምስል ይምረጡ።",
-  photoSize: "ፎቶው 5 ሜባ ወይም ከዚያ ያነሰ መሆን አለበት።",
+  photoSize: "ምስሉ በጣም ትልቅ ነው። ያነሰ ምስል ይምረጡ።",
   photoInvalid: "ይህ ፋይል ትክክለኛ ምስል አይደለም። ሌላ ፎቶ ይምረጡ።",
   photoUnreadable: "ይህን ምስል ማንበብ አልተቻለም። ሌላ ፎቶ ይምረጡ።",
   duplicatePhone: "ይህ ስልክ ቁጥር ለሌላ አባል ተመዝግቧል።",
@@ -41,5 +41,7 @@ export const api: Messages["api"] = {
   lastAdmin: "GymFlow ቢያንስ አንድ ንቁ አስተዳዳሪ ያስፈልገዋል። መጀመሪያ ሌላ ሠራተኛን አስተዳዳሪ ያድርጉ።",
   lastAdminField: "ይህ የመጨረሻው ንቁ አስተዳዳሪ ነው።",
   lastAdminShort: "GymFlow ቢያንስ አንድ ንቁ አስተዳዳሪ ያስፈልገዋል።",
+  superAdminProtected: "ይህን መለያ መቀየር የሚችለው ዋናው አስተዳዳሪ ብቻ ነው።",
+  superAdminRole: "ዋናው አስተዳዳሪ ሁልጊዜ ንቁ አስተዳዳሪ ሆኖ ይቆያል።",
   chooseRole: "ሚና ይምረጡ።",
 };

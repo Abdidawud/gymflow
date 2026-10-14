@@ -31,34 +31,25 @@ export function memberNumber(memberCode: string): number {
  * Lookup by member ID ("GYM-00124", "124"), phone in any format ("0911 234",
  * "+251911…") or name/email words in any order.
  */
-export function matchesMemberSearch(
-  member: SearchableMember,
-  raw: string | undefined,
-): boolean {
+export function matchesMemberSearch(member: SearchableMember, raw: string | undefined): boolean {
   const query = (raw ?? "").trim().replace(/\s+/g, " ").toLowerCase();
   if (!query) return true;
 
   const code = /^(?:gym)?[\s-]?0*(\d+)$/i.exec(query.replace(/\s/g, ""));
-  if (code && query.startsWith("gym"))
-    return memberNumber(member.memberCode) === Number(code[1]);
+  if (code && query.startsWith("gym")) return memberNumber(member.memberCode) === Number(code[1]);
   if (code && memberNumber(member.memberCode) === Number(code[1])) return true;
 
   const digits = phoneSearchDigits(query);
   if (digits && member.phone.slice(4).includes(digits)) return true;
 
-  const haystack =
-    `${member.firstName} ${member.lastName} ${member.email ?? ""}`.toLowerCase();
+  const haystack = `${member.firstName} ${member.lastName} ${member.email ?? ""}`.toLowerCase();
   return query.split(" ").every((token) => haystack.includes(token));
 }
 
 /** "Active" includes Expiring Soon everywhere (design.md §8, §14). */
-export function matchesStatusFilter(
-  status: MembershipStatus,
-  filter: MembershipStatus | undefined,
-): boolean {
+export function matchesStatusFilter(status: MembershipStatus, filter: MembershipStatus | undefined): boolean {
   if (!filter) return true;
-  if (filter === "ACTIVE")
-    return status === "ACTIVE" || status === "EXPIRING_SOON";
+  if (filter === "ACTIVE") return status === "ACTIVE" || status === "EXPIRING_SOON";
   return status === filter;
 }
 
@@ -67,9 +58,7 @@ export function displayPeriod(state: MembershipState): MembershipPeriod | null {
   return state.current ?? state.next ?? state.last;
 }
 
-export function countStatuses(
-  statuses: Iterable<MembershipStatus>,
-): MembershipCounts {
+export function countStatuses(statuses: Iterable<MembershipStatus>): MembershipCounts {
   const counts: MembershipCounts = {
     all: 0,
     active: 0,
@@ -103,61 +92,39 @@ export function countStatuses(
 }
 
 /** Monitoring order: expiring soonest, recently expired, active by end date, scheduled, unpaid. */
-export function attentionRank(
-  row: Pick<MemberSummary, "membership" | "registrationDate">,
-): [number, string] {
+export function attentionRank(row: Pick<MemberSummary, "membership" | "registrationDate">): [number, string] {
   const m = row.membership;
   switch (m.status) {
     case "EXPIRING_SOON":
       return [0, m.coverageEnd ?? ""];
     case "EXPIRED":
-      return [
-        1,
-        String(99999999 - Number((m.last?.endDate ?? "0").replace(/-/g, ""))),
-      ];
+      return [1, String(99999999 - Number((m.last?.endDate ?? "0").replace(/-/g, "")))];
     case "ACTIVE":
       return [2, m.coverageEnd ?? ""];
     case "SCHEDULED":
       return [3, m.next?.startDate ?? ""];
     case "UNPAID":
-      return [
-        4,
-        String(99999999 - Number(row.registrationDate.replace(/-/g, ""))),
-      ];
+      return [4, String(99999999 - Number(row.registrationDate.replace(/-/g, "")))];
   }
 }
 
 export function compareByAttention(a: MemberSummary, b: MemberSummary): number {
   const [ra, ka] = attentionRank(a);
   const [rb, kb] = attentionRank(b);
-  return (
-    ra - rb || ka.localeCompare(kb) || a.fullName.localeCompare(b.fullName)
-  );
+  return ra - rb || ka.localeCompare(kb) || a.fullName.localeCompare(b.fullName);
 }
 
-const endKey = (row: MemberSummary) =>
-  row.membership.coverageEnd ?? row.membership.last?.endDate ?? "9999-12-31";
+const endKey = (row: MemberSummary) => row.membership.coverageEnd ?? row.membership.last?.endDate ?? "9999-12-31";
 
-const SORTERS: Record<
-  MemberSortField,
-  (a: MemberSummary, b: MemberSummary) => number
-> = {
-  name: (a, b) =>
-    a.fullName.localeCompare(b.fullName) ||
-    a.memberCode.localeCompare(b.memberCode),
+const SORTERS: Record<MemberSortField, (a: MemberSummary, b: MemberSummary) => number> = {
+  name: (a, b) => a.fullName.localeCompare(b.fullName) || a.memberCode.localeCompare(b.memberCode),
   memberCode: (a, b) => a.memberCode.localeCompare(b.memberCode),
-  endDate: (a, b) =>
-    endKey(a).localeCompare(endKey(b)) || a.fullName.localeCompare(b.fullName),
+  endDate: (a, b) => endKey(a).localeCompare(endKey(b)) || a.fullName.localeCompare(b.fullName),
   registrationDate: (a, b) =>
-    a.registrationDate.localeCompare(b.registrationDate) ||
-    a.memberCode.localeCompare(b.memberCode),
+    a.registrationDate.localeCompare(b.registrationDate) || a.memberCode.localeCompare(b.memberCode),
 };
 
-export function sortMembers(
-  rows: MemberSummary[],
-  sort: MemberSortField = "name",
-  order: SortOrder = "asc",
-) {
+export function sortMembers(rows: MemberSummary[], sort: MemberSortField = "name", order: SortOrder = "asc") {
   const direction = order === "desc" ? -1 : 1;
   return [...rows].sort((a, b) => direction * SORTERS[sort](a, b));
 }

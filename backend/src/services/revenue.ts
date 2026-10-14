@@ -11,21 +11,14 @@ import type { Db } from "../db";
 export async function revenueTotals(db: Db, from: DateOnly, to: DateOnly) {
   const row = await db
     .selectFrom("payments")
-    .select([
-      sql<string>`coalesce(sum(amount), 0)::numeric(14, 2)`.as("amount"),
-      sql<string>`count(*)`.as("count"),
-    ])
+    .select([sql<string>`coalesce(sum(amount), 0)::numeric(14, 2)`.as("amount"), sql<string>`count(*)`.as("count")])
     .where("received_date", ">=", from)
     .where("received_date", "<=", to)
     .executeTakeFirstOrThrow();
   return { amount: row.amount, transactions: Number(row.count) };
 }
 
-export async function revenueSeries(
-  db: Db,
-  from: DateOnly,
-  to: DateOnly,
-): Promise<RevenuePoint[]> {
+export async function revenueSeries(db: Db, from: DateOnly, to: DateOnly): Promise<RevenuePoint[]> {
   const result = await sql<{
     date: string;
     amount: string;

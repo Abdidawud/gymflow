@@ -18,6 +18,8 @@ export interface StaffRecord {
   role: Role;
   isActive: boolean;
   mustChangePassword: boolean;
+  /** The gym owner's account (see CurrentAccount.isSuperAdmin). */
+  isSuperAdmin: boolean;
   appearance: Appearance;
   language: Locale;
   lastSignInAt: string | null;

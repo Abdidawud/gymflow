@@ -11,12 +11,7 @@ import { ROLE_PERMISSIONS } from "@gymflow/shared/domain/permissions";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { safeEqual, tokenDigest } from "../lib/crypto";
 import { fail } from "../lib/errors";
-import {
-  clearSessionCookies,
-  CSRF_HEADER,
-  csrfTokenFor,
-  sessionCookieName,
-} from "../services/sessions";
+import { clearSessionCookies, CSRF_HEADER, csrfTokenFor, sessionCookieName } from "../services/sessions";
 import type { Env } from "./context";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -31,20 +26,14 @@ export function checkOrigin(env: Env, request: FastifyRequest): void {
   const { t } = request.ctx;
   const origin = request.headers.origin;
   if (origin) {
-    if (!env.config.allowedOrigins.includes(origin))
-      fail(403, "FORBIDDEN", t("originForbidden"));
+    if (!env.config.allowedOrigins.includes(origin)) fail(403, "FORBIDDEN", t("originForbidden"));
     return;
   }
   // No Origin header (older browsers, server-to-server): reject only known cross-site requests.
-  if (request.headers["sec-fetch-site"] === "cross-site")
-    fail(403, "FORBIDDEN", t("originForbidden"));
+  if (request.headers["sec-fetch-site"] === "cross-site") fail(403, "FORBIDDEN", t("originForbidden"));
 }
 
-export async function authenticate(
-  env: Env,
-  request: FastifyRequest,
-  reply: FastifyReply,
-): Promise<void> {
+export async function authenticate(env: Env, request: FastifyRequest, reply: FastifyReply): Promise<void> {
   const { t } = request.ctx;
   const mode = request.routeOptions.config.auth ?? "session";
   const token = request.cookies[sessionCookieName(env)];
@@ -63,6 +52,7 @@ export async function authenticate(
       "staff.role",
       "staff.is_active",
       "staff.must_change_password",
+      "staff.is_super_admin",
       "staff.appearance",
       "staff.language",
     ])
@@ -76,31 +66,19 @@ export async function authenticate(
 
   const now = Date.now();
   const idleLimit = env.config.session.idleMinutes * 60_000;
-  if (
-    row.expires_at.getTime() <= now ||
-    now - row.last_seen_at.getTime() >= idleLimit
-  ) {
-    await env.db
-      .deleteFrom("sessions")
-      .where("id", "=", row.session_id)
-      .execute();
+  if (row.expires_at.getTime() <= now || now - row.last_seen_at.getTime() >= idleLimit) {
+    await env.db.deleteFrom("sessions").where("id", "=", row.session_id).execute();
     clearSessionCookies(env, reply);
     fail(401, "SESSION_EXPIRED", t("sessionExpired"));
   }
   if (!row.is_active) {
-    await env.db
-      .deleteFrom("sessions")
-      .where("staff_id", "=", row.id)
-      .execute();
+    await env.db.deleteFrom("sessions").where("staff_id", "=", row.id).execute();
     clearSessionCookies(env, reply);
     fail(401, "ACCOUNT_DEACTIVATED", t("deactivated"));
   }
   if (!isSafeMethod(request.method)) {
     const sent = request.headers[CSRF_HEADER];
-    if (
-      typeof sent !== "string" ||
-      !safeEqual(sent, csrfTokenFor(env, token))
-    ) {
+    if (typeof sent !== "string" || !safeEqual(sent, csrfTokenFor(env, token))) {
       fail(403, "FORBIDDEN", t("csrf"));
     }
   }
@@ -125,11 +103,11 @@ export async function authenticate(
     appearance: row.appearance,
     language: row.language,
     mustChangePassword: row.must_change_password,
+    isSuperAdmin: row.is_super_admin,
     permissions,
   };
   request.ctx.sessionId = row.session_id;
 
   const required = request.routeOptions.config.permission;
-  if (required && !permissions.includes(required))
-    fail(403, "FORBIDDEN", t("forbidden"));
+  if (required && !permissions.includes(required)) fail(403, "FORBIDDEN", t("forbidden"));
 }

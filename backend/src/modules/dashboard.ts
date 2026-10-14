@@ -9,11 +9,7 @@ import { startOfEthiopianMonth } from "@gymflow/shared/domain/ethiopian-calendar
 import { countStatuses } from "@gymflow/shared/domain/member-list";
 import type { FastifyInstance } from "fastify";
 import { can, type Env } from "../http/context";
-import {
-  loadRelevantPeriods,
-  memberSummaryDto,
-  selectMembers,
-} from "../services/members";
+import { loadRelevantPeriods, memberSummaryDto, selectMembers } from "../services/members";
 import { paymentSummaryDto, selectPayments } from "../services/payments";
 import { revenueSeries, revenueTotals } from "../services/revenue";
 import { hasEnabledPlans, readSettings } from "../services/settings";
@@ -26,11 +22,7 @@ export async function dashboardRoutes(app: FastifyInstance, env: Env) {
       readSettings(env.db),
       hasEnabledPlans(env.db),
       selectMembers(env.db).where("members.is_archived", "=", false).execute(),
-      selectPayments(env.db)
-        .orderBy("p.created_at", "desc")
-        .orderBy("p.id")
-        .limit(5)
-        .execute(),
+      selectPayments(env.db).orderBy("p.created_at", "desc").orderBy("p.id").limit(5).execute(),
     ]);
     const periods = await loadRelevantPeriods(
       env.db,
@@ -38,13 +30,7 @@ export async function dashboardRoutes(app: FastifyInstance, env: Env) {
       members.map((m) => m.id),
     );
     const rows = members.map((m) =>
-      memberSummaryDto(
-        env,
-        m,
-        periods.get(m.id) ?? [],
-        today,
-        settings.expirationWarningDays,
-      ),
+      memberSummaryDto(env, m, periods.get(m.id) ?? [], today, settings.expirationWarningDays),
     );
 
     let revenue: Dashboard["revenue"] = null;
@@ -70,8 +56,7 @@ export async function dashboardRoutes(app: FastifyInstance, env: Env) {
         .filter((row) => row.membership.status === "EXPIRING_SOON")
         .sort(
           (a, b) =>
-            (a.membership.remainingDays ?? 0) -
-              (b.membership.remainingDays ?? 0) ||
+            (a.membership.remainingDays ?? 0) - (b.membership.remainingDays ?? 0) ||
             a.fullName.localeCompare(b.fullName),
         )
         .slice(0, 5),

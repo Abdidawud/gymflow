@@ -71,11 +71,11 @@ export const members: Messages["members"] = {
   photo: {
     title: "የመገለጫ ፎቶ",
     optional: "(አማራጭ)",
-    hint: "JPEG፣ PNG ወይም WebP፣ እስከ 5 MB። በመቀበያው አባሉን ለመለየት ያገለግላል፤ ፎቶ ከሌለ የስሙ የመጀመሪያ ፊደላት ይታያሉ።",
+    hint: "JPEG፣ PNG ወይም WebP፣ እስከ 15 MB። በመቀበያው አባሉን ለመለየት ያገለግላል፤ ፎቶ ከሌለ የስሙ የመጀመሪያ ፊደላት ይታያሉ።",
     upload: "ፎቶ ስቀል",
     replace: "ፎቶ ቀይር",
     type: "JPEG፣ PNG ወይም WebP ምስል ይምረጡ።",
-    size: "ፎቶው ከ5 MB መብለጥ የለበትም።",
+    size: "ፎቶው ከ15 MB መብለጥ የለበትም።",
     preview: "የአባሉ ፎቶ ቅድመ እይታ",
   },
   form: {

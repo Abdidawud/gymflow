@@ -16,7 +16,7 @@ export const settings: Messages["settings"] = {
     logo: "አርማ",
     logoOptional: "(አማራጭ)",
     logoAlt: "የጂም አርማ",
-    logoHint: "በሚታተሙ ደረሰኞች ላይ ይታያል። JPEG፣ PNG ወይም WebP፣ እስከ 5 ሜባ።",
+    logoHint: "በሚታተሙ ደረሰኞች ላይ ይታያል። JPEG፣ PNG ወይም WebP፣ እስከ 15 ሜባ።",
     uploadLabel: "የጂም አርማ ስቀል",
     uploadLogo: "አርማ ስቀል",
     replaceLogo: "አርማ ቀይር",

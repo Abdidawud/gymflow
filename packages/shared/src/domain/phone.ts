@@ -11,20 +11,15 @@ export type PhoneKind = "mobile" | "any";
  * valid Ethiopian number. Mobile numbers start with 9 (Ethio Telecom) or
  * 7 (Safaricom) after the country code.
  */
-export function normalizeEthiopianPhone(
-  input: string,
-  kind: PhoneKind = "mobile",
-): string | null {
+export function normalizeEthiopianPhone(input: string, kind: PhoneKind = "mobile"): string | null {
   const compact = input.replace(/[\s\-().]/g, "");
   if (!/^\+?\d+$/.test(compact)) return null;
 
   let national: string;
   if (compact.startsWith("+251")) national = compact.slice(4);
   else if (compact.startsWith("00251")) national = compact.slice(5);
-  else if (compact.startsWith("251") && compact.length === 12)
-    national = compact.slice(3);
-  else if (compact.startsWith("0") && compact.length === 10)
-    national = compact.slice(1);
+  else if (compact.startsWith("251") && compact.length === 12) national = compact.slice(3);
+  else if (compact.startsWith("0") && compact.length === 10) national = compact.slice(1);
   else if (compact.length === 9) national = compact;
   else return null;
 

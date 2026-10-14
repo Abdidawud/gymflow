@@ -31,6 +31,8 @@ export const labels: Messages["labels"] = {
   periodStatus: { CURRENT: "የአሁኑ", UPCOMING: "የታቀደ", ENDED: "ያበቃ" },
   gender: { MALE: "ወንድ", FEMALE: "ሴት", unspecified: "አልተገለጸም" },
   roles: {
+    /** The gym owner's account (always an administrator). */
+    superAdmin: "ዋና አስተዳዳሪ",
     ADMINISTRATOR: {
       label: "አስተዳዳሪ",
       description: "ዕቅዶችን፣ ሪፖርቶችን፣ ሠራተኞችንና የጂም ቅንብሮችን ጨምሮ ሙሉ መዳረሻ።",

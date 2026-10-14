@@ -42,12 +42,7 @@ export async function createSession(env: Env, db: Db | Tx, staffId: string) {
   return { token, expiresAt };
 }
 
-export function setSessionCookies(
-  env: Env,
-  reply: FastifyReply,
-  token: string,
-  expiresAt: Date,
-): void {
+export function setSessionCookies(env: Env, reply: FastifyReply, token: string, expiresAt: Date): void {
   const common = {
     path: "/",
     secure: env.config.cookieSecure,
@@ -72,11 +67,7 @@ export function clearSessionCookies(env: Env, reply: FastifyReply): void {
 }
 
 /** Ends every session of a staff member, optionally keeping the current one. */
-export async function revokeSessions(
-  db: Db | Tx,
-  staffId: string,
-  keepSessionId?: string | null,
-): Promise<void> {
+export async function revokeSessions(db: Db | Tx, staffId: string, keepSessionId?: string | null): Promise<void> {
   let query = db.deleteFrom("sessions").where("staff_id", "=", staffId);
   if (keepSessionId) query = query.where("id", "!=", keepSessionId);
   await query.execute();

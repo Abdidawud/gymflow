@@ -7,22 +7,14 @@
  */
 
 import type { ColumnType, Generated } from "kysely";
-import type {
-  Appearance,
-  Gender,
-  PaymentMethod,
-} from "@gymflow/shared/api/types";
+import type { Appearance, Gender, PaymentMethod } from "@gymflow/shared/api/types";
 import type { DateOnly } from "@gymflow/shared/domain/dates";
 import type { Money } from "@gymflow/shared/domain/money";
 import type { Role } from "@gymflow/shared/domain/permissions";
 import type { Locale } from "@gymflow/shared/i18n/locales";
 
 type Timestamp = ColumnType<Date, Date | string, Date | string>;
-type DefaultTimestamp = ColumnType<
-  Date,
-  Date | string | undefined,
-  Date | string
->;
+type DefaultTimestamp = ColumnType<Date, Date | string | undefined, Date | string>;
 
 export interface StaffTable {
   id: Generated<string>;
@@ -32,6 +24,8 @@ export interface StaffTable {
   role: Role;
   is_active: Generated<boolean>;
   must_change_password: Generated<boolean>;
+  /** The gym owner's account: always an active administrator. */
+  is_super_admin: Generated<boolean>;
   appearance: Generated<Appearance>;
   language: Generated<Locale>;
   last_sign_in_at: Timestamp | null;
@@ -174,6 +168,13 @@ export interface EmailOutboxTable {
   created_at: DefaultTimestamp;
 }
 
+export interface StoredFilesTable {
+  key: string;
+  content_type: "image/jpeg" | "image/png";
+  data: Buffer;
+  created_at: DefaultTimestamp;
+}
+
 export interface SchemaMigrationsTable {
   version: string;
   checksum: string;
@@ -193,5 +194,6 @@ export interface Database {
   idempotency_keys: IdempotencyKeysTable;
   audit_events: AuditEventsTable;
   email_outbox: EmailOutboxTable;
+  stored_files: StoredFilesTable;
   schema_migrations: SchemaMigrationsTable;
 }

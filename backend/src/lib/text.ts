@@ -8,9 +8,7 @@ export function clean(value: string | null | undefined): string | null {
 }
 
 /** Trims but keeps line breaks (notes, descriptions); empty becomes null. */
-export function cleanMultiline(
-  value: string | null | undefined,
-): string | null {
+export function cleanMultiline(value: string | null | undefined): string | null {
   if (value === null || value === undefined) return null;
   const trimmed = value.trim().replace(/\r\n/g, "\n");
   return trimmed.length > 0 ? trimmed : null;

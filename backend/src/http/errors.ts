@@ -6,35 +6,21 @@
  */
 
 import type { ApiErrorBody } from "@gymflow/shared/api/errors";
-import type {
-  FastifyError,
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-} from "fastify";
+import type { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { isPgError, PG } from "../db";
 import { AppError } from "../lib/errors";
 import { negotiateLocale, translator, type Translate } from "../lib/i18n";
 
 function translate(request: FastifyRequest): Translate {
-  return (
-    request.ctx?.t ??
-    translator(negotiateLocale(request.headers["accept-language"]))
-  );
+  return request.ctx?.t ?? translator(negotiateLocale(request.headers["accept-language"]));
 }
 
-function send(
-  reply: FastifyReply,
-  request: FastifyRequest,
-  error: AppError,
-): void {
+function send(reply: FastifyReply, request: FastifyRequest, error: AppError): void {
   const body: ApiErrorBody = {
     error: {
       code: error.code,
       message: error.message,
-      ...(error.extra.fieldErrors
-        ? { fieldErrors: error.extra.fieldErrors }
-        : {}),
+      ...(error.extra.fieldErrors ? { fieldErrors: error.extra.fieldErrors } : {}),
       ...(error.extra.details ? { details: error.extra.details } : {}),
       requestId: String(request.id),
     },
@@ -46,11 +32,11 @@ function send(
 /** Database constraint violations that slipped past the service checks (e.g. a race). */
 function fromDatabase(error: unknown, t: Translate): AppError | null {
   if (!isPgError(error)) return null;
-  if (
-    error.code === PG.EXCLUSION_VIOLATION &&
-    error.constraint === "memberships_no_overlap"
-  ) {
+  if (error.code === PG.EXCLUSION_VIOLATION && error.constraint === "memberships_no_overlap") {
     return new AppError(409, "STALE_PREVIEW", t("previewChanged"));
+  }
+  if (error.code === PG.CHECK_VIOLATION && error.constraint === "staff_super_admin_active") {
+    return new AppError(409, "LAST_ADMINISTRATOR", t("superAdminRole"));
   }
   if (error.code === PG.UNIQUE_VIOLATION) {
     switch (error.constraint) {
@@ -78,38 +64,18 @@ export function registerErrorHandling(app: FastifyInstance): void {
 
     const known = fromDatabase(error, t);
     if (known) {
-      request.log.warn(
-        { err: error },
-        "constraint violation mapped to %s",
-        known.code,
-      );
+      request.log.warn({ err: error }, "constraint violation mapped to %s", known.code);
       return send(reply, request, known);
     }
 
     const status = (error as FastifyError).statusCode;
-    if (
-      status === 413 ||
-      (error as FastifyError).code === "FST_REQ_FILE_TOO_LARGE"
-    ) {
-      return send(
-        reply,
-        request,
-        new AppError(422, "VALIDATION_FAILED", t("payloadTooLarge")),
-      );
+    if (status === 413 || (error as FastifyError).code === "FST_REQ_FILE_TOO_LARGE") {
+      return send(reply, request, new AppError(422, "VALIDATION_FAILED", t("payloadTooLarge")));
     }
-    if (status === 429)
-      return send(
-        reply,
-        request,
-        new AppError(429, "RATE_LIMITED", t("tooManyRequests")),
-      );
+    if (status === 429) return send(reply, request, new AppError(429, "RATE_LIMITED", t("tooManyRequests")));
     if (status && status >= 400 && status < 500) {
       // Malformed JSON, wrong content type, missing multipart boundary…
-      return send(
-        reply,
-        request,
-        new AppError(400, "VALIDATION_FAILED", t("malformed")),
-      );
+      return send(reply, request, new AppError(400, "VALIDATION_FAILED", t("malformed")));
     }
 
     request.log.error({ err: error }, "unhandled error");
@@ -117,10 +83,6 @@ export function registerErrorHandling(app: FastifyInstance): void {
   });
 
   app.setNotFoundHandler((request, reply) => {
-    send(
-      reply,
-      request,
-      new AppError(404, "NOT_FOUND", translate(request)("routeNotFound")),
-    );
+    send(reply, request, new AppError(404, "NOT_FOUND", translate(request)("routeNotFound")));
   });
 }

@@ -18,10 +18,7 @@ export interface OutgoingEmail {
   expiresAt: Date;
 }
 
-export async function enqueueEmail(
-  db: Db | Tx,
-  email: OutgoingEmail,
-): Promise<void> {
+export async function enqueueEmail(db: Db | Tx, email: OutgoingEmail): Promise<void> {
   await db
     .insertInto("email_outbox")
     .values({
@@ -34,18 +31,10 @@ export async function enqueueEmail(
 }
 
 export interface MailTransport {
-  send(message: {
-    from: string;
-    to: string;
-    subject: string;
-    text: string;
-  }): Promise<void>;
+  send(message: { from: string; to: string; subject: string; text: string }): Promise<void>;
 }
 
-export function createMailTransport(
-  config: Config,
-  log: FastifyBaseLogger,
-): MailTransport {
+export function createMailTransport(config: Config, log: FastifyBaseLogger): MailTransport {
   switch (config.mail.transport) {
     case "smtp": {
       const transporter = nodemailer.createTransport(config.mail.smtpUrl!);
@@ -68,10 +57,7 @@ export function createMailTransport(
     case "disabled":
       return {
         async send(message) {
-          log.warn(
-            { mail: { to: message.to, subject: message.subject } },
-            "email dropped (MAIL_TRANSPORT=disabled)",
-          );
+          log.warn({ mail: { to: message.to, subject: message.subject } }, "email dropped (MAIL_TRANSPORT=disabled)");
         },
       };
   }
@@ -80,12 +66,7 @@ export function createMailTransport(
 const MAX_ATTEMPTS = 6;
 
 /** Delivers due messages once; returns how many were sent. */
-export async function deliverOutbox(
-  db: Db,
-  transport: MailTransport,
-  from: string,
-  log: FastifyBaseLogger,
-) {
+export async function deliverOutbox(db: Db, transport: MailTransport, from: string, log: FastifyBaseLogger) {
   return db.transaction().execute(async (tx) => {
     const due = await tx
       .selectFrom("email_outbox")
@@ -121,18 +102,13 @@ export async function deliverOutbox(
         sent++;
       } catch (error) {
         const attempts = email.attempts + 1;
-        log.warn(
-          { err: error, outboxId: email.id, attempts },
-          "email delivery failed",
-        );
+        log.warn({ err: error, outboxId: email.id, attempts }, "email delivery failed");
         await tx
           .updateTable("email_outbox")
           .set({
             attempts,
             last_error: String((error as Error).message).slice(0, 500),
-            send_after: new Date(
-              Date.now() + Math.min(2 ** attempts, 60) * 60_000,
-            ),
+            send_after: new Date(Date.now() + Math.min(2 ** attempts, 60) * 60_000),
           })
           .where("id", "=", email.id)
           .execute();

@@ -12,7 +12,7 @@ export const api = {
   validDates: "Choose valid dates.",
   validOption: "Choose a valid option.",
   photoType: "Choose a JPEG, PNG or WebP image.",
-  photoSize: "Photos must be 5 MB or smaller.",
+  photoSize: "This image is too large. Choose a smaller one.",
   photoInvalid: "This file isn't a valid image. Choose another photo.",
   photoUnreadable: "This image couldn't be read. Choose another photo.",
   duplicatePhone: "This phone number is already assigned to another member.",
@@ -40,5 +40,7 @@ export const api = {
   lastAdmin: "GymFlow needs at least one active administrator. Promote another staff member first.",
   lastAdminField: "This is the last active administrator.",
   lastAdminShort: "GymFlow needs at least one active administrator.",
+  superAdminProtected: "Only the super administrator can change this account.",
+  superAdminRole: "The super administrator always stays an active administrator.",
   chooseRole: "Choose a role.",
 } as const;

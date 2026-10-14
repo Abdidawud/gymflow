@@ -22,9 +22,7 @@ export function createClock(fixedToday: DateOnly | null): Clock {
   }
   return {
     now() {
-      const timeOfDay = new Date(Date.now() + ADDIS_OFFSET_MS)
-        .toISOString()
-        .slice(11, 23);
+      const timeOfDay = new Date(Date.now() + ADDIS_OFFSET_MS).toISOString().slice(11, 23);
       return new Date(`${fixedToday}T${timeOfDay}+03:00`);
     },
     today: () => fixedToday,

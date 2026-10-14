@@ -12,14 +12,10 @@ export function loadTestEnv(): {
   const appUrl = process.env.TEST_DATABASE_URL;
   const ownerUrl = process.env.TEST_MIGRATION_DATABASE_URL ?? appUrl;
   if (!appUrl || !ownerUrl) {
-    throw new Error(
-      "Set TEST_DATABASE_URL (see backend/.env.test.example) to run the integration tests.",
-    );
+    throw new Error("Set TEST_DATABASE_URL (see backend/.env.test.example) to run the integration tests.");
   }
   if (!/test/i.test(new URL(ownerUrl).pathname)) {
-    throw new Error(
-      "Refusing to run: the test database name must contain 'test' (its schema is dropped).",
-    );
+    throw new Error("Refusing to run: the test database name must contain 'test' (its schema is dropped).");
   }
   return { appUrl, ownerUrl, appRole: process.env.DATABASE_APP_ROLE };
 }

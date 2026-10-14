@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  ADMIN,
-  DEACTIVATED,
-  RECEPTIONIST,
-  TEMPORARY,
-  useHarness,
-} from "./helpers";
+import { ADMIN, DEACTIVATED, RECEPTIONIST, TEMPORARY, useHarness } from "./helpers";
 
 const h = useHarness();
 
@@ -36,24 +30,20 @@ describe("sign-in", () => {
   });
 
   it("answers wrong credentials generically, in the requested language", async () => {
-    const en = await h
-      .client("en")
-      .post("/auth/login", {
-        email: ADMIN.email,
-        password: "wrong-password-1",
-      });
+    const en = await h.client("en").post("/auth/login", {
+      email: ADMIN.email,
+      password: "wrong-password-1",
+    });
     expect(en.status).toBe(401);
     expect(en.body.error).toMatchObject({
       code: "INVALID_CREDENTIALS",
       message: "Email or password is incorrect.",
     });
     expect(en.body.error.requestId).toBeTruthy();
-    const unknown = await h
-      .client("am")
-      .post("/auth/login", {
-        email: "nobody@example.com",
-        password: "whatever-1",
-      });
+    const unknown = await h.client("am").post("/auth/login", {
+      email: "nobody@example.com",
+      password: "whatever-1",
+    });
     expect(unknown.body.error).toMatchObject({
       code: "INVALID_CREDENTIALS",
       message: "ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።",
@@ -63,33 +53,24 @@ describe("sign-in", () => {
   it("locks an email after repeated failures", async () => {
     const email = "lockout-test@example.com";
     for (let i = 0; i < 5; i++) {
-      expect(
-        (await h.client().post("/auth/login", { email, password: `nope-${i}` }))
-          .status,
-      ).toBe(401);
+      expect((await h.client().post("/auth/login", { email, password: `nope-${i}` })).status).toBe(401);
     }
-    const res = await h
-      .client()
-      .post("/auth/login", { email, password: "nope-again" });
+    const res = await h.client().post("/auth/login", { email, password: "nope-again" });
     expect(res.status).toBe(429);
     expect(res.body.error.code).toBe("RATE_LIMITED");
   });
 
   it("refuses deactivated accounts", async () => {
-    const res = await h
-      .client()
-      .post("/auth/login", {
-        email: DEACTIVATED.email,
-        password: DEACTIVATED.password,
-      });
+    const res = await h.client().post("/auth/login", {
+      email: DEACTIVATED.email,
+      password: DEACTIVATED.password,
+    });
     expect(res.status).toBe(401);
     expect(res.body.error.code).toBe("ACCOUNT_DEACTIVATED");
   });
 
   it("rejects unknown fields and malformed bodies", async () => {
-    const extra = await h
-      .client()
-      .post("/auth/login", { ...ADMIN, remember: true });
+    const extra = await h.client().post("/auth/login", { ...ADMIN, remember: true });
     expect(extra.status).toBe(400);
     expect(extra.body.error.fieldErrors).toHaveProperty("remember");
     const garbled = await h.client().request("POST", "/auth/login", {
@@ -144,19 +125,12 @@ describe("sessions", () => {
       headers: { origin: "https://evil.example" },
     });
     expect(foreign.status).toBe(403);
-    expect(
-      (await client.patch("/account/preferences", { appearance: "DARK" }))
-        .status,
-    ).toBe(200);
+    expect((await client.patch("/account/preferences", { appearance: "DARK" })).status).toBe(200);
   });
 
   it("denies administrator endpoints to receptionists even if the UI is bypassed", async () => {
     const client = await h.signIn(RECEPTIONIST);
-    for (const url of [
-      "/reports/revenue?from=2026-10-01&to=2026-10-07",
-      "/users",
-      "/settings",
-    ]) {
+    for (const url of ["/reports/revenue?from=2026-10-01&to=2026-10-07", "/users", "/settings"]) {
       const res = await client.get(url);
       expect(res.status, url).toBe(403);
       expect(res.body.error.code).toBe("FORBIDDEN");
@@ -238,33 +212,30 @@ describe("password recovery", () => {
 
   it("answers the same whether or not the account exists", async () => {
     await h.reset();
-    const before = await h.owner
-      .selectFrom("email_outbox")
-      .select("id")
-      .execute();
-    expect(
-      (
-        await h
-          .client()
-          .post("/auth/forgot-password", { email: "nobody@example.com" })
-      ).status,
-    ).toBe(204);
-    expect(
-      await h.owner.selectFrom("email_outbox").select("id").execute(),
-    ).toHaveLength(before.length);
-    expect(
-      (await h.client().post("/auth/forgot-password", { email: ADMIN.email }))
-        .status,
-    ).toBe(204);
+    const before = await h.owner.selectFrom("email_outbox").select("id").execute();
+    expect((await h.client().post("/auth/forgot-password", { email: "nobody@example.com" })).status).toBe(204);
+    expect(await h.owner.selectFrom("email_outbox").select("id").execute()).toHaveLength(before.length);
+    expect((await h.client().post("/auth/forgot-password", { email: ADMIN.email })).status).toBe(204);
     const { mail } = await latestResetLink();
     // The email is in the staff member's own language (Amharic for the demo staff).
     expect(mail).toMatchObject({
       recipient: ADMIN.email,
       subject: "የGymFlow የይለፍ ቃልዎን ይቀይሩ",
     });
-    expect(mail.body_text).toContain(
-      "http://localhost:3000/reset-password?token=",
-    );
+    expect(mail.body_text).toContain("http://localhost:3000/reset-password?token=");
+  });
+
+  it("delivers the email right after the response and erases its body", async () => {
+    await h.reset();
+    h.sentMail.length = 0;
+    await h.client().post("/auth/forgot-password", { email: RECEPTIONIST.email });
+    await h.runDeferred();
+    expect(h.sentMail).toHaveLength(1);
+    expect(h.sentMail[0]).toMatchObject({ to: RECEPTIONIST.email });
+    expect(h.sentMail[0].text).toContain("/reset-password?token=");
+    const row = await h.owner.selectFrom("email_outbox").select(["sent_at", "body_text"]).executeTakeFirstOrThrow();
+    expect(row.sent_at).not.toBeNull();
+    expect(row.body_text).toBeNull();
   });
 
   it("resets once, revokes sessions and stores only a digest of the token", async () => {
@@ -272,40 +243,29 @@ describe("password recovery", () => {
     const signedIn = await h.signIn(ADMIN);
     await h.client().post("/auth/forgot-password", { email: ADMIN.email });
     const { token } = await latestResetLink();
-    const stored = await h.owner
-      .selectFrom("password_resets")
-      .select("token_hash")
-      .executeTakeFirstOrThrow();
+    const stored = await h.owner.selectFrom("password_resets").select("token_hash").executeTakeFirstOrThrow();
     expect(stored.token_hash.toString("base64url")).not.toBe(token);
 
-    const reset = await h
-      .client()
-      .post("/auth/reset-password", { token, newPassword: "Recovered#2026" });
+    const reset = await h.client().post("/auth/reset-password", { token, newPassword: "Recovered#2026" });
     expect(reset.status).toBe(204);
     expect((await signedIn.get("/auth/me")).status).toBe(401);
     expect(
       (
-        await h
-          .client()
-          .post("/auth/login", {
-            email: ADMIN.email,
-            password: "Recovered#2026",
-          })
+        await h.client().post("/auth/login", {
+          email: ADMIN.email,
+          password: "Recovered#2026",
+        })
       ).status,
     ).toBe(200);
 
-    const reused = await h
-      .client()
-      .post("/auth/reset-password", { token, newPassword: "Another#2026" });
+    const reused = await h.client().post("/auth/reset-password", { token, newPassword: "Another#2026" });
     expect(reused.status).toBe(400);
     expect(reused.body.error.code).toBe("INVALID_RESET_TOKEN");
   });
 
   it("rejects expired links without changing the password", async () => {
     await h.reset();
-    await h
-      .client()
-      .post("/auth/forgot-password", { email: RECEPTIONIST.email });
+    await h.client().post("/auth/forgot-password", { email: RECEPTIONIST.email });
     const { token } = await latestResetLink();
     await h.owner
       .updateTable("password_resets")
@@ -314,18 +274,14 @@ describe("password recovery", () => {
         created_at: new Date(Date.now() - 60_000),
       })
       .execute();
-    const res = await h
-      .client()
-      .post("/auth/reset-password", { token, newPassword: "Expired#2026" });
+    const res = await h.client().post("/auth/reset-password", { token, newPassword: "Expired#2026" });
     expect(res.body.error.code).toBe("INVALID_RESET_TOKEN");
     expect(
       (
-        await h
-          .client()
-          .post("/auth/login", {
-            email: RECEPTIONIST.email,
-            password: RECEPTIONIST.password,
-          })
+        await h.client().post("/auth/login", {
+          email: RECEPTIONIST.email,
+          password: RECEPTIONIST.password,
+        })
       ).status,
     ).toBe(200);
   });

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Backs up the GymFlow database (pg_dump custom format) and private file storage
-# (member photos, logo) into a timestamped folder. Run daily from cron/systemd;
-# keep copies off the server. Test restores regularly (scripts/restore.sh).
+# Backs up the GymFlow database (pg_dump custom format) into a timestamped
+# folder. Member photos and the gym logo are stored in the database, so the
+# dump contains everything. Run daily from cron/systemd; keep copies off the
+# server. Test restores regularly (scripts/restore.sh). STORAGE_DIR is only
+# for older installations that kept files on disk.
 #
-#   DATABASE_URL=postgres://owner:…@host/gymflow STORAGE_DIR=/srv/gymflow/storage \
-#     scripts/backup.sh /var/backups/gymflow
+#   DATABASE_URL=postgres://owner:…@host/gymflow scripts/backup.sh /var/backups/gymflow
 set -euo pipefail
 
 DEST_ROOT="${1:?Usage: backup.sh <destination-folder>}"

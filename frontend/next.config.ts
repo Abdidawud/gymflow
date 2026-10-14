@@ -3,9 +3,9 @@ import type { NextConfig } from "next";
 const isProduction = process.env.NODE_ENV === "production";
 
 /**
- * In http mode the web app forwards /api/v1 to the GymFlow API, so the browser
- * talks to a single origin: session cookies stay first-party and no CORS is
- * needed. Set at build time, e.g. API_PROXY_TARGET=http://127.0.0.1:4000.
+ * Optional: forward /api/v1 to a separately running API server instead of the
+ * one built into this app (src/app/api/v1/[...path]/route.ts). Set at build
+ * time, e.g. API_PROXY_TARGET=http://127.0.0.1:4000.
  */
 const apiProxyTarget = process.env.API_PROXY_TARGET?.replace(/\/$/, "");
 
@@ -42,6 +42,16 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The API (backend/) runs inside the web app's route handler; its Node.js server
+  // libraries are loaded at runtime instead of bundled (pg, sharp and argon2 already are by default).
+  serverExternalPackages: [
+    "fastify",
+    "@fastify/cookie",
+    "@fastify/cors",
+    "@fastify/multipart",
+    "@fastify/rate-limit",
+    "nodemailer",
+  ],
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,

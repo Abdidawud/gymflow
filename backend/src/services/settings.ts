@@ -19,10 +19,7 @@ export interface SettingsRow {
  * Reads the singleton settings row. Inside a payment transaction it is read
  * FOR SHARE so a concurrent settings change waits until the payment commits.
  */
-export async function readSettings(
-  db: Db | Tx,
-  options: { lock?: "share" | "update" } = {},
-): Promise<SettingsRow> {
+export async function readSettings(db: Db | Tx, options: { lock?: "share" | "update" } = {}): Promise<SettingsRow> {
   let query = db
     .selectFrom("gym_settings")
     .select([
@@ -49,20 +46,13 @@ export async function readSettings(
     logoUpdatedAt: row.logo_updated_at,
     expirationWarningDays: row.expiration_warning_days,
     // Canonical order, whatever order they were saved in.
-    enabledPaymentMethods: PAYMENT_METHODS.filter((m) =>
-      row.methods.includes(m),
-    ),
+    enabledPaymentMethods: PAYMENT_METHODS.filter((m) => row.methods.includes(m)),
     updatedAt: row.updated_at,
     updatedBy: row.updated_by,
   };
 }
 
 export async function hasEnabledPlans(db: Db | Tx): Promise<boolean> {
-  const row = await db
-    .selectFrom("plans")
-    .select("id")
-    .where("is_enabled", "=", true)
-    .limit(1)
-    .executeTakeFirst();
+  const row = await db.selectFrom("plans").select("id").where("is_enabled", "=", true).limit(1).executeTakeFirst();
   return Boolean(row);
 }

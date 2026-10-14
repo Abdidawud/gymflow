@@ -14,7 +14,7 @@ export const settings = {
     logo: "Logo",
     logoOptional: "(optional)",
     logoAlt: "Gym logo",
-    logoHint: "Shown on printed receipts. JPEG, PNG or WebP up to 5 MB.",
+    logoHint: "Shown on printed receipts. JPEG, PNG or WebP up to 15 MB.",
     uploadLabel: "Upload gym logo",
     uploadLogo: "Upload logo",
     replaceLogo: "Replace logo",

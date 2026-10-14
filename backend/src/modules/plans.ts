@@ -40,11 +40,7 @@ type PlanRow = {
   updated_at: Date;
 };
 
-async function planDtos(
-  env: Env,
-  db: Db | Tx,
-  plans: PlanRow[],
-): Promise<Plan[]> {
+async function planDtos(env: Env, db: Db | Tx, plans: PlanRow[]): Promise<Plan[]> {
   if (plans.length === 0) return [];
   const today = env.clock.today();
   const ids = plans.map((p) => p.id);
@@ -53,10 +49,7 @@ async function planDtos(
     db
       .selectFrom("memberships as m")
       .innerJoin("members as mb", "mb.id", "m.member_id")
-      .select([
-        "m.plan_id",
-        (eb) => eb.fn.count<string>("m.member_id").distinct().as("count"),
-      ])
+      .select(["m.plan_id", (eb) => eb.fn.count<string>("m.member_id").distinct().as("count")])
       .where("mb.is_archived", "=", false)
       .where("m.start_date", "<=", today)
       .where("m.end_date", ">=", today)
@@ -70,9 +63,7 @@ async function planDtos(
       .where(sql<boolean>`plan_id = any(${ids}::uuid[])`)
       .execute(),
   ]);
-  const activeBy = new Map(
-    active.map((row) => [row.plan_id, Number(row.count)]),
-  );
+  const activeBy = new Map(active.map((row) => [row.plan_id, Number(row.count)]));
   const referencedSet = new Set(referenced.map((row) => row.plan_id));
   return plans.map((plan) => ({
     id: plan.id,
@@ -88,12 +79,7 @@ async function planDtos(
   }));
 }
 
-async function validatePlan(
-  db: Db | Tx,
-  ctx: RequestContext,
-  input: z.infer<typeof PlanBody>,
-  excludeId?: string,
-) {
+async function validatePlan(db: Db | Tx, ctx: RequestContext, input: z.infer<typeof PlanBody>, excludeId?: string) {
   const { t } = ctx;
   const errors = new FieldErrors(t);
   const name = clean(input.name);
@@ -102,11 +88,9 @@ async function validatePlan(
   const price = parsePriceInput(String(input.price ?? ""));
   if (!price || Number(price) >= 1e10) errors.add("price", t("planPrice"));
   const duration = Number(input.durationDays);
-  if (!Number.isInteger(duration) || duration < 1 || duration > 3650)
-    errors.add("durationDays", t("planDuration"));
+  if (!Number.isInteger(duration) || duration < 1 || duration > 3650) errors.add("durationDays", t("planDuration"));
   const description = cleanMultiline(input.description);
-  if (description && description.length > 280)
-    errors.add("description", t("maxLength", { max: 280 }));
+  if (description && description.length > 280) errors.add("description", t("maxLength", { max: 280 }));
   errors.throwIfAny();
 
   let duplicate = db
@@ -131,24 +115,10 @@ async function validatePlan(
 function selectPlans(db: Db | Tx) {
   return db
     .selectFrom("plans")
-    .select([
-      "id",
-      "name",
-      "price",
-      "duration_days",
-      "description",
-      "is_enabled",
-      "created_at",
-      "updated_at",
-    ]);
+    .select(["id", "name", "price", "duration_days", "description", "is_enabled", "created_at", "updated_at"]);
 }
 
-async function getPlan(
-  db: Db | Tx,
-  ctx: RequestContext,
-  id: string,
-  lock = false,
-): Promise<PlanRow> {
+async function getPlan(db: Db | Tx, ctx: RequestContext, id: string, lock = false): Promise<PlanRow> {
   let query = selectPlans(db).where("id", "=", id);
   if (lock) query = query.forUpdate();
   const plan = await query.executeTakeFirst();
@@ -160,150 +130,72 @@ export async function planRoutes(app: FastifyInstance, env: Env) {
   app.get("/plans", async (request) => {
     const query = parse(ListQuery, request.query, request.ctx.t);
     // Reception only ever sees plans that can be purchased.
-    const includeDisabled =
-      query.includeDisabled === "true" && can(request.ctx, "plans.manage");
+    const includeDisabled = query.includeDisabled === "true" && can(request.ctx, "plans.manage");
     let plans = selectPlans(env.db);
     if (!includeDisabled) plans = plans.where("is_enabled", "=", true);
-    return planDtos(
-      env,
-      env.db,
-      await plans.orderBy("duration_days").orderBy("name").execute(),
-    );
+    return planDtos(env, env.db, await plans.orderBy("duration_days").orderBy("name").execute());
   });
 
-  app.post(
-    "/plans",
-    { config: { permission: "plans.manage" } },
-    async (request, reply) => {
-      const ctx = request.ctx;
-      const values = await validatePlan(
-        env.db,
-        ctx,
-        parse(PlanBody, request.body, ctx.t),
-      );
-      const plan = await env.db.transaction().execute(async (tx) => {
-        const now = env.clock.now();
-        const row = await tx
-          .insertInto("plans")
-          .values({ ...values, created_at: now, updated_at: now })
-          .returning([
-            "id",
-            "name",
-            "price",
-            "duration_days",
-            "description",
-            "is_enabled",
-            "created_at",
-            "updated_at",
-          ])
-          .executeTakeFirstOrThrow();
-        await audit(
-          tx,
-          ctx,
-          "plan.create",
-          { type: "plan", id: row.id },
-          { name: row.name, price: row.price },
-          now,
-        );
-        return row;
-      });
-      return reply.code(201).send((await planDtos(env, env.db, [plan]))[0]);
-    },
-  );
+  app.post("/plans", { config: { permission: "plans.manage" } }, async (request, reply) => {
+    const ctx = request.ctx;
+    const values = await validatePlan(env.db, ctx, parse(PlanBody, request.body, ctx.t));
+    const plan = await env.db.transaction().execute(async (tx) => {
+      const now = env.clock.now();
+      const row = await tx
+        .insertInto("plans")
+        .values({ ...values, created_at: now, updated_at: now })
+        .returning(["id", "name", "price", "duration_days", "description", "is_enabled", "created_at", "updated_at"])
+        .executeTakeFirstOrThrow();
+      await audit(tx, ctx, "plan.create", { type: "plan", id: row.id }, { name: row.name, price: row.price }, now);
+      return row;
+    });
+    return reply.code(201).send((await planDtos(env, env.db, [plan]))[0]);
+  });
 
-  app.patch(
-    "/plans/:id",
-    { config: { permission: "plans.manage" } },
-    async (request) => {
+  app.patch("/plans/:id", { config: { permission: "plans.manage" } }, async (request) => {
+    const ctx = request.ctx;
+    const id = idParam(request.params, ctx.t);
+    const body = parse(PlanBody, request.body, ctx.t);
+    const plan = await env.db.transaction().execute(async (tx) => {
+      const before = await getPlan(tx, ctx, id, true);
+      const values = await validatePlan(tx, ctx, body, id);
+      const now = env.clock.now();
+      const row = await tx
+        .updateTable("plans")
+        .set({ ...values, updated_at: now })
+        .where("id", "=", id)
+        .returning(["id", "name", "price", "duration_days", "description", "is_enabled", "created_at", "updated_at"])
+        .executeTakeFirstOrThrow();
+      const changed = Object.fromEntries(
+        (["name", "price", "duration_days", "description", "is_enabled"] as const)
+          .filter((key) => before[key] !== row[key])
+          .map((key) => [key, { from: before[key], to: row[key] }]),
+      );
+      if (Object.keys(changed).length > 0) await audit(tx, ctx, "plan.update", { type: "plan", id }, changed, now);
+      return row;
+    });
+    return (await planDtos(env, env.db, [plan]))[0];
+  });
+
+  for (const action of ["disable", "enable"] as const) {
+    app.post(`/plans/:id/${action}`, { config: { permission: "plans.manage" } }, async (request) => {
       const ctx = request.ctx;
       const id = idParam(request.params, ctx.t);
-      const body = parse(PlanBody, request.body, ctx.t);
       const plan = await env.db.transaction().execute(async (tx) => {
         const before = await getPlan(tx, ctx, id, true);
-        const values = await validatePlan(tx, ctx, body, id);
+        const enabled = action === "enable";
+        if (before.is_enabled === enabled) return before;
         const now = env.clock.now();
         const row = await tx
           .updateTable("plans")
-          .set({ ...values, updated_at: now })
+          .set({ is_enabled: enabled, updated_at: now })
           .where("id", "=", id)
-          .returning([
-            "id",
-            "name",
-            "price",
-            "duration_days",
-            "description",
-            "is_enabled",
-            "created_at",
-            "updated_at",
-          ])
+          .returning(["id", "name", "price", "duration_days", "description", "is_enabled", "created_at", "updated_at"])
           .executeTakeFirstOrThrow();
-        const changed = Object.fromEntries(
-          (
-            [
-              "name",
-              "price",
-              "duration_days",
-              "description",
-              "is_enabled",
-            ] as const
-          )
-            .filter((key) => before[key] !== row[key])
-            .map((key) => [key, { from: before[key], to: row[key] }]),
-        );
-        if (Object.keys(changed).length > 0)
-          await audit(
-            tx,
-            ctx,
-            "plan.update",
-            { type: "plan", id },
-            changed,
-            now,
-          );
+        await audit(tx, ctx, enabled ? "plan.enable" : "plan.disable", { type: "plan", id }, { name: row.name }, now);
         return row;
       });
       return (await planDtos(env, env.db, [plan]))[0];
-    },
-  );
-
-  for (const action of ["disable", "enable"] as const) {
-    app.post(
-      `/plans/:id/${action}`,
-      { config: { permission: "plans.manage" } },
-      async (request) => {
-        const ctx = request.ctx;
-        const id = idParam(request.params, ctx.t);
-        const plan = await env.db.transaction().execute(async (tx) => {
-          const before = await getPlan(tx, ctx, id, true);
-          const enabled = action === "enable";
-          if (before.is_enabled === enabled) return before;
-          const now = env.clock.now();
-          const row = await tx
-            .updateTable("plans")
-            .set({ is_enabled: enabled, updated_at: now })
-            .where("id", "=", id)
-            .returning([
-              "id",
-              "name",
-              "price",
-              "duration_days",
-              "description",
-              "is_enabled",
-              "created_at",
-              "updated_at",
-            ])
-            .executeTakeFirstOrThrow();
-          await audit(
-            tx,
-            ctx,
-            enabled ? "plan.enable" : "plan.disable",
-            { type: "plan", id },
-            { name: row.name },
-            now,
-          );
-          return row;
-        });
-        return (await planDtos(env, env.db, [plan]))[0];
-      },
-    );
+    });
   }
 }

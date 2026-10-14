@@ -15,8 +15,7 @@ export function isMoneyString(value: string): boolean {
 
 export function toCents(value: Money): number {
   const trimmed = value.trim();
-  if (!MONEY_RE.test(trimmed))
-    throw new RangeError(`Invalid money value: ${value}`);
+  if (!MONEY_RE.test(trimmed)) throw new RangeError(`Invalid money value: ${value}`);
   const negative = trimmed.startsWith("-");
   const [whole, fraction = ""] = trimmed.replace("-", "").split(".");
   const cents = Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
@@ -24,8 +23,7 @@ export function toCents(value: Money): number {
 }
 
 export function fromCents(cents: number): Money {
-  if (!Number.isSafeInteger(cents))
-    throw new RangeError(`Unsafe cents value: ${cents}`);
+  if (!Number.isSafeInteger(cents)) throw new RangeError(`Unsafe cents value: ${cents}`);
   const negative = cents < 0;
   const abs = Math.abs(cents);
   const whole = Math.floor(abs / 100);

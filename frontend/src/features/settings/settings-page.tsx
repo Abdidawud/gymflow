@@ -31,6 +31,7 @@ import { addDays } from "@gymflow/shared/domain/dates";
 import { formatPhone, normalizeEthiopianPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { useUnsavedChangesGuard } from "@/lib/use-unsaved-changes";
+import { shrinkImage } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/providers/auth-provider";
 import { PAYMENT_METHOD_ICONS } from "@/features/payments/payment-methods";
@@ -246,7 +247,8 @@ function ProfileTab({ settings, onDirtyChange }: { settings: GymSettings; onDirt
     setLogoError(null);
     setLogoBusy(true);
     try {
-      const saved = file ? await api.settings.uploadLogo(file) : await api.settings.update({ logoUrl: null });
+      const prepared = file ? await shrinkImage(file, { maxSize: 1024, type: "image/png" }) : null;
+      const saved = prepared ? await api.settings.uploadLogo(prepared) : await api.settings.update({ logoUrl: null });
       queryClient.setQueryData(queryKeys.settings, saved);
       toast.success(file ? t("settings.profile.logoUpdated") : t("settings.profile.logoRemoved"));
     } catch (err) {

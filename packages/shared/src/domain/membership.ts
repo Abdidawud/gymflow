@@ -12,13 +12,7 @@
 
 import { addDays, daysBetween, type DateOnly } from "./dates";
 
-export const MEMBERSHIP_STATUSES = [
-  "ACTIVE",
-  "EXPIRING_SOON",
-  "EXPIRED",
-  "SCHEDULED",
-  "UNPAID",
-] as const;
+export const MEMBERSHIP_STATUSES = ["ACTIVE", "EXPIRING_SOON", "EXPIRED", "SCHEDULED", "UNPAID"] as const;
 export type MembershipStatus = (typeof MEMBERSHIP_STATUSES)[number];
 
 export const DEFAULT_WARNING_DAYS = 7;
@@ -28,14 +22,9 @@ export interface CoveragePeriod {
   endDate: DateOnly;
 }
 
-export function membershipEndDate(
-  startDate: DateOnly,
-  durationDays: number,
-): DateOnly {
+export function membershipEndDate(startDate: DateOnly, durationDays: number): DateOnly {
   if (!Number.isInteger(durationDays) || durationDays < 1) {
-    throw new RangeError(
-      `Duration must be a positive whole number of days, got ${durationDays}`,
-    );
+    throw new RangeError(`Duration must be a positive whole number of days, got ${durationDays}`);
   }
   return addDays(startDate, durationDays - 1);
 }
@@ -48,16 +37,12 @@ function byStart<P extends CoveragePeriod>(a: P, b: P): number {
  * Last date of the uninterrupted chain of paid periods that begins with `from`.
  * Contiguous means the next period starts the day after the previous one ends.
  */
-export function continuousCoverageEnd<P extends CoveragePeriod>(
-  periods: readonly P[],
-  from: P,
-): DateOnly {
+export function continuousCoverageEnd<P extends CoveragePeriod>(periods: readonly P[], from: P): DateOnly {
   const sorted = [...periods].sort(byStart);
   let end = from.endDate;
   for (const period of sorted) {
     if (period.startDate <= end) {
-      if (period.endDate > end && period.startDate >= from.startDate)
-        end = period.endDate;
+      if (period.endDate > end && period.startDate >= from.startDate) end = period.endDate;
       continue;
     }
     if (period.startDate === addDays(end, 1)) {
@@ -99,14 +84,10 @@ export function evaluateMembership<P extends CoveragePeriod>(
   warningDays: number = DEFAULT_WARNING_DAYS,
 ): MembershipEvaluation<P> {
   const sorted = [...periods].sort(byStart);
-  const current =
-    sorted.find((p) => p.startDate <= today && today <= p.endDate) ?? null;
+  const current = sorted.find((p) => p.startDate <= today && today <= p.endDate) ?? null;
   const next = sorted.find((p) => p.startDate > today) ?? null;
   const ended = sorted.filter((p) => p.endDate < today);
-  const last =
-    ended.length > 0
-      ? ended.reduce((a, b) => (b.endDate > a.endDate ? b : a))
-      : null;
+  const last = ended.length > 0 ? ended.reduce((a, b) => (b.endDate > a.endDate ? b : a)) : null;
 
   const base = { current, next, last, hasPaidMembership: sorted.length > 0 };
 
@@ -151,10 +132,7 @@ export interface ProposedStart {
  * - scheduled → the day after the scheduled chain ends (editable, today or later);
  * - expired / unpaid → today (editable, today or later).
  */
-export function proposeStartDate<P extends CoveragePeriod>(
-  periods: readonly P[],
-  today: DateOnly,
-): ProposedStart {
+export function proposeStartDate<P extends CoveragePeriod>(periods: readonly P[], today: DateOnly): ProposedStart {
   const evaluation = evaluateMembership(periods, today);
   if (evaluation.current && evaluation.coverageEnd) {
     return { startDate: addDays(evaluation.coverageEnd, 1), automatic: true };
@@ -171,10 +149,7 @@ export function findOverlap<P extends CoveragePeriod>(
   startDate: DateOnly,
   endDate: DateOnly,
 ): P | null {
-  return (
-    periods.find((p) => !(endDate < p.startDate || startDate > p.endDate)) ??
-    null
-  );
+  return periods.find((p) => !(endDate < p.startDate || startDate > p.endDate)) ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -202,17 +177,11 @@ export function statusDetail(input: StatusDetailInput): StatusDetail | null {
     case "ACTIVE":
     case "EXPIRING_SOON":
       if (input.remainingDays === null) return null;
-      return input.remainingDays === 0
-        ? { kind: "expiresToday" }
-        : { kind: "daysLeft", days: input.remainingDays };
+      return input.remainingDays === 0 ? { kind: "expiresToday" } : { kind: "daysLeft", days: input.remainingDays };
     case "SCHEDULED":
-      return input.nextStartDate
-        ? { kind: "starts", date: input.nextStartDate }
-        : null;
+      return input.nextStartDate ? { kind: "starts", date: input.nextStartDate } : null;
     case "EXPIRED":
-      return input.lastEndDate
-        ? { kind: "ended", date: input.lastEndDate }
-        : null;
+      return input.lastEndDate ? { kind: "ended", date: input.lastEndDate } : null;
     case "UNPAID":
       return null;
   }

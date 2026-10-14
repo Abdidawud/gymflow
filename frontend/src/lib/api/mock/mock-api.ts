@@ -88,7 +88,7 @@ const SESSION_IDLE_MS = 30 * 60 * 1000;
 const RESET_TOKEN_MS = 30 * 60 * 1000;
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const LOGIN_MAX_FAILURES = 5;
-const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const PHOTO_MAX_BYTES = 4 * 1024 * 1024;
 
 export interface MockControls {
   failNextPayment: null | "before-commit" | "after-commit";
@@ -335,6 +335,7 @@ export function createMockApi(): GymFlowApi {
       appearance: staff.appearance,
       language: staff.language,
       mustChangePassword: staff.mustChangePassword,
+      isSuperAdmin: staff.isSuperAdmin,
       permissions: permissionsOf(staff),
     };
   }
@@ -363,6 +364,7 @@ export function createMockApi(): GymFlowApi {
       role: staff.role,
       isActive: staff.isActive,
       mustChangePassword: staff.mustChangePassword,
+      isSuperAdmin: staff.isSuperAdmin,
       lastSignInAt: staff.lastSignInAt,
       createdAt: staff.createdAt,
     };
@@ -1375,7 +1377,12 @@ export function createMockApi(): GymFlowApi {
         const staff = authenticate();
         requirePermission(staff, "staff.manage");
         return [...db.staff]
-          .sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.fullName.localeCompare(b.fullName))
+          .sort(
+            (a, b) =>
+              Number(b.isSuperAdmin) - Number(a.isSuperAdmin) ||
+              Number(b.isActive) - Number(a.isActive) ||
+              a.fullName.localeCompare(b.fullName),
+          )
           .map(staffDto);
       },
 
@@ -1407,6 +1414,7 @@ export function createMockApi(): GymFlowApi {
           role: input.role,
           isActive: true,
           mustChangePassword: true,
+          isSuperAdmin: false,
           appearance: "SYSTEM",
           language: readStoredLocale(),
           lastSignInAt: null,
@@ -1427,6 +1435,13 @@ export function createMockApi(): GymFlowApi {
         const fullName = clean(input.fullName);
         if (!fullName) invalid({ fullName: msg("staff.form.errors.fullName") });
         if (input.role !== "ADMINISTRATOR" && input.role !== "RECEPTIONIST") invalid({ role: msg("api.chooseRole") });
+        // Only the super administrator can change their account, which always stays an administrator.
+        if (target.isSuperAdmin && target.id !== actor.id) fail(403, "FORBIDDEN", msg("api.superAdminProtected"));
+        if (target.isSuperAdmin && input.role !== "ADMINISTRATOR") {
+          fail(409, "LAST_ADMINISTRATOR", msg("api.superAdminRole"), {
+            fieldErrors: { role: msg("api.superAdminRole") },
+          });
+        }
 
         const demoting = target.role === "ADMINISTRATOR" && input.role !== "ADMINISTRATOR" && target.isActive;
         const activeAdmins = db.staff.filter((s) => s.role === "ADMINISTRATOR" && s.isActive).length;
@@ -1454,6 +1469,7 @@ export function createMockApi(): GymFlowApi {
         if (target.id === actor.id) {
           fail(403, "FORBIDDEN", msg("staff.cantDeactivateSelf"));
         }
+        if (target.isSuperAdmin) fail(403, "FORBIDDEN", msg("api.superAdminProtected"));
         const activeAdmins = db.staff.filter((s) => s.role === "ADMINISTRATOR" && s.isActive).length;
         if (target.role === "ADMINISTRATOR" && target.isActive && activeAdmins <= 1) {
           fail(409, "LAST_ADMINISTRATOR", msg("api.lastAdminShort"));

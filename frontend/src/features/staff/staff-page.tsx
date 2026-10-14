@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  Crown,
   Ellipsis,
   Info,
   KeyRound,
@@ -113,6 +114,8 @@ export function StaffPage() {
                 list.map((user) => {
                   const self = user.id === account.id;
                   const lastAdmin = isLastAdmin(user);
+                  // Only the super administrator can change the super administrator's account.
+                  const protectedOwner = user.isSuperAdmin && !self;
                   return (
                     <TR key={user.id} interactive>
                       <TD>
@@ -131,9 +134,15 @@ export function StaffPage() {
                       </TD>
                       <TD className="text-fg-muted hidden md:table-cell">{user.email}</TD>
                       <TD>
-                        <Badge tone={user.role === "ADMINISTRATOR" ? "primary" : "neutral"}>
-                          {t(`labels.roles.${user.role}.label`)}
-                        </Badge>
+                        {user.isSuperAdmin ? (
+                          <Badge tone="primary" icon={<Crown aria-hidden />}>
+                            {t("labels.roles.superAdmin")}
+                          </Badge>
+                        ) : (
+                          <Badge tone={user.role === "ADMINISTRATOR" ? "primary" : "neutral"}>
+                            {t(`labels.roles.${user.role}.label`)}
+                          </Badge>
+                        )}
                       </TD>
                       <TD>
                         <div className="flex flex-col items-start gap-1">
@@ -158,14 +167,14 @@ export function StaffPage() {
                             </IconButton>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem onSelect={() => setDialog(user)}>
+                            <DropdownMenuItem disabled={protectedOwner} onSelect={() => setDialog(user)}>
                               <Pencil aria-hidden />
                               {t("staff.edit")}
                             </DropdownMenuItem>
                             {user.isActive ? (
                               <DropdownMenuItem
                                 tone="danger"
-                                disabled={lastAdmin || self}
+                                disabled={lastAdmin || self || user.isSuperAdmin}
                                 onSelect={() => setDeactivating(user)}
                               >
                                 <UserRoundX aria-hidden />
@@ -177,7 +186,11 @@ export function StaffPage() {
                                 {t("staff.activate")}
                               </DropdownMenuItem>
                             )}
-                            {user.isActive && (lastAdmin || self) ? (
+                            {protectedOwner ? (
+                              <DropdownMenuLabel className="max-w-56">
+                                {t("staff.superAdminProtected")}
+                              </DropdownMenuLabel>
+                            ) : user.isActive && (lastAdmin || self) ? (
                               <DropdownMenuLabel className="max-w-56">
                                 {self ? t("staff.cantDeactivateSelf") : t("staff.cantDeactivateLastAdmin")}
                               </DropdownMenuLabel>
@@ -201,7 +214,7 @@ export function StaffPage() {
           <EditStaffDialog
             key={dialog.id}
             user={dialog}
-            lastAdmin={isLastAdmin(dialog)}
+            roleLock={dialog.isSuperAdmin ? "superAdmin" : isLastAdmin(dialog) ? "lastAdmin" : null}
             onClose={() => setDialog(null)}
           />
         ) : null}
@@ -369,11 +382,12 @@ type EditValues = z.infer<ReturnType<typeof buildEditSchema>>;
 
 function EditStaffDialog({
   user,
-  lastAdmin,
+  roleLock,
   onClose,
 }: {
   user: StaffAccount;
-  lastAdmin: boolean;
+  /** Why the role can't change: the last active administrator, or the super administrator. */
+  roleLock: "lastAdmin" | "superAdmin" | null;
   onClose: () => void;
 }) {
   const { t } = useI18n();
@@ -419,10 +433,16 @@ function EditStaffDialog({
             required
             id="edit-staff-role"
             error={errors.role?.message}
-            hint={lastAdmin ? t("staff.update.lastAdminHint") : t(`labels.roles.${role}.description`)}
+            hint={
+              roleLock === "superAdmin"
+                ? t("staff.update.superAdminHint")
+                : roleLock === "lastAdmin"
+                  ? t("staff.update.lastAdminHint")
+                  : t(`labels.roles.${role}.description`)
+            }
           >
             {(c) =>
-              lastAdmin ? (
+              roleLock ? (
                 <Input {...c} readOnly value={t(`labels.roles.${user.role}.label`)} />
               ) : (
                 <Select {...c} {...form.register("role")}>

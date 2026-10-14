@@ -21,15 +21,14 @@ When a Stitch mockup and `design.md` disagree, `design.md` wins (see [Design dec
 # Node 20.9+ (Node 24 LTS recommended). This machine uses nvm:
 source ~/.nvm/nvm.sh
 
-npm install          # at the repo root (npm workspaces)
-npm run dev          # in frontend/: http://localhost:3000 on the in-browser mock API
-# or, at the repo root, the full stack with the real API and PostgreSQL:
-# npm run dev
+npm install                        # at the repo root (npm workspaces)
+npm run dev                        # http://localhost:3000 — the app and its API (needs .env.local, see below)
+NEXT_PUBLIC_API_MODE=mock npm run dev   # or: a demo on an in-browser mock API, no database
 ```
 
-On its own the app runs against an **in-browser mock backend** (`NEXT_PUBLIC_API_MODE=mock`), so no server is
-needed; it implements the same rules as the real API, on the same demo data.
-Demo accounts (also listed on the sign-in screen in demo mode):
+By default the app runs the real API (inside the app) on PostgreSQL — set it up as described in
+[`../backend/README.md`](../backend/README.md). The mock implements the same rules on the same demo data.
+Demo accounts (demo data only; real accounts are created with `admin:create --super` and the Staff page):
 
 | Role                                   | Email                     | Password       |
 | -------------------------------------- | ------------------------- | -------------- |
@@ -110,20 +109,19 @@ Key behaviors:
   [Languages](#languages)).
 - **Security headers** (production): CSP, `frame-ancestors 'none'`, `nosniff`, strict referrer and permissions policies.
 
-## Connecting the real backend
+## The API inside the app
 
-The API is in [`../backend`](../backend). In http mode the app calls `/api/v1` on its own origin and Next.js forwards
-it to the API (`API_PROXY_TARGET`, read when the app is built or `next dev` starts), so session cookies stay
-first-party and no CORS is needed:
+In http mode (the default) the app calls `/api/v1` on its own origin, and the route handler
+`src/app/api/v1/[...path]/route.ts` runs the API from [`../backend`](../backend) in-process: one deployment, first-party
+session cookies, no CORS. Server-side settings (database, `SESSION_SECRET`, …) come from `.env.local` locally and from
+the Vercel project in production — see [`.env.example`](.env.example) and
+[Deploying to Vercel](../backend/README.md#deploying-to-vercel).
 
-```bash
-NEXT_PUBLIC_API_MODE=http API_PROXY_TARGET=http://127.0.0.1:4000 npm run dev    # or `npm run dev` at the repo root
-```
+Alternatives: `API_PROXY_TARGET=http://127.0.0.1:4000` (at build time) forwards `/api/v1` to a separately running API
+server; `NEXT_PUBLIC_API_BASE_URL` set to an absolute URL calls an API on another origin (add this app's origin to the
+API's `ALLOWED_ORIGINS`); `NEXT_PUBLIC_API_MODE=mock` runs the in-browser demo with no database.
 
-To serve the app and the API from different origins instead, set `NEXT_PUBLIC_API_BASE_URL` to the API's absolute URL
-(the CSP allows it automatically) and add the app's origin to the API's `ALLOWED_ORIGINS`.
-
-`E2E_API_MODE=http npx playwright test` runs the end-to-end tests against the real API and a freshly seeded database.
+Images are shrunk in the browser before upload (`src/lib/images.ts`), keeping requests under Vercel's 4.5 MB limit.
 
 Contract details beyond `backend-database-system-design.md` (DTOs in `packages/shared/src/api/types.ts`):
 

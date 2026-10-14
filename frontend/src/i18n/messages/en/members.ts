@@ -69,11 +69,11 @@ export const members = {
   photo: {
     title: "Profile photo",
     optional: "(optional)",
-    hint: "JPEG, PNG or WebP up to 5 MB. Used for front-desk identification; initials are shown without a photo.",
+    hint: "JPEG, PNG or WebP up to 15 MB. Used for front-desk identification; initials are shown without a photo.",
     upload: "Upload photo",
     replace: "Replace photo",
     type: "Choose a JPEG, PNG or WebP image.",
-    size: "Photos must be 5 MB or smaller.",
+    size: "Photos must be 15 MB or smaller.",
     preview: "Member photo preview",
   },
   form: {

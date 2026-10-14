@@ -13,7 +13,6 @@ import { Field } from "@/components/ui/field";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { useDocumentTitle, useI18n } from "@/i18n/provider";
 import type { MessageKey } from "@/i18n/types";
-import { API_MODE } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
 import { safeReturnPath } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
@@ -23,12 +22,6 @@ const REASON_MESSAGES: Record<string, { tone: "warning" | "success"; text: Messa
   deactivated: { tone: "warning", text: "auth.login.reasonDeactivated" },
   "password-reset": { tone: "success", text: "auth.login.reasonReset" },
 };
-
-const DEMO_ACCOUNTS: { label: MessageKey; email: string; password: string }[] = [
-  { label: "auth.login.demoAdmin", email: "abdi@adamafitness.com", password: "GymFlow#2026" },
-  { label: "auth.login.demoReception", email: "tigist@adamafitness.com", password: "GymFlow#2026" },
-  { label: "auth.login.demoFirstSignIn", email: "selam@adamafitness.com", password: "Welcome#2026" },
-];
 
 export function LoginForm() {
   const { t } = useI18n();
@@ -135,29 +128,6 @@ export function LoginForm() {
       </form>
 
       <p className="text-fg-muted mt-6 text-sm">{t("auth.login.staffNote")}</p>
-
-      {API_MODE === "mock" ? (
-        <div className="border-line-strong mt-8 rounded-xl border border-dashed p-4">
-          <p className="text-fg-muted text-xs font-semibold tracking-wider uppercase">{t("auth.login.demoTitle")}</p>
-          <ul className="mt-2 flex flex-col gap-1">
-            {DEMO_ACCOUNTS.map((demo) => (
-              <li key={demo.email}>
-                <button
-                  type="button"
-                  className="hover:bg-tint flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-2 text-left text-sm md:min-h-9"
-                  onClick={() => {
-                    form.setValue("email", demo.email);
-                    form.setValue("password", demo.password);
-                  }}
-                >
-                  <span className="text-fg font-semibold">{t(demo.label)}</span>
-                  <span className="text-fg-muted truncate">{demo.email}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
     </div>
   );
 }

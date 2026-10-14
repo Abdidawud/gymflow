@@ -2,8 +2,9 @@
  * Operations commands (run with `npm run cli -- <command>` or `node dist/cli.js <command>`):
  *
  *   migrate                       apply pending migrations (and app-role grants)
- *   admin:create --email E --name N [--password P] [--language am|en]
+ *   admin:create --email E --name N [--super] [--gym-name G] [--password P] [--language am|en]
  *                                 bootstrap an administrator (there is no public sign-up)
+ *   admin:super --email E         make an existing account the super administrator
  *   seed:demo [--reset]           load the demo gym (development and staging only)
  *   db:reset                      drop and recreate the schema (development and tests only)
  */
@@ -29,8 +30,7 @@ function parseArgs(argv: string[]): Args {
     if (!arg.startsWith("--")) continue;
     const [name, inline] = arg.slice(2).split("=", 2);
     if (inline !== undefined) flags.set(name, inline);
-    else if (rest[i + 1] && !rest[i + 1].startsWith("--"))
-      flags.set(name, rest[++i]);
+    else if (rest[i + 1] && !rest[i + 1].startsWith("--")) flags.set(name, rest[++i]);
     else flags.set(name, true);
   }
   return { command, flags };
@@ -53,16 +53,7 @@ function ownerDb(config: Config) {
 
 /** Readable temporary password that meets the policy (letters, digits, a symbol). */
 function temporaryPassword(): string {
-  const words = [
-    "Adama",
-    "Lift",
-    "Strong",
-    "Flow",
-    "Power",
-    "Iron",
-    "Fit",
-    "Bole",
-  ];
+  const words = ["Adama", "Lift", "Strong", "Flow", "Power", "Iron", "Fit", "Bole"];
   const symbols = "#!@$%";
   return `${words[randomInt(words.length)]}${words[randomInt(words.length)]}${symbols[randomInt(symbols.length)]}${randomInt(1000, 10000)}`;
 }
@@ -72,48 +63,66 @@ async function createAdmin(config: Config, args: Args) {
   const name = flag(args, "name")?.trim();
   const language = flag(args, "language") ?? "am";
   const given = flag(args, "password");
+  const superAdmin = args.flags.has("super");
+  const gymName = flag(args, "gym-name")?.trim();
   if (!isEmail(email) || !name || !isLocale(language)) {
     throw new Error(
-      'Usage: admin:create --email admin@example.com --name "Full Name" [--password P] [--language am|en]',
+      'Usage: admin:create --email admin@example.com --name "Full Name" [--super] [--gym-name "Gym"] [--password P] [--language am|en]',
     );
   }
   const password = given ?? temporaryPassword();
-  if (!meetsPasswordPolicy(password))
-    throw new Error(
-      "The password needs 8+ characters with a letter and a number or symbol.",
-    );
+  if (!meetsPasswordPolicy(password)) {
+    throw new Error("The password needs 8+ characters with a letter and a number or symbol.");
+  }
 
   const { pool, db } = ownerDb(config);
   try {
-    const existing = await db
-      .selectFrom("staff")
-      .select("id")
+    const existing = await db.selectFrom("staff").select("id").where("email", "=", email).executeTakeFirst();
+    if (existing) throw new Error(`A staff account with ${email} already exists (use admin:super to promote it).`);
+    const passwordHash = await hashPassword(password);
+    await db.transaction().execute(async (tx) => {
+      await tx
+        .insertInto("staff")
+        .values({
+          full_name: name,
+          email,
+          password_hash: passwordHash,
+          role: "ADMINISTRATOR",
+          is_super_admin: superAdmin,
+          must_change_password: true,
+          language: language as Locale,
+        })
+        .execute();
+      if (gymName) await tx.updateTable("gym_settings").set({ gym_name: gymName, updated_at: new Date() }).execute();
+    });
+    console.warn(`${superAdmin ? "Super administrator" : "Administrator"} ${email} created.`);
+    if (!given) console.warn(`Temporary password (shown once, change it at first sign-in): ${password}`);
+  } finally {
+    await pool.end();
+  }
+}
+
+/** Makes an existing account the super administrator (an active administrator that only its owner can change). */
+async function makeSuperAdmin(config: Config, args: Args) {
+  const email = normalizeEmail(flag(args, "email"));
+  if (!isEmail(email)) throw new Error("Usage: admin:super --email you@example.com");
+  const { pool, db } = ownerDb(config);
+  try {
+    const updated = await db
+      .updateTable("staff")
+      .set({ role: "ADMINISTRATOR", is_active: true, is_super_admin: true, updated_at: new Date() })
       .where("email", "=", email)
+      .returning("id")
       .executeTakeFirst();
-    if (existing)
-      throw new Error(`A staff account with ${email} already exists.`);
-    await db
-      .insertInto("staff")
-      .values({
-        full_name: name,
-        email,
-        password_hash: await hashPassword(password),
-        role: "ADMINISTRATOR",
-        must_change_password: true,
-        language: language as Locale,
-      })
-      .execute();
-    console.warn(`Administrator ${email} created.`);
-    if (!given)
-      console.warn(
-        `Temporary password (shown once, change it at first sign-in): ${password}`,
-      );
+    if (!updated) throw new Error(`No staff account with ${email}.`);
+    console.warn(`${email} is now the super administrator.`);
   } finally {
     await pool.end();
   }
 }
 
 const DATA_TABLES = [
+  "stored_files",
   "audit_events",
   "idempotency_keys",
   "payments",
@@ -127,40 +136,19 @@ const DATA_TABLES = [
   "staff",
 ] as const;
 
-async function chunked<T>(
-  rows: T[],
-  size: number,
-  insert: (chunk: T[]) => Promise<unknown>,
-) {
-  for (let i = 0; i < rows.length; i += size)
-    await insert(rows.slice(i, i + size));
+async function chunked<T>(rows: T[], size: number, insert: (chunk: T[]) => Promise<unknown>) {
+  for (let i = 0; i < rows.length; i += size) await insert(rows.slice(i, i + size));
 }
 
-export async function seedDemo(
-  db: Db,
-  options: { reset: boolean },
-): Promise<void> {
+export async function seedDemo(db: Db, options: { reset: boolean }): Promise<void> {
   const data = generateDemoData();
   await db.transaction().execute(async (tx) => {
     if (options.reset) {
-      await sql`TRUNCATE ${sql.join(DATA_TABLES.map((t) => sql.table(t)))} RESTART IDENTITY CASCADE`.execute(
-        tx,
-      );
+      await sql`TRUNCATE ${sql.join(DATA_TABLES.map((t) => sql.table(t)))} RESTART IDENTITY CASCADE`.execute(tx);
     } else {
-      const existing = await tx
-        .selectFrom("members")
-        .select("id")
-        .limit(1)
-        .executeTakeFirst();
-      const staff = await tx
-        .selectFrom("staff")
-        .select("id")
-        .limit(1)
-        .executeTakeFirst();
-      if (existing || staff)
-        throw new Error(
-          "The database already has data. Use seed:demo --reset to replace it.",
-        );
+      const existing = await tx.selectFrom("members").select("id").limit(1).executeTakeFirst();
+      const staff = await tx.selectFrom("staff").select("id").limit(1).executeTakeFirst();
+      if (existing || staff) throw new Error("The database already has data. Use seed:demo --reset to replace it.");
     }
 
     const hashes = new Map<string, string>();
@@ -177,6 +165,7 @@ export async function seedDemo(
           role: s.role,
           is_active: s.isActive,
           must_change_password: s.mustChangePassword,
+          is_super_admin: s.isSuperAdmin,
           appearance: s.appearance,
           language: s.language,
           last_sign_in_at: s.lastSignInAt,
@@ -284,12 +273,8 @@ export async function seedDemo(
       .onConflict((oc) => oc.column("id").doUpdateSet(settings))
       .execute();
     // New codes continue after the demo's highest numbers.
-    await sql`SELECT setval('member_number_seq', ${data.counters.member})`.execute(
-      tx,
-    );
-    await sql`SELECT setval('payment_number_seq', ${data.counters.payment})`.execute(
-      tx,
-    );
+    await sql`SELECT setval('member_number_seq', ${data.counters.member})`.execute(tx);
+    await sql`SELECT setval('payment_number_seq', ${data.counters.payment})`.execute(tx);
   });
 }
 
@@ -312,9 +297,7 @@ async function main() {
           log,
         });
         log(
-          result.applied.length
-            ? `Applied: ${result.applied.join(", ")}`
-            : `Schema is up to date (${result.current}).`,
+          result.applied.length ? `Applied: ${result.applied.join(", ")}` : `Schema is up to date (${result.current}).`,
         );
       } finally {
         await pool.end();
@@ -323,23 +306,21 @@ async function main() {
     }
     case "admin:create":
       return createAdmin(config, args);
+    case "admin:super":
+      return makeSuperAdmin(config, args);
     case "seed:demo": {
-      if (config.isProduction)
-        throw new Error("seed:demo is not available in production.");
+      if (config.isProduction) throw new Error("seed:demo is not available in production.");
       const { pool, db } = ownerDb(config);
       try {
         await seedDemo(db, { reset: args.flags.has("reset") });
-        log(
-          "Demo data loaded: Adama Fitness, 356 members, staff password GymFlow#2026.",
-        );
+        log("Demo data loaded: Adama Fitness, 356 members, staff password GymFlow#2026.");
       } finally {
         await pool.end();
       }
       return;
     }
     case "db:reset": {
-      if (config.isProduction)
-        throw new Error("db:reset is not available in production.");
+      if (config.isProduction) throw new Error("db:reset is not available in production.");
       const { pool, db } = ownerDb(config);
       try {
         await resetSchema(db);
@@ -362,7 +343,7 @@ async function main() {
     }
     default:
       console.warn(
-        "Commands: migrate | admin:create --email E --name N [--password P] | seed:demo [--reset] | db:reset | grant",
+        "Commands: migrate | admin:create --email E --name N [--super] | admin:super --email E | seed:demo [--reset] | db:reset | grant",
       );
       process.exitCode = args.command === "help" ? 0 : 1;
   }

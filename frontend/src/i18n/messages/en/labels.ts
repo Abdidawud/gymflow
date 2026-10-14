@@ -29,6 +29,8 @@ export const labels = {
   periodStatus: { CURRENT: "Current", UPCOMING: "Scheduled", ENDED: "Ended" },
   gender: { MALE: "Male", FEMALE: "Female", unspecified: "Not specified" },
   roles: {
+    /** The gym owner's account (always an administrator). */
+    superAdmin: "Super admin",
     ADMINISTRATOR: {
       label: "Administrator",
       description: "Full access, including plans, reports, staff and gym settings.",

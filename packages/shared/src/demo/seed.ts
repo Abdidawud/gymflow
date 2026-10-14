@@ -167,30 +167,9 @@ const FATHER_NAMES = [
   "Asfaw",
 ] as const;
 
-const SUB_CITIES = [
-  "Bole",
-  "Abba Gadaa",
-  "Boku Shanan",
-  "Dabe",
-  "Dembela",
-  "Lugo",
-] as const;
-const RELATIONSHIPS = [
-  "Spouse",
-  "Sister",
-  "Brother",
-  "Mother",
-  "Father",
-  "Friend",
-  "Cousin",
-] as const;
-const EMAIL_DOMAINS = [
-  "gmail.com",
-  "gmail.com",
-  "gmail.com",
-  "yahoo.com",
-  "outlook.com",
-] as const;
+const SUB_CITIES = ["Bole", "Abba Gadaa", "Boku Shanan", "Dabe", "Dembela", "Lugo"] as const;
+const RELATIONSHIPS = ["Spouse", "Sister", "Brother", "Mother", "Father", "Friend", "Cousin"] as const;
+const EMAIL_DOMAINS = ["gmail.com", "gmail.com", "gmail.com", "yahoo.com", "outlook.com"] as const;
 const NOTES = [
   "Prefers morning sessions before work.",
   "Knee injury last year; avoids heavy squats.",
@@ -200,13 +179,9 @@ const NOTES = [
   "Usually pays by bank transfer from CBE.",
 ] as const;
 
-type PlanKey =
-  "daily" | "weekly" | "monthly" | "quarter" | "half" | "annual" | "student";
+type PlanKey = "daily" | "weekly" | "monthly" | "quarter" | "half" | "annual" | "student";
 
-const PLAN_DEFS: Record<
-  PlanKey,
-  Omit<PlanRecord, "createdAt" | "updatedAt">
-> = {
+const PLAN_DEFS: Record<PlanKey, Omit<PlanRecord, "createdAt" | "updatedAt">> = {
   daily: {
     id: demoId("plan", 1),
     name: "Daily Pass",
@@ -228,8 +203,7 @@ const PLAN_DEFS: Record<
     name: "Monthly",
     price: "1500.00",
     durationDays: 30,
-    description:
-      "Thirty consecutive days of full gym access. The most popular plan.",
+    description: "Thirty consecutive days of full gym access. The most popular plan.",
     isEnabled: true,
   },
   quarter: {
@@ -269,42 +243,10 @@ const PLAN_DEFS: Record<
 const DAWIT_DEACTIVATED: DateOnly = "2026-05-31";
 
 const STAFF: StaffRecord[] = [
-  staff(
-    DEMO_STAFF_IDS.abdi,
-    "Abdi Dawud",
-    "abdi@adamafitness.com",
-    "ADMINISTRATOR",
-    true,
-    false,
-    "2025-01-02",
-  ),
-  staff(
-    DEMO_STAFF_IDS.tigist,
-    "Tigist Haile",
-    "tigist@adamafitness.com",
-    "RECEPTIONIST",
-    true,
-    false,
-    "2025-01-03",
-  ),
-  staff(
-    DEMO_STAFF_IDS.dawit,
-    "Dawit Tadesse",
-    "dawit.t@adamafitness.com",
-    "RECEPTIONIST",
-    false,
-    false,
-    "2025-02-10",
-  ),
-  staff(
-    DEMO_STAFF_IDS.selam,
-    "Selam Girma",
-    "selam@adamafitness.com",
-    "RECEPTIONIST",
-    true,
-    true,
-    "2026-10-05",
-  ),
+  staff(DEMO_STAFF_IDS.abdi, "Abdi Dawud", "abdi@adamafitness.com", "ADMINISTRATOR", true, false, "2025-01-02"),
+  staff(DEMO_STAFF_IDS.tigist, "Tigist Haile", "tigist@adamafitness.com", "RECEPTIONIST", true, false, "2025-01-03"),
+  staff(DEMO_STAFF_IDS.dawit, "Dawit Tadesse", "dawit.t@adamafitness.com", "RECEPTIONIST", false, false, "2025-02-10"),
+  staff(DEMO_STAFF_IDS.selam, "Selam Girma", "selam@adamafitness.com", "RECEPTIONIST", true, true, "2026-10-05"),
 ];
 
 function staff(
@@ -324,11 +266,11 @@ function staff(
     role,
     isActive,
     mustChangePassword,
+    // The demo owner is the super administrator.
+    isSuperAdmin: id === DEMO_STAFF_IDS.abdi,
     appearance: "SYSTEM",
     language: "am",
-    lastSignInAt: mustChangePassword
-      ? null
-      : gymTimestamp(isActive ? SEED_TODAY : DAWIT_DEACTIVATED, "07:55"),
+    lastSignInAt: mustChangePassword ? null : gymTimestamp(isActive ? SEED_TODAY : DAWIT_DEACTIVATED, "07:55"),
     createdAt: gymTimestamp(created, "09:00"),
     updatedAt: gymTimestamp(isActive ? created : DAWIT_DEACTIVATED, "17:30"),
   };
@@ -351,8 +293,7 @@ interface PlannedMember {
   fixedCode?: number;
 }
 
-type Target =
-  "ACTIVE" | "ACTIVE_PREPAID" | "EXPIRING" | "EXPIRED" | "UNPAID" | "ARCHIVED";
+type Target = "ACTIVE" | "ACTIVE_PREPAID" | "EXPIRING" | "EXPIRED" | "UNPAID" | "ARCHIVED";
 
 const TARGETS: [Target, number][] = [
   ["ACTIVE", 279],
@@ -369,26 +310,16 @@ const FIXTURE_CODES = new Set([124, 125, 126, 127, 128]);
 export function generateDemoData(): DemoDataset {
   const rng = createRng(20261007);
   const today = SEED_TODAY;
-  const usedPhones = new Set<string>([
-    "911234567",
-    "922456789",
-    "933567890",
-    "944678901",
-    "955789012",
-    "912345678",
-  ]);
+  const usedPhones = new Set<string>(["911234567", "922456789", "933567890", "944678901", "955789012", "912345678"]);
 
   const planned: PlannedMember[] = [...fixtureMembers()];
   for (const [target, count] of TARGETS) {
-    for (let i = 0; i < count; i++)
-      planned.push(generateMember(rng, target, today, usedPhones));
+    for (let i = 0; i < count; i++) planned.push(generateMember(rng, target, today, usedPhones));
   }
 
   // Member codes follow registration order; the design fixtures keep GYM-00124…00128.
   const generated = planned.filter((p) => p.fixedCode === undefined);
-  generated.sort((a, b) =>
-    a.member.registrationDate < b.member.registrationDate ? -1 : 1,
-  );
+  generated.sort((a, b) => (a.member.registrationDate < b.member.registrationDate ? -1 : 1));
   let nextCode = 1;
   for (const entry of generated) {
     while (FIXTURE_CODES.has(nextCode)) nextCode++;
@@ -415,9 +346,7 @@ export function generateDemoData(): DemoDataset {
       updatedAt: entry.member.archivedAt ?? createdAt,
     });
 
-    const sorted = [...entry.periods].sort((a, b) =>
-      a.startDate < b.startDate ? -1 : 1,
-    );
+    const sorted = [...entry.periods].sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
     sorted.forEach((period, index) => {
       const def = PLAN_DEFS[period.plan];
       const membershipId = demoId("membership", membershipSeq);
@@ -426,24 +355,12 @@ export function generateDemoData(): DemoDataset {
 
       const previous = sorted[index - 1];
       const receivedDate =
-        period.receivedDate ??
-        chooseReceivedDate(
-          rng,
-          period,
-          previous,
-          entry.member.registrationDate,
-          today,
-        );
+        period.receivedDate ?? chooseReceivedDate(rng, period, previous, entry.member.registrationDate, today);
       const time =
-        period.time ??
-        `${String(rng.int(6, 20)).padStart(2, "0")}:${String(rng.int(0, 59)).padStart(2, "0")}`;
+        period.time ?? `${String(rng.int(6, 20)).padStart(2, "0")}:${String(rng.int(0, 59)).padStart(2, "0")}`;
       // A few payments are entered the day after they were received.
-      const enteredLate =
-        !period.time && rng.chance(0.03) && receivedDate < today;
-      const createdAtPayment = gymTimestamp(
-        enteredLate ? addDays(receivedDate, 1) : receivedDate,
-        time,
-      );
+      const enteredLate = !period.time && rng.chance(0.03) && receivedDate < today;
+      const createdAtPayment = gymTimestamp(enteredLate ? addDays(receivedDate, 1) : receivedDate, time);
       const method = period.method ?? chooseMethod(rng);
 
       memberships.push({
@@ -467,10 +384,7 @@ export function generateDemoData(): DemoDataset {
         method,
         receivedDate,
         reference: referenceFor(rng, method),
-        notes:
-          method === "CASH" && rng.chance(0.08)
-            ? "Paid at the front desk."
-            : null,
+        notes: method === "CASH" && rng.chance(0.08) ? "Paid at the front desk." : null,
         recordedBy: period.recordedBy ?? chooseRecorder(rng, receivedDate),
         createdAt: createdAtPayment,
       });
@@ -478,37 +392,19 @@ export function generateDemoData(): DemoDataset {
   }
 
   // Payment codes follow entry order; Abebe's Oct 01 payment is PAY-10234 (design.md §13).
-  payments.sort((a, b) =>
-    a.createdAt < b.createdAt
-      ? -1
-      : a.createdAt > b.createdAt
-        ? 1
-        : a.id < b.id
-          ? -1
-          : 1,
-  );
-  const anchorIndex = payments.findIndex(
-    (p) => p.memberId === demoMemberId(124) && p.receivedDate === "2026-10-01",
-  );
+  payments.sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : a.id < b.id ? -1 : 1));
+  const anchorIndex = payments.findIndex((p) => p.memberId === demoMemberId(124) && p.receivedDate === "2026-10-01");
   const base = 10234 - anchorIndex;
   const codedPayments: PaymentRecord[] = payments.map((p, index) => ({
     ...p,
     paymentCode: `PAY-${String(base + index).padStart(5, "0")}`,
   }));
 
-  const plans: PlanRecord[] = (Object.keys(PLAN_DEFS) as PlanKey[]).map(
-    (key) => ({
-      ...PLAN_DEFS[key],
-      createdAt: gymTimestamp(
-        key === "student" ? "2025-01-06" : "2025-01-05",
-        "10:00",
-      ),
-      updatedAt: gymTimestamp(
-        key === "student" ? "2025-09-01" : "2025-01-05",
-        "10:00",
-      ),
-    }),
-  );
+  const plans: PlanRecord[] = (Object.keys(PLAN_DEFS) as PlanKey[]).map((key) => ({
+    ...PLAN_DEFS[key],
+    createdAt: gymTimestamp(key === "student" ? "2025-01-06" : "2025-01-05", "10:00"),
+    updatedAt: gymTimestamp(key === "student" ? "2025-09-01" : "2025-01-05", "10:00"),
+  }));
 
   const settings: SettingsRecord = {
     gymName: "Adama Fitness",
@@ -747,12 +643,7 @@ function periodEnding(plan: PlanKey, endDate: DateOnly): PlannedPeriod {
   };
 }
 
-function generateMember(
-  rng: Rng,
-  target: Target,
-  today: DateOnly,
-  usedPhones: Set<string>,
-): PlannedMember {
+function generateMember(rng: Rng, target: Target, today: DateOnly, usedPhones: Set<string>): PlannedMember {
   const gender: Gender = rng.chance(0.52) ? "MALE" : "FEMALE";
   const firstName = rng.pick(gender === "MALE" ? MALE_NAMES : FEMALE_NAMES);
   const lastName = rng.pick(FATHER_NAMES);
@@ -775,10 +666,7 @@ function generateMember(
     }
     case "EXPIRING": {
       const plan = rng.weighted(EXPIRING_PLANS);
-      const remaining = rng.int(
-        0,
-        Math.min(7, PLAN_DEFS[plan].durationDays - 1),
-      );
+      const remaining = rng.int(0, Math.min(7, PLAN_DEFS[plan].durationDays - 1));
       latest = [periodEnding(plan, addDays(today, remaining))];
       break;
     }
@@ -815,19 +703,12 @@ function generateMember(
     while (rng.chance(loyalty)) {
       // The discontinued student plan only appears in older history.
       const choices: [PlanKey, number][] =
-        cursor.startDate < "2025-09-01"
-          ? [...ANY_PLANS, ["student", 12]]
-          : ANY_PLANS;
-      const plan: PlanKey = rng.chance(0.8)
-        ? cursor.plan
-        : rng.weighted(choices);
-      const contiguous = rng.chance(
-        plan === "daily" ? 0.1 : plan === "weekly" ? 0.45 : 0.7,
-      );
+        cursor.startDate < "2025-09-01" ? [...ANY_PLANS, ["student", 12]] : ANY_PLANS;
+      const plan: PlanKey = rng.chance(0.8) ? cursor.plan : rng.weighted(choices);
+      const contiguous = rng.chance(plan === "daily" ? 0.1 : plan === "weekly" ? 0.45 : 0.7);
       const gap = contiguous ? 0 : rng.int(3, 45);
       const previous = periodEnding(plan, addDays(cursor.startDate, -1 - gap));
-      if (previous.startDate < historyFloor || previous.startDate < GYM_OPENED)
-        break;
+      if (previous.startDate < historyFloor || previous.startDate < GYM_OPENED) break;
       periods.unshift(previous);
       cursor = previous;
     }
@@ -840,10 +721,7 @@ function generateMember(
   let archivedAt: string | null = null;
   if (target === "ARCHIVED") {
     const archivedOn = addDays(latest[0].endDate, rng.int(30, 90));
-    archivedAt = gymTimestamp(
-      archivedOn < today ? archivedOn : addDays(today, -3),
-      "11:00",
-    );
+    archivedAt = gymTimestamp(archivedOn < today ? archivedOn : addDays(today, -3), "11:00");
   }
 
   return {
@@ -854,12 +732,8 @@ function generateMember(
       email: rng.chance(0.55) ? emailFor(rng, firstName, lastName) : null,
       gender: rng.chance(0.9) ? gender : null,
       photoUrl: null,
-      emergencyName: hasEmergency
-        ? `${rng.pick(rng.chance(0.5) ? MALE_NAMES : FEMALE_NAMES)} ${lastName}`
-        : null,
-      emergencyPhone: hasEmergency
-        ? `+251${uniquePhone(rng, usedPhones).slice(4)}`
-        : null,
+      emergencyName: hasEmergency ? `${rng.pick(rng.chance(0.5) ? MALE_NAMES : FEMALE_NAMES)} ${lastName}` : null,
+      emergencyPhone: hasEmergency ? `+251${uniquePhone(rng, usedPhones).slice(4)}` : null,
       emergencyRelationship: hasEmergency ? rng.pick(RELATIONSHIPS) : null,
       address: rng.chance(0.5)
         ? `${rng.pick(SUB_CITIES)} Sub-city, Kebele ${String(rng.int(1, 14)).padStart(2, "0")}, Adama`
@@ -887,11 +761,7 @@ function uniquePhone(rng: Rng, used: Set<string>): string {
 function emailFor(rng: Rng, first: string, last: string): string {
   const style = rng.int(0, 2);
   const local =
-    style === 0
-      ? `${first}.${last[0]}`
-      : style === 1
-        ? `${first}${last}`
-        : `${first}.${last}${rng.int(1, 99)}`;
+    style === 0 ? `${first}.${last[0]}` : style === 1 ? `${first}${last}` : `${first}.${last}${rng.int(1, 99)}`;
   return `${local.toLowerCase()}@${rng.pick(EMAIL_DOMAINS)}`;
 }
 
@@ -903,12 +773,9 @@ function chooseReceivedDate(
   today: DateOnly,
 ): DateOnly {
   let received = current.startDate;
-  const contiguous =
-    previous && addDays(previous.endDate, 1) === current.startDate;
-  if (contiguous && rng.chance(0.45))
-    received = addDays(current.startDate, -rng.int(1, 5));
-  if (previous && received <= previous.startDate)
-    received = addDays(previous.startDate, 1);
+  const contiguous = previous && addDays(previous.endDate, 1) === current.startDate;
+  if (contiguous && rng.chance(0.45)) received = addDays(current.startDate, -rng.int(1, 5));
+  if (previous && received <= previous.startDate) received = addDays(previous.startDate, 1);
   if (received < registrationDate) received = registrationDate;
   if (received > today) received = today;
   return received;
@@ -924,8 +791,7 @@ function chooseMethod(rng: Rng): PaymentMethod {
 }
 
 function referenceFor(rng: Rng, method: PaymentMethod): string | null {
-  const digits = (n: number) =>
-    Array.from({ length: n }, () => rng.int(0, 9)).join("");
+  const digits = (n: number) => Array.from({ length: n }, () => rng.int(0, 9)).join("");
   switch (method) {
     case "CASH":
       return null;
@@ -939,11 +805,7 @@ function referenceFor(rng: Rng, method: PaymentMethod): string | null {
 }
 
 function chooseRecorder(rng: Rng, receivedDate: DateOnly): string {
-  if (
-    receivedDate <= DAWIT_DEACTIVATED &&
-    receivedDate >= "2025-02-10" &&
-    rng.chance(0.25)
-  )
+  if (receivedDate <= DAWIT_DEACTIVATED && receivedDate >= "2025-02-10" && rng.chance(0.25))
     return DEMO_STAFF_IDS.dawit;
   return rng.chance(0.62) ? DEMO_STAFF_IDS.tigist : DEMO_STAFF_IDS.abdi;
 }

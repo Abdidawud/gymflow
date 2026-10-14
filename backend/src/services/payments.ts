@@ -46,15 +46,9 @@ export function selectPayments(db: Db | Tx) {
     ]);
 }
 
-export type PaymentRow = Awaited<
-  ReturnType<ReturnType<typeof selectPayments>["execute"]>
->[number];
+export type PaymentRow = Awaited<ReturnType<ReturnType<typeof selectPayments>["execute"]>>[number];
 
-export function paymentSummaryDto(
-  env: Env,
-  ctx: RequestContext,
-  row: PaymentRow,
-): PaymentSummary {
+export function paymentSummaryDto(env: Env, ctx: RequestContext, row: PaymentRow): PaymentSummary {
   return {
     id: row.id,
     paymentCode: row.payment_code,
@@ -85,11 +79,7 @@ export function paymentSummaryDto(
   };
 }
 
-export function paymentDetailDto(
-  env: Env,
-  ctx: RequestContext,
-  row: PaymentRow,
-): PaymentDetail {
+export function paymentDetailDto(env: Env, ctx: RequestContext, row: PaymentRow): PaymentDetail {
   const summary = paymentSummaryDto(env, ctx, row);
   return {
     ...summary,

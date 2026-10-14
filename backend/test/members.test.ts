@@ -58,12 +58,8 @@ describe("members", () => {
         },
       },
     });
-    const lookup = await client.get(
-      "/members?phone=%2B251%20911%20234%20567&archived=any&pageSize=2",
-    );
-    expect(lookup.body.items.map((m: { id: string }) => m.id)).toEqual([
-      MEMBERS.abebe,
-    ]);
+    const lookup = await client.get("/members?phone=%2B251%20911%20234%20567&archived=any&pageSize=2");
+    expect(lookup.body.items.map((m: { id: string }) => m.id)).toEqual([MEMBERS.abebe]);
   });
 
   it("validates fields with the form's wording", async () => {
@@ -85,11 +81,9 @@ describe("members", () => {
   it("finds members by code, phone digits and name words", async () => {
     const client = await h.signIn(RECEPTIONIST);
     const ids = async (search: string) =>
-      (
-        await client.get(
-          `/members?search=${encodeURIComponent(search)}&pageSize=100`,
-        )
-      ).body.items.map((m: { memberCode: string }) => m.memberCode);
+      (await client.get(`/members?search=${encodeURIComponent(search)}&pageSize=100`)).body.items.map(
+        (m: { memberCode: string }) => m.memberCode,
+      );
     expect(await ids("GYM-00124")).toEqual(["GYM-00124"]);
     expect(await ids("0922 456")).toContain("GYM-00125");
     expect(await ids("kebede abebe")).toContain("GYM-00124");
@@ -99,21 +93,15 @@ describe("members", () => {
     const client = await h.signIn(RECEPTIONIST);
     const active = await client.get("/members?status=ACTIVE&pageSize=1");
     expect(active.body.total).toBe(306);
-    const expiring = await client.get(
-      "/members?status=EXPIRING_SOON&sort=endDate&pageSize=100",
-    );
+    const expiring = await client.get("/members?status=EXPIRING_SOON&sort=endDate&pageSize=100");
     expect(expiring.body.total).toBe(20);
-    const ends = expiring.body.items.map(
-      (m: { membership: { coverageEnd: string } }) => m.membership.coverageEnd,
-    );
+    const ends = expiring.body.items.map((m: { membership: { coverageEnd: string } }) => m.membership.coverageEnd);
     expect(ends).toEqual([...ends].sort());
   });
 
   it("archives and reactivates (administrators only), keeping history", async () => {
     const desk = await h.signIn(RECEPTIONIST);
-    expect((await desk.post(`/members/${MEMBERS.abebe}/archive`)).status).toBe(
-      403,
-    );
+    expect((await desk.post(`/members/${MEMBERS.abebe}/archive`)).status).toBe(403);
     const admin = await h.signIn(ADMIN);
     const archived = await admin.post(`/members/${MEMBERS.abebe}/archive`);
     expect(archived.body).toMatchObject({
@@ -121,16 +109,9 @@ describe("members", () => {
       permittedActions: { recordPayment: false, reactivate: true },
     });
     expect((await admin.get("/members?search=GYM-00124")).body.total).toBe(0);
-    expect(
-      (await admin.get("/members?search=GYM-00124&archived=true")).body.total,
-    ).toBe(1);
-    expect(
-      (await admin.get(`/members/${MEMBERS.abebe}/payments`)).body.total,
-    ).toBeGreaterThan(0);
-    expect(
-      (await admin.post(`/members/${MEMBERS.abebe}/reactivate`)).body
-        .isArchived,
-    ).toBe(false);
+    expect((await admin.get("/members?search=GYM-00124&archived=true")).body.total).toBe(1);
+    expect((await admin.get(`/members/${MEMBERS.abebe}/payments`)).body.total).toBeGreaterThan(0);
+    expect((await admin.post(`/members/${MEMBERS.abebe}/reactivate`)).body.isArchived).toBe(false);
   });
 
   it("lists period history with per-period status", async () => {
@@ -146,10 +127,7 @@ describe("members", () => {
   it("returns 404 for unknown or malformed ids", async () => {
     const client = await h.signIn(RECEPTIONIST);
     expect((await client.get("/members/not-a-uuid")).status).toBe(404);
-    expect(
-      (await client.get("/members/00000000-0000-4000-8200-999999999999"))
-        .status,
-    ).toBe(404);
+    expect((await client.get("/members/00000000-0000-4000-8200-999999999999")).status).toBe(404);
   });
 });
 
@@ -162,15 +140,9 @@ describe("member photos", () => {
       .png()
       .toBuffer();
     const upload = multipart("photo", "me.png", "image/png", png);
-    const res = await client.request(
-      "POST",
-      `/members/${MEMBERS.abebe}/photo`,
-      upload,
-    );
+    const res = await client.request("POST", `/members/${MEMBERS.abebe}/photo`, upload);
     expect(res.status).toBe(200);
-    expect(res.body.photoUrl).toMatch(
-      new RegExp(`^/api/v1/members/${MEMBERS.abebe}/photo\\?v=\\d+$`),
-    );
+    expect(res.body.photoUrl).toMatch(new RegExp(`^/api/v1/members/${MEMBERS.abebe}/photo\\?v=\\d+$`));
 
     const photo = await client.get(res.body.photoUrl.replace("/api/v1", ""));
     expect(photo.status).toBe(200);
@@ -179,40 +151,19 @@ describe("member photos", () => {
     expect(meta.format).toBe("jpeg");
     expect(Math.max(meta.width ?? 0, meta.height ?? 0)).toBe(640);
 
-    expect(
-      (await h.client().get(res.body.photoUrl.replace("/api/v1", ""))).status,
-    ).toBe(401);
-    expect(
-      (await client.delete(`/members/${MEMBERS.abebe}/photo`)).body.photoUrl,
-    ).toBeNull();
+    expect((await h.client().get(res.body.photoUrl.replace("/api/v1", ""))).status).toBe(401);
+    expect((await client.delete(`/members/${MEMBERS.abebe}/photo`)).body.photoUrl).toBeNull();
   });
 
   it("rejects files that are not images, whatever they claim to be", async () => {
     const client = await h.signIn(RECEPTIONIST);
-    const fake = multipart(
-      "photo",
-      "virus.png",
-      "image/png",
-      Buffer.from("#!/bin/sh\necho pwned\n"),
-    );
-    const res = await client.request(
-      "POST",
-      `/members/${MEMBERS.abebe}/photo`,
-      fake,
-    );
+    const fake = multipart("photo", "virus.png", "image/png", Buffer.from("#!/bin/sh\necho pwned\n"));
+    const res = await client.request("POST", `/members/${MEMBERS.abebe}/photo`, fake);
     expect(res.status).toBe(422);
-    expect(res.body.error.fieldErrors.photo).toBe(
-      "This file isn't a valid image. Choose another photo.",
+    expect(res.body.error.fieldErrors.photo).toBe("This file isn't a valid image. Choose another photo.");
+    const pdf = multipart("photo", "doc.pdf", "application/pdf", Buffer.from("%PDF-1.4"));
+    expect((await client.request("POST", `/members/${MEMBERS.abebe}/photo`, pdf)).body.error.fieldErrors.photo).toBe(
+      "Choose a JPEG, PNG or WebP image.",
     );
-    const pdf = multipart(
-      "photo",
-      "doc.pdf",
-      "application/pdf",
-      Buffer.from("%PDF-1.4"),
-    );
-    expect(
-      (await client.request("POST", `/members/${MEMBERS.abebe}/photo`, pdf))
-        .body.error.fieldErrors.photo,
-    ).toBe("Choose a JPEG, PNG or WebP image.");
   });
 });

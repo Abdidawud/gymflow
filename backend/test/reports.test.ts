@@ -39,34 +39,21 @@ describe("dashboard", () => {
 describe("reports", () => {
   it("totals revenue by received date with exact decimals and breakdowns", async () => {
     const admin = await h.signIn(ADMIN);
-    const res = await admin.get(
-      "/reports/revenue?from=2026-09-11&to=2026-10-07",
-    );
+    const res = await admin.get("/reports/revenue?from=2026-09-11&to=2026-10-07");
     expect(res.status).toBe(200);
     const { totalRevenue, transactions, series, byPlan, byMethod } = res.body;
     expect(series).toHaveLength(27);
     const sumOf = (rows: { amount?: string; revenue?: string }[]) =>
-      rows.reduce(
-        (cents, row) =>
-          cents + Math.round(Number(row.amount ?? row.revenue) * 100),
-        0,
-      );
+      rows.reduce((cents, row) => cents + Math.round(Number(row.amount ?? row.revenue) * 100), 0);
     expect(sumOf(series)).toBe(Math.round(Number(totalRevenue) * 100));
     expect(sumOf(byPlan)).toBe(Math.round(Number(totalRevenue) * 100));
     expect(sumOf(byMethod)).toBe(Math.round(Number(totalRevenue) * 100));
-    expect(
-      byMethod.reduce(
-        (n: number, row: { transactions: number }) => n + row.transactions,
-        0,
-      ),
-    ).toBe(transactions);
+    expect(byMethod.reduce((n: number, row: { transactions: number }) => n + row.transactions, 0)).toBe(transactions);
   });
 
   it("returns zeros for a range without payments", async () => {
     const admin = await h.signIn(ADMIN);
-    const res = await admin.get(
-      "/reports/revenue?from=2024-01-01&to=2024-01-31",
-    );
+    const res = await admin.get("/reports/revenue?from=2024-01-01&to=2024-01-31");
     expect(res.body).toMatchObject({
       totalRevenue: "0.00",
       transactions: 0,
@@ -78,21 +65,15 @@ describe("reports", () => {
 
   it("validates ranges", async () => {
     const admin = await h.signIn(ADMIN);
-    expect(
-      (await admin.get("/reports/revenue?from=2026-10-07&to=2026-10-01")).body
-        .error.fieldErrors.from,
-    ).toBe("The From date must be on or before the To date.");
-    expect(
-      (await admin.get("/reports/revenue?from=2025-01-01&to=2026-10-07"))
-        .status,
-    ).toBe(422);
+    expect((await admin.get("/reports/revenue?from=2026-10-07&to=2026-10-01")).body.error.fieldErrors.from).toBe(
+      "The From date must be on or before the To date.",
+    );
+    expect((await admin.get("/reports/revenue?from=2025-01-01&to=2026-10-07")).status).toBe(422);
   });
 
   it("separates renewals from first purchases and reports current counts as of today", async () => {
     const admin = await h.signIn(ADMIN);
-    const res = await admin.get(
-      "/reports/memberships?from=2026-09-11&to=2026-10-07",
-    );
+    const res = await admin.get("/reports/memberships?from=2026-09-11&to=2026-10-07");
     expect(res.body.current).toMatchObject({
       asOf: "2026-10-07",
       active: 306,
@@ -113,9 +94,7 @@ describe("plans", () => {
     const admin = await h.signIn(ADMIN);
     const all = (await admin.get("/plans?includeDisabled=true")).body;
     expect(all).toHaveLength(7);
-    expect(
-      all.find((p: { name: string }) => p.name === "Monthly").activeMemberCount,
-    ).toBeGreaterThan(100);
+    expect(all.find((p: { name: string }) => p.name === "Monthly").activeMemberCount).toBeGreaterThan(100);
     const duplicate = await admin.post("/plans", {
       name: "monthly",
       price: "10",

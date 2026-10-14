@@ -2,25 +2,14 @@ import { randomUUID } from "node:crypto";
 import { demoId } from "@gymflow/shared/demo/ids";
 import { sql } from "kysely";
 import { beforeEach, describe, expect, it } from "vitest";
-import {
-  ADMIN,
-  MEMBERS,
-  RECEPTIONIST,
-  useHarness,
-  type TestClient,
-} from "./helpers";
+import { ADMIN, MEMBERS, RECEPTIONIST, useHarness, type TestClient } from "./helpers";
 
 const h = useHarness();
 const MONTHLY = demoId("plan", 3); // 1500.00 ETB, 30 days
 const WEEKLY = demoId("plan", 2); // 500.00 ETB, 7 days
 const STUDENT = demoId("plan", 7); // disabled
 
-async function preview(
-  client: TestClient,
-  memberId: string,
-  planId = MONTHLY,
-  requestedStartDate?: string,
-) {
+async function preview(client: TestClient, memberId: string, planId = MONTHLY, requestedStartDate?: string) {
   return client.post("/payments/preview", {
     memberId,
     planId,
@@ -40,12 +29,7 @@ async function record(
     receivedDate?: string;
   } = {},
 ) {
-  const p = await preview(
-    client,
-    memberId,
-    options.planId ?? MONTHLY,
-    options.start,
-  );
+  const p = await preview(client, memberId, options.planId ?? MONTHLY, options.start);
   if (p.status !== 200) return p;
   return client.post(
     "/payments",
@@ -149,13 +133,10 @@ describe("membership dates (backend design §5)", () => {
 
   it("refuses backdated and far-future starts", async () => {
     const client = await h.signIn(RECEPTIONIST);
-    expect(
-      (await preview(client, MEMBERS.dawit, MONTHLY, "2026-10-06")).body.error
-        .fieldErrors,
-    ).toHaveProperty("requestedStartDate");
-    expect(
-      (await preview(client, MEMBERS.dawit, MONTHLY, "2027-12-01")).status,
-    ).toBe(422);
+    expect((await preview(client, MEMBERS.dawit, MONTHLY, "2026-10-06")).body.error.fieldErrors).toHaveProperty(
+      "requestedStartDate",
+    );
+    expect((await preview(client, MEMBERS.dawit, MONTHLY, "2027-12-01")).status).toBe(422);
   });
 
   it("rejects a purchase overlapping disconnected future coverage, writing nothing", async () => {
@@ -201,11 +182,7 @@ describe("recording payments (backend design §10)", () => {
     expect(retry.body.payment.id).toBe(first.body.payment.id);
     expect(await count("payments")).toBe(before + 1);
 
-    const changed = await client.post(
-      "/payments",
-      { ...body, reference: "FT9999999999" },
-      { "idempotency-key": key },
-    );
+    const changed = await client.post("/payments", { ...body, reference: "FT9999999999" }, { "idempotency-key": key });
     expect(changed.status).toBe(409);
     expect(changed.body.error.code).toBe("IDEMPOTENCY_CONFLICT");
     expect(await count("payments")).toBe(before + 1);
@@ -226,13 +203,9 @@ describe("recording payments (backend design §10)", () => {
     };
     const before = await count("payments");
     const results = await Promise.all(
-      Array.from({ length: 5 }, () =>
-        client.post("/payments", body, { "idempotency-key": key }),
-      ),
+      Array.from({ length: 5 }, () => client.post("/payments", body, { "idempotency-key": key })),
     );
-    expect(results.map((r) => r.status).sort()).toEqual([
-      200, 200, 200, 200, 201,
-    ]);
+    expect(results.map((r) => r.status).sort()).toEqual([200, 200, 200, 200, 201]);
     expect(new Set(results.map((r) => r.body.payment.id)).size).toBe(1);
     expect(await count("payments")).toBe(before + 1);
   });
@@ -240,10 +213,7 @@ describe("recording payments (backend design §10)", () => {
   it("lets only one of two concurrent renewals through; the other must review a new preview", async () => {
     const desk = await h.signIn(RECEPTIONIST);
     const office = await h.signIn(ADMIN);
-    const [a, b] = await Promise.all([
-      preview(desk, MEMBERS.abebe),
-      preview(office, MEMBERS.abebe),
-    ]);
+    const [a, b] = await Promise.all([preview(desk, MEMBERS.abebe), preview(office, MEMBERS.abebe)]);
     expect(a.body.previewFingerprint).toBe(b.body.previewFingerprint);
     const body = (fp: string) => ({
       memberId: MEMBERS.abebe,
@@ -263,26 +233,20 @@ describe("recording payments (backend design §10)", () => {
       }),
     ]);
     expect(results.map((r) => r.status).sort()).toEqual([201, 409]);
-    expect(results.find((r) => r.status === 409)!.body.error.code).toBe(
-      "STALE_PREVIEW",
-    );
+    expect(results.find((r) => r.status === 409)!.body.error.code).toBe("STALE_PREVIEW");
     const periods = await h.owner
       .selectFrom("memberships")
       .select(["start_date", "end_date"])
       .where("member_id", "=", MEMBERS.abebe)
       .where("start_date", ">", "2026-10-07")
       .execute();
-    expect(periods).toEqual([
-      { start_date: "2026-10-31", end_date: "2026-11-29" },
-    ]);
+    expect(periods).toEqual([{ start_date: "2026-10-31", end_date: "2026-11-29" }]);
   });
 
   it("asks for a new review when the price changed after the preview", async () => {
     const client = await h.signIn(ADMIN);
     const p = await preview(client, MEMBERS.dawit);
-    const plan = (await client.get("/plans")).body.find(
-      (x: { id: string }) => x.id === MONTHLY,
-    );
+    const plan = (await client.get("/plans")).body.find((x: { id: string }) => x.id === MONTHLY);
     expect(
       (
         await client.patch(`/plans/${MONTHLY}`, {
@@ -339,9 +303,7 @@ describe("recording payments (backend design §10)", () => {
     const future = await record(client, MEMBERS.dawit, {
       receivedDate: "2026-10-08",
     });
-    expect(future.body.error.fieldErrors.receivedDate).toBe(
-      "Payment date can't be in the future.",
-    );
+    expect(future.body.error.fieldErrors.receivedDate).toBe("Payment date can't be in the future.");
     const backEntered = await record(client, MEMBERS.dawit, {
       receivedDate: "2026-10-02",
     });
@@ -364,9 +326,7 @@ describe("recording payments (backend design §10)", () => {
 
   it("refuses disabled plans and methods, and archived members", async () => {
     const admin = await h.signIn(ADMIN);
-    expect((await preview(admin, MEMBERS.dawit, STUDENT)).body.error.code).toBe(
-      "PLAN_DISABLED",
-    );
+    expect((await preview(admin, MEMBERS.dawit, STUDENT)).body.error.code).toBe("PLAN_DISABLED");
 
     await admin.patch("/settings", { enabledPaymentMethods: ["CASH"] });
     const card = await record(admin, MEMBERS.dawit, {
@@ -376,9 +336,7 @@ describe("recording payments (backend design §10)", () => {
     expect(card.body.error.code).toBe("PAYMENT_METHOD_DISABLED");
 
     await admin.post(`/members/${MEMBERS.dawit}/archive`);
-    expect((await preview(admin, MEMBERS.dawit)).body.error.code).toBe(
-      "MEMBER_ARCHIVED",
-    );
+    expect((await preview(admin, MEMBERS.dawit)).body.error.code).toBe("MEMBER_ARCHIVED");
   });
 
   it("writes the period, the payment and an audit event together", async () => {
@@ -388,17 +346,11 @@ describe("recording payments (backend design §10)", () => {
       memberships: await count("memberships"),
       audit: await count("audit_events"),
     };
-    expect(
-      (await record(client, MEMBERS.sara, { planId: WEEKLY })).status,
-    ).toBe(201);
+    expect((await record(client, MEMBERS.sara, { planId: WEEKLY })).status).toBe(201);
     expect(await count("payments")).toBe(before.payments + 1);
     expect(await count("memberships")).toBe(before.memberships + 1);
     expect(await count("audit_events")).toBe(before.audit + 1);
-    const event = await h.owner
-      .selectFrom("audit_events")
-      .selectAll()
-      .orderBy("id", "desc")
-      .executeTakeFirstOrThrow();
+    const event = await h.owner.selectFrom("audit_events").selectAll().orderBy("id", "desc").executeTakeFirstOrThrow();
     expect(event).toMatchObject({
       action: "payment.create",
       actor_id: RECEPTIONIST.id,
@@ -411,9 +363,7 @@ describe("financial history", () => {
   it("keeps purchase-time plan details after a plan is renamed and repriced", async () => {
     const admin = await h.signIn(ADMIN);
     const paid = await record(admin, MEMBERS.dawit);
-    const plan = (await admin.get("/plans")).body.find(
-      (x: { id: string }) => x.id === MONTHLY,
-    );
+    const plan = (await admin.get("/plans")).body.find((x: { id: string }) => x.id === MONTHLY);
     const renamed = await admin.patch(`/plans/${MONTHLY}`, {
       ...planInput(plan),
       name: "Monthly Plus",
@@ -424,9 +374,7 @@ describe("financial history", () => {
       price: "1800.00",
       isReferenced: true,
     });
-    const receipt = await admin.get(
-      `/payments/${paid.body.payment.id}/receipt`,
-    );
+    const receipt = await admin.get(`/payments/${paid.body.payment.id}/receipt`);
     expect(receipt.body.payment.membership).toMatchObject({
       planName: "Monthly",
       price: "1500.00",
@@ -439,27 +387,14 @@ describe("financial history", () => {
   });
 
   it("cannot be edited or deleted, even by the application role", async () => {
-    const payment = await h.appDb
-      .selectFrom("payments")
-      .select("id")
-      .executeTakeFirstOrThrow();
+    const payment = await h.appDb.selectFrom("payments").select("id").executeTakeFirstOrThrow();
     await expect(
-      h.appDb
-        .updateTable("payments")
-        .set({ notes: "edited" })
-        .where("id", "=", payment.id)
-        .execute(),
+      h.appDb.updateTable("payments").set({ notes: "edited" }).where("id", "=", payment.id).execute(),
     ).rejects.toThrow(/permission denied/);
-    await expect(h.appDb.deleteFrom("memberships").execute()).rejects.toThrow(
-      /permission denied/,
-    );
+    await expect(h.appDb.deleteFrom("memberships").execute()).rejects.toThrow(/permission denied/);
     // Even the schema owner is stopped by the immutability trigger.
     await expect(
-      h.owner
-        .updateTable("payments")
-        .set({ notes: "edited" })
-        .where("id", "=", payment.id)
-        .execute(),
+      h.owner.updateTable("payments").set({ notes: "edited" }).where("id", "=", payment.id).execute(),
     ).rejects.toThrow(/immutable/);
   });
 
@@ -491,17 +426,10 @@ describe("payment lists", () => {
   it("searches by payment number, member and reference, with revenue for administrators only", async () => {
     const admin = await h.signIn(ADMIN);
     const byCode = await admin.get("/payments?search=PAY-10234");
+    expect(byCode.body.items.map((p: { paymentCode: string }) => p.paymentCode)).toEqual(["PAY-10234"]);
+    const byMember = await admin.get("/payments?search=abebe%20kebede&pageSize=100");
     expect(
-      byCode.body.items.map((p: { paymentCode: string }) => p.paymentCode),
-    ).toEqual(["PAY-10234"]);
-    const byMember = await admin.get(
-      "/payments?search=abebe%20kebede&pageSize=100",
-    );
-    expect(
-      byMember.body.items.every(
-        (p: { member: { fullName: string } }) =>
-          p.member.fullName === "Abebe Kebede",
-      ),
+      byMember.body.items.every((p: { member: { fullName: string } }) => p.member.fullName === "Abebe Kebede"),
     ).toBe(true);
     const october = await admin.get("/payments?from=2026-10-07&to=2026-10-07");
     expect(october.body.summary).toEqual({
@@ -510,8 +438,6 @@ describe("payment lists", () => {
     });
 
     const desk = await h.signIn(RECEPTIONIST);
-    expect(
-      (await desk.get("/payments?from=2026-10-07&to=2026-10-07")).body.summary,
-    ).toBeNull();
+    expect((await desk.get("/payments?from=2026-10-07&to=2026-10-07")).body.summary).toBeNull();
   });
 });

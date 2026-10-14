@@ -19,11 +19,7 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { Env } from "../http/context";
 import { parse } from "../http/validation";
-import {
-  loadRelevantPeriods,
-  memberSummaryDto,
-  selectMembers,
-} from "../services/members";
+import { loadRelevantPeriods, memberSummaryDto, selectMembers } from "../services/members";
 import { readSettings } from "../services/settings";
 
 const date = z.string().refine(isDateOnly);
@@ -44,11 +40,7 @@ export async function membershipRoutes(app: FastifyInstance, env: Env) {
     const today = env.clock.today();
     const settings = await readSettings(env.db);
 
-    const members = (
-      await selectMembers(env.db)
-        .where("members.is_archived", "=", false)
-        .execute()
-    ).filter((m) =>
+    const members = (await selectMembers(env.db).where("members.is_archived", "=", false).execute()).filter((m) =>
       matchesMemberSearch(
         {
           memberCode: m.member_code,
@@ -71,27 +63,12 @@ export async function membershipRoutes(app: FastifyInstance, env: Env) {
       const period = displayPeriod(row.membership);
       if (!period) return false;
       const end = row.membership.coverageEnd ?? period.endDate;
-      return (
-        (!query.endFrom || end >= query.endFrom) &&
-        (!query.endTo || end <= query.endTo)
-      );
+      return (!query.endFrom || end >= query.endFrom) && (!query.endTo || end <= query.endTo);
     };
 
     const base = members
-      .map((m) =>
-        memberSummaryDto(
-          env,
-          m,
-          periods.get(m.id) ?? [],
-          today,
-          settings.expirationWarningDays,
-        ),
-      )
-      .filter(
-        (row) =>
-          !query.planId ||
-          displayPeriod(row.membership)?.planId === query.planId,
-      )
+      .map((m) => memberSummaryDto(env, m, periods.get(m.id) ?? [], today, settings.expirationWarningDays))
+      .filter((row) => !query.planId || displayPeriod(row.membership)?.planId === query.planId)
       .filter(inEndRange);
     const counts = countStatuses(base.map((row) => row.membership.status));
     const rows = base

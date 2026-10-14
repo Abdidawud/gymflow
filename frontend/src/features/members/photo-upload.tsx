@@ -4,16 +4,17 @@ import { Camera, Trash2, UserRound } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/provider";
+import { MAX_ORIGINAL_BYTES, MAX_UPLOAD_BYTES, shrinkImage } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
-const MAX_BYTES = 5 * 1024 * 1024;
 
 export type PhotoChange = { kind: "keep" } | { kind: "replace"; file: File } | { kind: "remove" };
 
 /**
- * Optional member photo (design.md §10): JPEG/PNG/WebP up to 5 MB, with
- * preview, remove and upload-error states. Initials are used without a photo.
+ * Optional member photo (design.md §10): JPEG/PNG/WebP, shrunk in the browser
+ * before upload, with preview, remove and upload-error states. Initials are
+ * used without a photo.
  */
 export function PhotoUpload({
   currentUrl,
@@ -41,18 +42,23 @@ export function PhotoUpload({
   const shown = change.kind === "replace" ? previewUrl : change.kind === "remove" ? null : currentUrl;
   const message = localError ?? error ?? null;
 
-  function onFile(file: File | undefined) {
+  async function onFile(file: File | undefined) {
     if (!file) return;
     if (!ACCEPTED.includes(file.type)) {
       setLocalError(t("members.photo.type"));
       return;
     }
-    if (file.size > MAX_BYTES) {
+    if (file.size > MAX_ORIGINAL_BYTES) {
+      setLocalError(t("members.photo.size"));
+      return;
+    }
+    const prepared = await shrinkImage(file, { maxSize: 1280, type: "image/jpeg" });
+    if (prepared.size > MAX_UPLOAD_BYTES) {
       setLocalError(t("members.photo.size"));
       return;
     }
     setLocalError(null);
-    onChange({ kind: "replace", file });
+    onChange({ kind: "replace", file: prepared });
   }
 
   return (
@@ -89,7 +95,7 @@ export function PhotoUpload({
             className="sr-only"
             aria-labelledby={`${id}-label`}
             onChange={(event) => {
-              onFile(event.target.files?.[0]);
+              void onFile(event.target.files?.[0]);
               event.target.value = "";
             }}
           />

@@ -24,26 +24,26 @@ export interface DatabaseOptions {
   applicationName?: string;
 }
 
-export function createPool({
-  url,
-  poolMax = 10,
-  ssl = false,
-  applicationName = "gymflow-api",
-}: DatabaseOptions) {
+/**
+ * A connection pool that also works behind a transaction pooler (Neon's
+ * PgBouncer): no per-session SET commands or startup options, and only
+ * transaction-scoped advisory locks at runtime. Timestamps are absolute
+ * (timestamptz) and gym-local dates are computed explicitly, so the session
+ * timezone never matters. Statement timeouts are set on the database role
+ * (see grantAppRole).
+ */
+export function createPool({ url, poolMax = 10, ssl = false, applicationName = "gymflow-api" }: DatabaseOptions) {
   const pool = new pg.Pool({
     connectionString: url,
     max: poolMax,
-    ssl: ssl ? { rejectUnauthorized: true } : undefined,
+    ...(ssl ? { ssl: { rejectUnauthorized: true } } : {}),
     application_name: applicationName,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,
-    // Fail fast instead of holding row locks forever if something goes wrong.
-    statement_timeout: 15_000,
-    idle_in_transaction_session_timeout: 30_000,
   });
-  // Every session works in UTC; gym-local dates are computed explicitly.
-  pool.on("connect", (client) => {
-    void client.query("SET TIME ZONE 'UTC'");
+  // An idle connection dropped by the server must not crash the process.
+  pool.on("error", (error) => {
+    console.error("[db] idle client error:", error.message);
   });
   return pool;
 }

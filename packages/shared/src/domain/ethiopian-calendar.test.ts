@@ -21,11 +21,7 @@ const icu = new Intl.DateTimeFormat("en-US-u-ca-ethiopic", {
 });
 
 function icuEthiopian(date: string) {
-  const parts = Object.fromEntries(
-    icu
-      .formatToParts(new Date(`${date}T00:00:00Z`))
-      .map((p) => [p.type, p.value]),
-  );
+  const parts = Object.fromEntries(icu.formatToParts(new Date(`${date}T00:00:00Z`)).map((p) => [p.type, p.value]));
   return {
     year: Number(parts.year),
     month: Number(parts.month),
@@ -64,14 +60,8 @@ describe("Ethiopian calendar", () => {
     for (const date of days) {
       const expected = icuEthiopian(date);
       const actual = toEthiopian(date);
-      if (
-        actual.year !== expected.year ||
-        actual.month !== expected.month ||
-        actual.day !== expected.day
-      ) {
-        throw new Error(
-          `${date}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
-        );
+      if (actual.year !== expected.year || actual.month !== expected.month || actual.day !== expected.day) {
+        throw new Error(`${date}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
       }
     }
   });
@@ -93,9 +83,7 @@ describe("Ethiopian calendar", () => {
     expect(ethiopianMonthLength(2018, 13)).toBe(5);
     expect(isValidEthiopianDate({ year: 2018, month: 13, day: 6 })).toBe(false);
     expect(isValidEthiopianDate({ year: 2019, month: 13, day: 6 })).toBe(true);
-    expect(() => fromEthiopian({ year: 2018, month: 13, day: 6 })).toThrow(
-      RangeError,
-    );
+    expect(() => fromEthiopian({ year: 2018, month: 13, day: 6 })).toThrow(RangeError);
   });
 
   it("finds Ethiopian month boundaries", () => {

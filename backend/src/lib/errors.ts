@@ -25,20 +25,12 @@ export class AppError extends Error {
   }
 }
 
-export function fail(
-  status: number,
-  code: ApiErrorCode,
-  message: string,
-  extra?: AppErrorExtra,
-): never {
+export function fail(status: number, code: ApiErrorCode, message: string, extra?: AppErrorExtra): never {
   throw new AppError(status, code, message, extra);
 }
 
 /** 422 with one message per field, as the forms show them. */
-export function invalid(
-  t: Translate,
-  fieldErrors: Record<string, string>,
-): never {
+export function invalid(t: Translate, fieldErrors: Record<string, string>): never {
   throw new AppError(422, "VALIDATION_FAILED", t("checkFields"), {
     fieldErrors,
   });

@@ -32,10 +32,6 @@ export const auth = {
     reasonDeactivated: "This account has been deactivated. Contact your gym administrator for help.",
     reasonReset: "Password updated. Sign in with your new password.",
     staffNote: "Staff accounts are created by your gym administrator. Need access? Ask your administrator.",
-    demoTitle: "Demo accounts (mock data)",
-    demoAdmin: "Administrator",
-    demoReception: "Receptionist",
-    demoFirstSignIn: "First sign-in",
   },
   forgot: {
     pageTitle: "Reset your password",

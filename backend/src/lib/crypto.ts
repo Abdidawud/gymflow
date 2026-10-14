@@ -1,9 +1,4 @@
-import {
-  createHash,
-  createHmac,
-  randomBytes,
-  timingSafeEqual,
-} from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 /** Unguessable opaque token (256 bits), URL-safe. */
 export function randomToken(bytes = 32): string {
@@ -38,8 +33,5 @@ export function canonicalJson(value: unknown): string {
 
 /** Stable digest of a value, for preview and request fingerprints. */
 export function fingerprint(value: unknown): string {
-  return createHash("sha256")
-    .update(canonicalJson(value))
-    .digest("hex")
-    .slice(0, 32);
+  return createHash("sha256").update(canonicalJson(value)).digest("hex").slice(0, 32);
 }

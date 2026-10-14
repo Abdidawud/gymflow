@@ -4,11 +4,7 @@
  * receptionists print receipts.
  */
 
-import {
-  PAYMENT_METHODS,
-  type GymSettings,
-  type PaymentMethod,
-} from "@gymflow/shared/api/types";
+import { PAYMENT_METHODS, type GymSettings, type PaymentMethod } from "@gymflow/shared/api/types";
 import { normalizeEthiopianPhone } from "@gymflow/shared/domain/phone";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
@@ -42,11 +38,7 @@ export function logoUrl(env: Env, settings: SettingsRow): string | null {
 async function settingsDto(env: Env, db: Db): Promise<GymSettings> {
   const settings = await readSettings(db);
   const updatedBy = settings.updatedBy
-    ? await db
-        .selectFrom("staff")
-        .select(["id", "full_name"])
-        .where("id", "=", settings.updatedBy)
-        .executeTakeFirst()
+    ? await db.selectFrom("staff").select(["id", "full_name"]).where("id", "=", settings.updatedBy).executeTakeFirst()
     : undefined;
   return {
     gymName: settings.gymName,
@@ -59,9 +51,7 @@ async function settingsDto(env: Env, db: Db): Promise<GymSettings> {
     expirationWarningDays: settings.expirationWarningDays,
     enabledPaymentMethods: settings.enabledPaymentMethods,
     updatedAt: settings.updatedAt.toISOString(),
-    updatedBy: updatedBy
-      ? { id: updatedBy.id, fullName: updatedBy.full_name }
-      : null,
+    updatedBy: updatedBy ? { id: updatedBy.id, fullName: updatedBy.full_name } : null,
   };
 }
 
@@ -74,8 +64,7 @@ function validate(ctx: RequestContext, input: z.infer<typeof UpdateBody>) {
   if (input.gymName !== undefined) {
     const name = clean(input.gymName);
     if (!name) errors.add("gymName", t("gymName"));
-    else if (name.length > 80)
-      errors.add("gymName", t("maxLength", { max: 80 }));
+    else if (name.length > 80) errors.add("gymName", t("maxLength", { max: 80 }));
     else changes.gym_name = name;
   }
   if (input.phone !== undefined) {
@@ -91,8 +80,7 @@ function validate(ctx: RequestContext, input: z.infer<typeof UpdateBody>) {
   }
   if (input.address !== undefined) {
     const address = clean(input.address);
-    if (address && address.length > 200)
-      errors.add("address", t("maxLength", { max: 200 }));
+    if (address && address.length > 200) errors.add("address", t("maxLength", { max: 200 }));
     else changes.address = address;
   }
   if (input.logoUrl !== undefined) {
@@ -102,16 +90,12 @@ function validate(ctx: RequestContext, input: z.infer<typeof UpdateBody>) {
   }
   if (input.expirationWarningDays !== undefined) {
     const days = Number(input.expirationWarningDays);
-    if (!Number.isInteger(days) || days < 0 || days > 30)
-      errors.add("expirationWarningDays", t("warningDays"));
+    if (!Number.isInteger(days) || days < 0 || days > 30) errors.add("expirationWarningDays", t("warningDays"));
     else changes.expiration_warning_days = days;
   }
   if (input.enabledPaymentMethods !== undefined) {
-    const methods = PAYMENT_METHODS.filter((m) =>
-      input.enabledPaymentMethods!.includes(m),
-    );
-    if (methods.length === 0)
-      errors.add("enabledPaymentMethods", t("atLeastOneMethod"));
+    const methods = PAYMENT_METHODS.filter((m) => input.enabledPaymentMethods!.includes(m));
+    if (methods.length === 0) errors.add("enabledPaymentMethods", t("atLeastOneMethod"));
     else changes.enabled_payment_methods = methods as PaymentMethod[];
   }
   errors.throwIfAny();
@@ -125,86 +109,53 @@ export async function settingsRoutes(app: FastifyInstance, env: Env) {
 
   app.patch("/settings", { config }, async (request) => {
     const ctx = request.ctx;
-    const { changes, removeLogo } = validate(
-      ctx,
-      parse(UpdateBody, request.body, ctx.t),
-    );
-    const previousLogo = await env.db.transaction().execute(async (tx) => {
+    const { changes, removeLogo } = validate(ctx, parse(UpdateBody, request.body, ctx.t));
+    await env.db.transaction().execute(async (tx) => {
       const before = await readSettings(tx, { lock: "update" });
       const now = env.clock.now();
       await tx
         .updateTable("gym_settings")
         .set({
           ...changes,
-          ...(removeLogo
-            ? { logo_storage_key: null, logo_updated_at: null }
-            : {}),
+          ...(removeLogo ? { logo_storage_key: null, logo_updated_at: null } : {}),
           updated_at: now,
           updated_by: ctx.actor?.id ?? null,
         })
         .execute();
-      const changed = [
-        ...Object.keys(changes),
-        ...(removeLogo && before.logoStorageKey ? ["logo"] : []),
-      ];
-      if (changed.length > 0)
-        await audit(
-          tx,
-          ctx,
-          "settings.update",
-          { type: "settings", id: null },
-          { changed },
-          now,
-        );
-      return removeLogo ? before.logoStorageKey : null;
+      if (removeLogo && before.logoStorageKey) await env.storage.delete(tx, before.logoStorageKey);
+      const changed = [...Object.keys(changes), ...(removeLogo && before.logoStorageKey ? ["logo"] : [])];
+      if (changed.length > 0) {
+        await audit(tx, ctx, "settings.update", { type: "settings", id: null }, { changed }, now);
+      }
     });
-    if (previousLogo) await env.storage.delete(previousLogo).catch(() => {});
     return settingsDto(env, env.db);
   });
 
   app.post("/settings/logo", { config }, async (request) => {
     const ctx = request.ctx;
-    const image = await processLogo(
-      await readUpload(request, "logo", ctx.t),
-      ctx.t,
-    );
-    const key = env.storage.newKey("logo", LOGO_OWNER, "png");
-    await env.storage.put(key, image);
-    const previous = await env.db.transaction().execute(async (tx) => {
+    const image = await processLogo(await readUpload(request, "logo", ctx.t), ctx.t);
+    await env.db.transaction().execute(async (tx) => {
       const before = await readSettings(tx, { lock: "update" });
+      const key = env.storage.newKey("logo", LOGO_OWNER, "png");
+      await env.storage.put(tx, key, { contentType: "image/png", data: image });
       const now = env.clock.now();
       await tx
         .updateTable("gym_settings")
-        .set({
-          logo_storage_key: key,
-          logo_updated_at: now,
-          updated_at: now,
-          updated_by: ctx.actor?.id ?? null,
-        })
+        .set({ logo_storage_key: key, logo_updated_at: now, updated_at: now, updated_by: ctx.actor?.id ?? null })
         .execute();
-      await audit(
-        tx,
-        ctx,
-        "settings.update",
-        { type: "settings", id: null },
-        { changed: ["logo"] },
-        now,
-      );
-      return before.logoStorageKey;
+      if (before.logoStorageKey) await env.storage.delete(tx, before.logoStorageKey);
+      await audit(tx, ctx, "settings.update", { type: "settings", id: null }, { changed: ["logo"] }, now);
     });
-    if (previous) await env.storage.delete(previous).catch(() => {});
     return settingsDto(env, env.db);
   });
 
   app.get("/settings/logo", async (request, reply) => {
     const settings = await readSettings(env.db);
-    const data = settings.logoStorageKey
-      ? await env.storage.get(settings.logoStorageKey)
-      : null;
-    if (!data) notFound(request.ctx.t);
+    const file = settings.logoStorageKey ? await env.storage.get(env.db, settings.logoStorageKey) : null;
+    if (!file) notFound(request.ctx.t);
     return reply
-      .header("Content-Type", "image/png")
+      .header("Content-Type", file.contentType)
       .header("Cache-Control", "private, max-age=31536000, immutable")
-      .send(data);
+      .send(file.data);
   });
 }

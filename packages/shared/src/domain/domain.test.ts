@@ -1,18 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { addDays, dateInTimeZone, daysBetween, isDateOnly } from "./dates";
-import {
-  averageMoney,
-  formatMoney,
-  fromCents,
-  parsePriceInput,
-  sumMoney,
-  toCents,
-} from "./money";
-import {
-  formatPhone,
-  normalizeEthiopianPhone,
-  phoneSearchDigits,
-} from "./phone";
+import { averageMoney, formatMoney, fromCents, parsePriceInput, sumMoney, toCents } from "./money";
+import { formatPhone, normalizeEthiopianPhone, phoneSearchDigits } from "./phone";
 
 describe("dates", () => {
   it("does whole-day arithmetic", () => {
@@ -78,9 +67,7 @@ describe("phone", () => {
     expect(normalizeEthiopianPhone("abc")).toBeNull();
   });
   it("accepts landlines when any number is allowed", () => {
-    expect(normalizeEthiopianPhone("022 111 8920", "any")).toBe(
-      "+251221118920",
-    );
+    expect(normalizeEthiopianPhone("022 111 8920", "any")).toBe("+251221118920");
   });
   it("formats canonical numbers for display", () => {
     expect(formatPhone("+251911234567")).toBe("0911 234 567");

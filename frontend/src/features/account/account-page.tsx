@@ -1,7 +1,18 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DatabaseZap, KeyRound, Languages, LogOut, Monitor, Moon, Palette, ShieldCheck, Sun } from "lucide-react";
+import {
+  Crown,
+  DatabaseZap,
+  KeyRound,
+  Languages,
+  LogOut,
+  Monitor,
+  Moon,
+  Palette,
+  ShieldCheck,
+  Sun,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -81,8 +92,12 @@ export function AccountPage() {
               <div className="min-w-0">
                 <p className="text-fg text-lg font-semibold">{account.fullName}</p>
                 <p className="text-fg-muted truncate text-sm">{account.email}</p>
-                <Badge tone="primary" className="mt-1.5" icon={<ShieldCheck aria-hidden />}>
-                  {t(`labels.roles.${account.role}.label`)}
+                <Badge
+                  tone="primary"
+                  className="mt-1.5"
+                  icon={account.isSuperAdmin ? <Crown aria-hidden /> : <ShieldCheck aria-hidden />}
+                >
+                  {account.isSuperAdmin ? t("labels.roles.superAdmin") : t(`labels.roles.${account.role}.label`)}
                 </Badge>
               </div>
             </div>

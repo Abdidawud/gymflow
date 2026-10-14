@@ -18,21 +18,14 @@ export function isDateOnly(value: unknown): value is DateOnly {
   if (!match) return false;
   const [, y, m, d] = match;
   const date = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
-  return (
-    date.getUTCFullYear() === Number(y) &&
-    date.getUTCMonth() === Number(m) - 1 &&
-    date.getUTCDate() === Number(d)
-  );
+  return date.getUTCFullYear() === Number(y) && date.getUTCMonth() === Number(m) - 1 && date.getUTCDate() === Number(d);
 }
 
 /** Days since 1970-01-01 for a date-only value. */
 export function toDayNumber(date: DateOnly): number {
   const match = DATE_ONLY_RE.exec(date);
   if (!match) throw new RangeError(`Invalid date-only value: ${date}`);
-  return (
-    Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])) /
-    MS_PER_DAY
-  );
+  return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])) / MS_PER_DAY;
 }
 
 export function fromDayNumber(day: number): DateOnly {
@@ -61,10 +54,7 @@ export function maxDate(a: DateOnly, b: DateOnly): DateOnly {
 }
 
 /** Calendar date of an instant in the given timezone. */
-export function dateInTimeZone(
-  instant: Date,
-  timeZone: string = GYM_TIMEZONE,
-): DateOnly {
+export function dateInTimeZone(instant: Date, timeZone: string = GYM_TIMEZONE): DateOnly {
   // en-CA formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat("en-CA", {
     timeZone,

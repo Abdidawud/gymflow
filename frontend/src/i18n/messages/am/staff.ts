@@ -21,6 +21,7 @@ export const staff: Messages["staff"] = {
   activate: "አንቃ",
   cantDeactivateSelf: "የራስዎን መለያ ማገድ አይችሉም።",
   cantDeactivateLastAdmin: "የመጨረሻውን ንቁ አስተዳዳሪ ማገድ አይቻልም።",
+  superAdminProtected: "ይህን መለያ መቀየር የሚችለው ዋናው አስተዳዳሪ ብቻ ነው።",
   activated: "{name} እንደገና መግባት ይችላሉ።",
   deactivateTitle: "{name}ን ያግዳሉ?",
   deactivateText: "ወዲያውኑ ከሲስተሙ ይወጣሉ፤ እንደገና መግባትም አይችሉም። የመዘገቧቸው ክፍያዎች አይቀየሩም።",
@@ -50,6 +51,7 @@ export const staff: Messages["staff"] = {
   update: {
     title: "ሠራተኛ አርትዕ",
     lastAdminHint: "ይህ የመጨረሻው ንቁ አስተዳዳሪ ስለሆነ ሚናውን መቀየር አይቻልም።",
+    superAdminHint: "ዋናው አስተዳዳሪ ሁልጊዜ አስተዳዳሪ ሆኖ ይቆያል።",
     note: "ኢሜይል ሊቀየር አይችልም። የሚና ለውጦች ወዲያውኑ ተፈጻሚ ይሆናሉ፤ ሰውየውንም ከሲስተሙ ያስወጣሉ።",
     updated: "የሠራተኛው መለያ ተዘምኗል።",
     failed: "መለያውን ማዘመን አልተቻለም። እንደገና ይሞክሩ።",

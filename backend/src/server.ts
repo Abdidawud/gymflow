@@ -9,7 +9,6 @@ import { loadConfig } from "./config";
 import { createDb, createPool } from "./db";
 import { createClock } from "./lib/clock";
 import { startBackgroundJobs } from "./services/jobs";
-import { createMailTransport } from "./services/mail";
 import { FileStorage } from "./services/storage";
 
 async function main() {
@@ -25,22 +24,14 @@ async function main() {
     db,
     pool,
     clock: createClock(config.fixedToday),
-    storage: new FileStorage(config.storageDir),
+    storage: new FileStorage(),
   });
 
-  if (config.fixedToday)
-    app.log.warn(
-      `FIXED_TODAY=${config.fixedToday}: "today" is frozen (development only).`,
-    );
+  if (config.fixedToday) app.log.warn(`FIXED_TODAY=${config.fixedToday}: "today" is frozen (development only).`);
   if (config.mail.transport !== "smtp")
-    app.log.warn(
-      `MAIL_TRANSPORT=${config.mail.transport}: recovery emails are not sent.`,
-    );
+    app.log.warn(`MAIL_TRANSPORT=${config.mail.transport}: recovery emails are not sent.`);
 
-  const jobs = startBackgroundJobs(
-    { ...app.env(), log: app.log },
-    createMailTransport(config, app.log),
-  );
+  const jobs = startBackgroundJobs(app.env());
 
   let stopping = false;
   const shutdown = async (signal: string) => {

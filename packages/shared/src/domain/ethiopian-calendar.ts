@@ -40,17 +40,12 @@ export function isEthiopianLeapYear(year: number): boolean {
 }
 
 export function ethiopianMonthLength(year: number, month: number): number {
-  if (month < 1 || month > ETHIOPIAN_MONTH_COUNT)
-    throw new RangeError(`Invalid Ethiopian month: ${month}`);
+  if (month < 1 || month > ETHIOPIAN_MONTH_COUNT) throw new RangeError(`Invalid Ethiopian month: ${month}`);
   if (month < 13) return 30;
   return isEthiopianLeapYear(year) ? 6 : 5;
 }
 
-export function isValidEthiopianDate({
-  year,
-  month,
-  day,
-}: EthiopianDate): boolean {
+export function isValidEthiopianDate({ year, month, day }: EthiopianDate): boolean {
   return (
     Number.isInteger(year) &&
     Number.isInteger(month) &&
@@ -63,25 +58,14 @@ export function isValidEthiopianDate({
 }
 
 function toJulianDay({ year, month, day }: EthiopianDate): number {
-  return (
-    AMETE_MIHRET_OFFSET +
-    365 +
-    365 * (year - 1) +
-    floorDiv(year, 4) +
-    30 * month +
-    day -
-    31
-  );
+  return AMETE_MIHRET_OFFSET + 365 + 365 * (year - 1) + floorDiv(year, 4) + 30 * month + day - 31;
 }
 
 function fromJulianDay(jdn: number): EthiopianDate {
   const r = mod(jdn - AMETE_MIHRET_OFFSET, 1461);
   const n = mod(r, 365) + 365 * floorDiv(r, 1460);
   return {
-    year:
-      4 * floorDiv(jdn - AMETE_MIHRET_OFFSET, 1461) +
-      floorDiv(r, 365) -
-      floorDiv(r, 1460),
+    year: 4 * floorDiv(jdn - AMETE_MIHRET_OFFSET, 1461) + floorDiv(r, 365) - floorDiv(r, 1460),
     month: floorDiv(n, 30) + 1,
     day: mod(n, 30) + 1,
   };
@@ -95,9 +79,7 @@ export function toEthiopian(date: DateOnly): EthiopianDate {
 /** Ethiopian date → ISO date. Throws on an impossible date such as Pagume 6 in a common year. */
 export function fromEthiopian(date: EthiopianDate): DateOnly {
   if (!isValidEthiopianDate(date)) {
-    throw new RangeError(
-      `Invalid Ethiopian date: ${date.year}-${date.month}-${date.day}`,
-    );
+    throw new RangeError(`Invalid Ethiopian date: ${date.year}-${date.month}-${date.day}`);
   }
   return fromDayNumber(toJulianDay(date) - UNIX_EPOCH_JDN);
 }
@@ -115,10 +97,7 @@ export function endOfEthiopianMonth(date: DateOnly): DateOnly {
 }
 
 /** The month `delta` months after `month` (negative to go back), across years. */
-export function addEthiopianMonths(
-  { year, month }: EthiopianMonth,
-  delta: number,
-): EthiopianMonth {
+export function addEthiopianMonths({ year, month }: EthiopianMonth, delta: number): EthiopianMonth {
   const index = year * ETHIOPIAN_MONTH_COUNT + (month - 1) + delta;
   return {
     year: floorDiv(index, ETHIOPIAN_MONTH_COUNT),
@@ -126,10 +105,7 @@ export function addEthiopianMonths(
   };
 }
 
-export function compareEthiopianMonths(
-  a: EthiopianMonth,
-  b: EthiopianMonth,
-): number {
+export function compareEthiopianMonths(a: EthiopianMonth, b: EthiopianMonth): number {
   return a.year - b.year || a.month - b.month;
 }
 
@@ -149,15 +125,7 @@ export interface EthiopianTime {
 
 /** Converts a 24-hour clock time (local to the gym) to Ethiopian time. */
 export function toEthiopianTime(hour24: number, minute: number): EthiopianTime {
-  if (!Number.isInteger(hour24) || hour24 < 0 || hour24 > 23)
-    throw new RangeError(`Invalid hour: ${hour24}`);
-  const period: EthiopianDayPeriod =
-    hour24 < 6
-      ? "night"
-      : hour24 < 12
-        ? "morning"
-        : hour24 < 18
-          ? "day"
-          : "evening";
+  if (!Number.isInteger(hour24) || hour24 < 0 || hour24 > 23) throw new RangeError(`Invalid hour: ${hour24}`);
+  const period: EthiopianDayPeriod = hour24 < 6 ? "night" : hour24 < 12 ? "morning" : hour24 < 18 ? "day" : "evening";
   return { hour: mod(hour24 + 6, 12) || 12, minute, period };
 }

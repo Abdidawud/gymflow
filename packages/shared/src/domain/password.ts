@@ -18,8 +18,7 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   {
     id: "length",
-    test: (p) =>
-      p.length >= PASSWORD_MIN_LENGTH && p.length <= PASSWORD_MAX_LENGTH,
+    test: (p) => p.length >= PASSWORD_MIN_LENGTH && p.length <= PASSWORD_MAX_LENGTH,
   },
   { id: "letter", test: (p) => /\p{L}/u.test(p) },
   { id: "numberOrSymbol", test: (p) => /[^\p{L}]/u.test(p) },

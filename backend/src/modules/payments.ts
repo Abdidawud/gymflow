@@ -10,22 +10,9 @@
  * returns the original payment; a different body under the same key is refused.
  */
 
-import {
-  PAYMENT_METHODS,
-  type PaymentPreview,
-  type PaymentMethod,
-} from "@gymflow/shared/api/types";
-import {
-  addDays,
-  daysBetween,
-  isDateOnly,
-  type DateOnly,
-} from "@gymflow/shared/domain/dates";
-import {
-  findOverlap,
-  membershipEndDate,
-  proposeStartDate,
-} from "@gymflow/shared/domain/membership";
+import { PAYMENT_METHODS, type PaymentPreview, type PaymentMethod } from "@gymflow/shared/api/types";
+import { addDays, daysBetween, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { findOverlap, membershipEndDate, proposeStartDate } from "@gymflow/shared/domain/membership";
 import { sumMoney } from "@gymflow/shared/domain/money";
 import { phoneSearchDigits } from "@gymflow/shared/domain/phone";
 import type { FastifyInstance } from "fastify";
@@ -40,17 +27,8 @@ import { fail, FieldErrors, invalid, notFound } from "../lib/errors";
 import { dateText } from "../lib/i18n";
 import { clean, cleanMultiline } from "../lib/text";
 import { audit } from "../services/audit";
-import {
-  loadRelevantPeriods,
-  memberSummaryDto,
-  periodDto,
-  type PeriodRow,
-} from "../services/members";
-import {
-  paymentDetailDto,
-  paymentSummaryDto,
-  selectPayments,
-} from "../services/payments";
+import { loadRelevantPeriods, memberSummaryDto, periodDto, type PeriodRow } from "../services/members";
+import { paymentDetailDto, paymentSummaryDto, selectPayments } from "../services/payments";
 import { readSettings, type SettingsRow } from "../services/settings";
 import { getMemberRow } from "./members";
 
@@ -107,24 +85,13 @@ async function computePreview(
 ): Promise<ComputedPreview> {
   const { t, locale } = ctx;
   if (!isUuid(input.memberId)) notFound(t);
-  const member = await getMemberRow(
-    db,
-    ctx,
-    input.memberId.toLowerCase(),
-    lock,
-  );
+  const member = await getMemberRow(db, ctx, input.memberId.toLowerCase(), lock);
   if (member.is_archived) fail(422, "MEMBER_ARCHIVED", t("memberArchived"));
 
   let planQuery = db
     .selectFrom("plans")
     .select(["id", "name", "price", "duration_days", "is_enabled"])
-    .where(
-      "id",
-      "=",
-      isUuid(input.planId)
-        ? input.planId.toLowerCase()
-        : "00000000-0000-0000-0000-000000000000",
-    );
+    .where("id", "=", isUuid(input.planId) ? input.planId.toLowerCase() : "00000000-0000-0000-0000-000000000000");
   if (lock) planQuery = planQuery.forShare();
   const plan = await planQuery.executeTakeFirst();
   if (!plan) fail(404, "NOT_FOUND", t("planNotFound"));
@@ -135,18 +102,15 @@ async function computePreview(
   }
 
   const today = env.clock.today();
-  const periods =
-    (await loadRelevantPeriods(db, today, [member.id])).get(member.id) ?? [];
+  const periods = (await loadRelevantPeriods(db, today, [member.id])).get(member.id) ?? [];
   const coverage = periods.map(asCoverage);
   const proposed = proposeStartDate(coverage, today);
   let startDate = proposed.startDate;
   if (!proposed.automatic && input.requestedStartDate) {
     const requested = input.requestedStartDate;
-    if (!isDateOnly(requested))
-      invalid(t, { requestedStartDate: t("validStartDate") });
+    if (!isDateOnly(requested)) invalid(t, { requestedStartDate: t("validStartDate") });
     if (requested < today) invalid(t, { requestedStartDate: t("startInPast") });
-    if (daysBetween(today, requested) > 365)
-      invalid(t, { requestedStartDate: t("startTooFar") });
+    if (daysBetween(today, requested) > 365) invalid(t, { requestedStartDate: t("startTooFar") });
     startDate = requested;
   }
   const endDate = membershipEndDate(startDate, plan.duration_days);
@@ -187,13 +151,7 @@ async function computePreview(
   return {
     plan,
     preview: {
-      member: memberSummaryDto(
-        env,
-        member,
-        periods,
-        today,
-        settings.expirationWarningDays,
-      ),
+      member: memberSummaryDto(env, member, periods, today, settings.expirationWarningDays),
       plan: {
         id: plan.id,
         name: plan.name,
@@ -207,9 +165,7 @@ async function computePreview(
       startIsAutomatic: proposed.automatic,
       minStartDate: proposed.automatic ? startDate : today,
       isRenewal: periods.length > 0,
-      existingCoverage: periods
-        .filter((p) => p.end_date >= today)
-        .map(periodDto),
+      existingCoverage: periods.filter((p) => p.end_date >= today).map(periodDto),
       previewFingerprint,
     },
   };
@@ -224,25 +180,20 @@ function validatePaymentFields(
   const { t } = ctx;
   const errors = new FieldErrors(t);
   const method = body.paymentMethod as PaymentMethod;
-  if (!PAYMENT_METHODS.includes(method))
-    errors.add("paymentMethod", t("choosePaymentMethod"));
+  if (!PAYMENT_METHODS.includes(method)) errors.add("paymentMethod", t("choosePaymentMethod"));
   else if (!settings.enabledPaymentMethods.includes(method)) {
     fail(422, "PAYMENT_METHOD_DISABLED", t("methodDisabled"), {
       fieldErrors: { paymentMethod: t("chooseEnabledMethod") },
     });
   }
-  if (!isDateOnly(body.receivedDate))
-    errors.add("receivedDate", t("receivedDate"));
-  else if (body.receivedDate > today)
-    errors.add("receivedDate", t("receivedDateFuture"));
+  if (!isDateOnly(body.receivedDate)) errors.add("receivedDate", t("receivedDate"));
+  else if (body.receivedDate > today) errors.add("receivedDate", t("receivedDateFuture"));
 
   const reference = clean(body.reference);
   if (method !== "CASH" && !reference) errors.add("reference", t("reference"));
-  if (reference && reference.length > 64)
-    errors.add("reference", t("maxLength", { max: 64 }));
+  if (reference && reference.length > 64) errors.add("reference", t("maxLength", { max: 64 }));
   const notes = cleanMultiline(body.notes);
-  if (notes && notes.length > 500)
-    errors.add("notes", t("maxLength", { max: 500 }));
+  if (notes && notes.length > 500) errors.add("notes", t("maxLength", { max: 500 }));
   errors.throwIfAny();
   return { method, reference, notes };
 }
@@ -250,19 +201,16 @@ function validatePaymentFields(
 /** SQL for the member lookup rules in shared/domain/member-list.ts (ID, phone digits, name words). */
 function memberSearchSql(raw: string): RawBuilder<boolean> {
   const query = raw.trim().replace(/\s+/g, " ").toLowerCase();
-  const like = (value: string) =>
-    `%${value.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const like = (value: string) => `%${value.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
   const memberNumber = sql`substring(mb.member_code from 5)::bigint`;
 
   const code = /^(?:gym)?[\s-]?0*(\d+)$/i.exec(query.replace(/\s/g, ""));
-  if (code && query.startsWith("gym"))
-    return sql<boolean>`${memberNumber} = ${Number(code[1])}`;
+  if (code && query.startsWith("gym")) return sql<boolean>`${memberNumber} = ${Number(code[1])}`;
 
   const options: RawBuilder<boolean>[] = [];
   if (code) options.push(sql<boolean>`${memberNumber} = ${Number(code[1])}`);
   const digits = phoneSearchDigits(query);
-  if (digits)
-    options.push(sql<boolean>`substring(mb.phone from 5) LIKE ${like(digits)}`);
+  if (digits) options.push(sql<boolean>`substring(mb.phone from 5) LIKE ${like(digits)}`);
   const words = query
     .split(" ")
     .map(
@@ -275,9 +223,7 @@ function memberSearchSql(raw: string): RawBuilder<boolean> {
 
 export async function paymentRoutes(app: FastifyInstance, env: Env) {
   async function loadDetail(ctx: RequestContext, id: string) {
-    const row = await selectPayments(env.db)
-      .where("p.id", "=", id)
-      .executeTakeFirst();
+    const row = await selectPayments(env.db).where("p.id", "=", id).executeTakeFirst();
     if (!row) notFound(ctx.t);
     return paymentDetailDto(env, ctx, row);
   }
@@ -286,8 +232,7 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
     const ctx = request.ctx;
     const body = parse(PreviewBody, request.body, ctx.t);
     const settings = await readSettings(env.db);
-    return (await computePreview(env, ctx, env.db, body, settings, false))
-      .preview;
+    return (await computePreview(env, ctx, env.db, body, settings, false)).preview;
   });
 
   app.post("/payments", async (request, reply) => {
@@ -295,8 +240,7 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
     const { t } = ctx;
     const actor = actorOf(ctx);
     const key = request.headers["idempotency-key"];
-    if (typeof key !== "string" || !isUuid(key))
-      fail(400, "VALIDATION_FAILED", t("missingIdempotencyKey"));
+    if (typeof key !== "string" || !isUuid(key)) fail(400, "VALIDATION_FAILED", t("missingIdempotencyKey"));
     const body = parse(RecordBody, request.body, t);
     const requestFingerprint = fingerprint({
       memberId: body.memberId.toLowerCase(),
@@ -331,10 +275,7 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
           .where("staff_id", "=", actor.id)
           .where("request_key", "=", key.toLowerCase())
           .executeTakeFirstOrThrow();
-        if (
-          existing.request_fingerprint !== requestFingerprint ||
-          !existing.payment_id
-        ) {
+        if (existing.request_fingerprint !== requestFingerprint || !existing.payment_id) {
           fail(409, "IDEMPOTENCY_CONFLICT", t("idempotencyConflict"));
         }
         return { paymentId: existing.payment_id, replayed: true };
@@ -356,8 +297,7 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
         settings,
         true,
       );
-      if (preview.previewFingerprint !== body.previewFingerprint)
-        fail(409, "STALE_PREVIEW", t("previewChanged"));
+      if (preview.previewFingerprint !== body.previewFingerprint) fail(409, "STALE_PREVIEW", t("previewChanged"));
 
       const membership = await tx
         .insertInto("memberships")
@@ -422,51 +362,31 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
     const ctx = request.ctx;
     const query = parse(ListQuery, request.query, ctx.t);
     const conditions: RawBuilder<boolean>[] = [];
-    if (query.from)
-      conditions.push(sql<boolean>`p.received_date >= ${query.from}`);
+    if (query.from) conditions.push(sql<boolean>`p.received_date >= ${query.from}`);
     if (query.to) conditions.push(sql<boolean>`p.received_date <= ${query.to}`);
     if (query.method) conditions.push(sql<boolean>`p.method = ${query.method}`);
     if (query.memberId)
-      conditions.push(
-        isUuid(query.memberId)
-          ? sql<boolean>`p.member_id = ${query.memberId}`
-          : sql<boolean>`false`,
-      );
+      conditions.push(isUuid(query.memberId) ? sql<boolean>`p.member_id = ${query.memberId}` : sql<boolean>`false`);
     if (query.planId)
-      conditions.push(
-        isUuid(query.planId)
-          ? sql<boolean>`ms.plan_id = ${query.planId}`
-          : sql<boolean>`false`,
-      );
+      conditions.push(isUuid(query.planId) ? sql<boolean>`ms.plan_id = ${query.planId}` : sql<boolean>`false`);
     const search = (query.search ?? "").trim().toLowerCase();
     if (search) {
       const options: RawBuilder<boolean>[] = [memberSearchSql(search)];
-      const paymentNumber = /^(?:pay)?[\s-]?0*(\d{3,})$/i.exec(
-        search.replace(/\s/g, ""),
-      );
+      const paymentNumber = /^(?:pay)?[\s-]?0*(\d{3,})$/i.exec(search.replace(/\s/g, ""));
       if (paymentNumber) {
-        options.push(
-          sql<boolean>`substring(p.payment_code from 5)::bigint = ${Number(paymentNumber[1])}`,
-        );
+        options.push(sql<boolean>`substring(p.payment_code from 5)::bigint = ${Number(paymentNumber[1])}`);
       }
       const escaped = `%${search.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
       options.push(sql<boolean>`lower(p.reference) LIKE ${escaped}`);
       conditions.push(sql<boolean>`(${sql.join(options, sql` OR `)})`);
     }
-    const where =
-      conditions.length > 0
-        ? sql<boolean>`${sql.join(conditions, sql` AND `)}`
-        : sql<boolean>`true`;
+    const where = conditions.length > 0 ? sql<boolean>`${sql.join(conditions, sql` AND `)}` : sql<boolean>`true`;
 
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 10;
     const direction = query.order === "asc" ? sql`ASC` : sql`DESC`;
     const sortColumn =
-      query.sort === "amount"
-        ? sql`p.amount`
-        : query.sort === "createdAt"
-          ? sql`p.created_at`
-          : sql`p.received_date`;
+      query.sort === "amount" ? sql`p.amount` : query.sort === "createdAt" ? sql`p.created_at` : sql`p.received_date`;
 
     const [totals, rows] = await Promise.all([
       env.db
@@ -503,9 +423,7 @@ export async function paymentRoutes(app: FastifyInstance, env: Env) {
     };
   });
 
-  app.get("/payments/:id", async (request) =>
-    loadDetail(request.ctx, idParam(request.params, request.ctx.t)),
-  );
+  app.get("/payments/:id", async (request) => loadDetail(request.ctx, idParam(request.params, request.ctx.t)));
 
   app.get("/payments/:id/receipt", async (request) => {
     const ctx = request.ctx;

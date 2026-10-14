@@ -9,21 +9,9 @@ export const ROLES = ["ADMINISTRATOR", "RECEPTIONIST"] as const;
 export type Role = (typeof ROLES)[number];
 
 export type Permission =
-  | "members.archive"
-  | "plans.manage"
-  | "revenue.view"
-  | "reports.view"
-  | "staff.manage"
-  | "settings.manage";
+  "members.archive" | "plans.manage" | "revenue.view" | "reports.view" | "staff.manage" | "settings.manage";
 
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
-  ADMINISTRATOR: [
-    "members.archive",
-    "plans.manage",
-    "revenue.view",
-    "reports.view",
-    "staff.manage",
-    "settings.manage",
-  ],
+  ADMINISTRATOR: ["members.archive", "plans.manage", "revenue.view", "reports.view", "staff.manage", "settings.manage"],
   RECEPTIONIST: [],
 };

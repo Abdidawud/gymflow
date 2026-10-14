@@ -1,8 +1,11 @@
 # GymFlow — API
 
 The GymFlow backend: a TypeScript service on **Fastify 5** with **PostgreSQL 18**, implementing
-[`../backend-database-system-design.md`](../backend-database-system-design.md) under `/api/v1`. The web app in
-`../frontend` uses it in http mode (it proxies `/api/v1` here, so the browser sees one origin).
+[`../backend-database-system-design.md`](../backend-database-system-design.md) under `/api/v1`.
+
+It runs **inside the web app**: `frontend/src/app/api/v1/[...path]/route.ts` hands each request to this Fastify app
+through [`src/web.ts`](src/web.ts), so the site and the API deploy together (on Vercel) and share one origin. The same
+app also runs as a standalone server (`src/server.ts`) on any Node host.
 
 Business rules (membership status, renewal dates, money, phone numbers, password policy, the Ethiopian calendar)
 and the API contract types come from [`../packages/shared`](../packages/shared), the same code the web app uses, so
@@ -18,30 +21,32 @@ npm install
 scripts/local-postgres.sh install && scripts/local-postgres.sh init   # once; prints where the credentials are
 scripts/local-postgres.sh start                                        # after each reboot
 
-cp backend/.env.example backend/.env      # fill in DATABASE_URL, MIGRATION_DATABASE_URL, SESSION_SECRET
-npm run migrate -w backend                # create the schema
-npm run seed:demo -w backend              # optional: the demo gym (staff password GymFlow#2026)
-# or, for a real gym, the first administrator:
-npm run admin:create -w backend -- --email you@gym.et --name "Your Name"
+cp frontend/.env.example frontend/.env.local   # DATABASE_URL, MIGRATION_DATABASE_URL, SESSION_SECRET (web app + API)
+cp backend/.env.example backend/.env           # the same database settings, for the CLI and the standalone server
+npm run migrate -w backend                     # create or update the schema
+npm run admin:create -w backend -- --email you@example.com --name "Your Name" --super
+# or load the demo gym instead (staff password GymFlow#2026):
+npm run seed:demo -w backend
 
-npm run dev                               # API on :4000 and web app on :3000, wired together
+npm run dev                                    # http://localhost:3000 — web app with the API inside
 ```
 
-With `FIXED_TODAY=2026-10-07` in `.env`, "today" is frozen at the design date (Meskerem 27, 2019 E.C.) so the demo
-data matches the design fixtures. Remove it to follow the real date in Africa/Addis_Ababa.
+With `FIXED_TODAY=2026-10-07`, "today" is frozen at the design date (Meskerem 27, 2019 E.C.) so the demo data matches
+the design fixtures. Remove it to follow the real date in Africa/Addis_Ababa.
 
 ## Commands
 
-| Command (in `backend/`)                      | What it does                                                  |
-| -------------------------------------------- | ------------------------------------------------------------- |
-| `npm run dev`                                | API with reload (`tsx watch`)                                 |
-| `npm run build` / `npm start`                | Bundle to `dist/` (shared code included) / run the bundle     |
-| `npm run migrate`                            | Apply pending migrations and the application-role grants      |
-| `npm run admin:create -- --email E --name N` | Bootstrap an administrator (prints a temporary password once) |
-| `npm run seed:demo [-- --reset]`             | Load the demo gym (refused in production)                     |
-| `npm run cli -- db:reset`                    | Drop and recreate the schema (refused in production)          |
-| `npm test`                                   | Integration tests against a real PostgreSQL test database     |
-| `npm run typecheck` / `npm run lint`         | TypeScript and ESLint                                         |
+| Command (in `backend/`)                              | What it does                                                         |
+| ---------------------------------------------------- | -------------------------------------------------------------------- |
+| `npm run dev`                                        | API with reload (`tsx watch`)                                        |
+| `npm run build` / `npm start`                        | Bundle to `dist/` (shared code included) / run the bundle            |
+| `npm run migrate`                                    | Apply pending migrations and the application-role grants             |
+| `npm run admin:create -- --email E --name N --super` | Bootstrap the super administrator (prints a temporary password once) |
+| `npm run cli -- admin:super --email E`               | Make an existing account the super administrator                     |
+| `npm run seed:demo [-- --reset]`                     | Load the demo gym (refused in production)                            |
+| `npm run cli -- db:reset`                            | Drop and recreate the schema (refused in production)                 |
+| `npm test`                                           | Integration tests against a real PostgreSQL test database            |
+| `npm run typecheck` / `npm run lint`                 | TypeScript and ESLint                                                |
 
 The web app's end-to-end tests can run against this API:
 `cd frontend && E2E_API_MODE=http npx playwright test` (uses `backend/.env.e2e`; its database is reset each run).
@@ -99,8 +104,15 @@ Key decisions:
   and requests are rate-limited per IP; unknown emails take the same time as wrong passwords.
 - **Password recovery** queues the email in an outbox in the same transaction; a background worker delivers it with
   retries and then erases the body (it contains the single-use link). Responses never reveal whether an account exists.
-- **Photos and logo** are verified by content, re-encoded (strips GPS/camera metadata), stored under random keys
-  outside any web root and served only to signed-in staff.
+- **Photos and logo** are verified by content, re-encoded (strips GPS/camera metadata) and stored in PostgreSQL
+  (`stored_files`), written and removed in the same transaction as the record that points at them. They need no
+  disk (serverless hosting), are part of every database backup, and are served only to signed-in staff. The web app
+  shrinks images before upload; the API accepts up to 4 MB (Vercel's request limit is 4.5 MB).
+- **Super administrator.** One account (`staff.is_super_admin`, the gym owner) is always an active administrator: a
+  database check enforces it, and only its owner can edit it. Create it with `admin:create --super`.
+- **Serverless-ready.** Pooler-safe connections (no session settings; transaction-scoped locks), small per-instance
+  pools released on suspend (`attachDatabasePool`), email sent right after the response (`after`), and a daily cron
+  (`/api/v1/internal/cron`, protected by `CRON_SECRET`) for cleanup and email retries.
 - **Language.** Errors follow `Accept-Language` (`am`, the default, or `en`) with the same wording as the web app;
   dates in messages and emails use the Ethiopian calendar. Data is stored with ISO dates.
 - **Audit trail.** Payments, member archive/reactivation, plan changes, staff changes and settings changes are
@@ -108,22 +120,59 @@ Key decisions:
 - **Scale.** One gym: member lists evaluate statuses in memory after loading only the relevant periods (fast for
   thousands of members); payments, reports and histories are paginated or aggregated in SQL.
 
-## Production
+## Deploying to Vercel
 
-1. **PostgreSQL 14+** with the `btree_gist` extension (available on all major managed services). Create two roles:
-   a schema owner and an application role (`DATABASE_APP_ROLE`), e.g.
+The web app and the API deploy as **one Vercel project**. [`frontend/vercel.json`](../frontend/vercel.json) installs
+the workspace, runs migrations on production builds ([`scripts/vercel-build.mjs`](../scripts/vercel-build.mjs)),
+pins functions to Frankfurt (`fra1`, near Addis Ababa) and schedules the daily maintenance cron.
+
+1. **Project:** import the GitHub repository in Vercel (or `vercel link`), framework Next.js, **Root Directory
+   `frontend`** (keep "Include files outside the root directory" on).
+2. **Database:** add **Neon Postgres** from the Vercel Marketplace (Storage → Create → Neon), region
+   **AWS eu-central-1 (Frankfurt)**, and connect it to the project. It sets `DATABASE_URL` (pooled) and
+   `DATABASE_URL_UNPOOLED` (direct, used for migrations).
+3. **Environment variables** (Production):
+
+   | Variable                | Value                                                                |
+   | ----------------------- | -------------------------------------------------------------------- |
+   | `SESSION_SECRET`        | 32+ random characters                                                |
+   | `CRON_SECRET`           | 16+ random characters (Vercel sends it to the cron route)            |
+   | `APP_ORIGIN`            | Only for a custom domain (defaults to the project's production URL)  |
+   | `SMTP_URL`, `MAIL_FROM` | For password-recovery email (otherwise recovery emails are not sent) |
+
+4. **Deploy** (push to the production branch, or `vercel --prod`). The build applies migrations before building.
+5. **Super administrator:** from your machine, with the direct database URL:
+
+   ```bash
+   DATABASE_URL='<DATABASE_URL_UNPOOLED>' SESSION_SECRET='<any 32+ chars>' APP_ORIGIN=https://<domain> \
+     npm run admin:create -w backend -- --email you@example.com --name "Your Name" --super
+   ```
+
+   Sign in with the printed temporary password; you'll choose your own right away.
+
+6. Check `https://<domain>/api/v1/ready` → `{"status":"ready"}`.
+
+Optional hardening: create a least-privileged role in Neon (`CREATE ROLE gymflow_app LOGIN PASSWORD '…'`), set
+`DATABASE_APP_ROLE=gymflow_app` so migrations grant it data access, and point the app at it with
+`GYMFLOW_DATABASE_URL` (its pooled URL), which takes precedence over the integration's `DATABASE_URL`. Posted
+payments are immutable either way (database triggers).
+
+Use one database per environment: preview deployments skip migrations, so don't share the production database with
+previews.
+
+## Other hosts
+
+1. **PostgreSQL 14+** with the `btree_gist` extension. Create a schema owner and an application role
+   (`DATABASE_APP_ROLE`), e.g.
    `CREATE ROLE gymflow_owner LOGIN PASSWORD '…'; CREATE ROLE gymflow_app LOGIN PASSWORD '…'; CREATE DATABASE gymflow OWNER gymflow_owner;`
-2. **Build and migrate** on each deploy: `npm ci && npm run build -w backend && node backend/dist/cli.js migrate`
-   (with `MIGRATION_DATABASE_URL` and `DATABASE_APP_ROLE` set). Ship `backend/dist`, `backend/migrations` and
-   `node_modules`.
-3. **Run** `NODE_ENV=production node --enable-source-maps backend/dist/server.js` under a supervisor (systemd,
-   a container) behind a TLS-terminating reverse proxy. Build the web app with
-   `NEXT_PUBLIC_API_MODE=http API_PROXY_TARGET=http://127.0.0.1:4000 npm run build -w frontend`.
+2. **Migrate** on each deploy: `npm ci && npm run migrate -w backend` (or `npm run build -w backend && node backend/dist/cli.js migrate`).
+3. **Run** the web app (`npm run build -w frontend && npm start -w frontend`), which serves the API too, behind a
+   TLS-terminating reverse proxy. To run the API separately instead, start `backend/dist/server.js` and build the web
+   app with `API_PROXY_TARGET=http://127.0.0.1:4000`.
 4. **Probes:** `GET /api/v1/health` (liveness) and `GET /api/v1/ready` (database reachable and migrations applied).
-5. **Bootstrap** the first administrator with `node backend/dist/cli.js admin:create --email … --name …`.
-6. **Backups:** schedule `scripts/backup.sh` daily (database dump plus `STORAGE_DIR`), keep copies off the server,
-   and rehearse `scripts/restore.sh` into an empty database. Enable point-in-time recovery if your host offers it.
-7. **Email:** set `MAIL_TRANSPORT=smtp`, `SMTP_URL` and `MAIL_FROM` for password recovery.
+5. **Backups:** schedule `scripts/backup.sh` daily (photos and the logo are in the database), keep copies off the
+   server, and rehearse `scripts/restore.sh` into an empty database. Enable point-in-time recovery if available.
+6. **Email:** set `SMTP_URL` and `MAIL_FROM` for password recovery.
 
 Before going live, confirm the open policy questions in the design (§18): fixed-day pricing, one member per phone
 number, immutable payments (corrections need a separate workflow), session lengths and backup targets.
