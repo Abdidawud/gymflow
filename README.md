@@ -1,7 +1,7 @@
 # GymFlow
 
 Staff-facing gym membership and payment management for a single gym (ETB, Africa/Addis_Ababa). The interface is
-bilingual — **Amharic (default) and English** — and every date is shown and picked in the **Ethiopian calendar**
+bilingual — **English (default) and Amharic** — and every date is shown and picked in the **Ethiopian calendar**
 (Meskerem 27, 2019 E.C.), with Ethiopian time of day in Amharic.
 
 | Path                                                                                   | Contents                                                                    |

@@ -215,9 +215,10 @@ describe("password recovery", () => {
     const before = await h.owner.selectFrom("email_outbox").select("id").execute();
     expect((await h.client().post("/auth/forgot-password", { email: "nobody@example.com" })).status).toBe(204);
     expect(await h.owner.selectFrom("email_outbox").select("id").execute()).toHaveLength(before.length);
-    expect((await h.client().post("/auth/forgot-password", { email: ADMIN.email })).status).toBe(204);
+    // The email is in the staff member's own language, not the requester's (this request is in English).
+    await h.owner.updateTable("staff").set({ language: "am" }).where("id", "=", ADMIN.id).execute();
+    expect((await h.client("en").post("/auth/forgot-password", { email: ADMIN.email })).status).toBe(204);
     const { mail } = await latestResetLink();
-    // The email is in the staff member's own language (Amharic for the demo staff).
     expect(mail).toMatchObject({
       recipient: ADMIN.email,
       subject: "የGymFlow የይለፍ ቃልዎን ይቀይሩ",

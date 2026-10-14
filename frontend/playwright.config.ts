@@ -44,8 +44,17 @@ export default defineConfig({
       name: "desktop",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
       grepInvert: /@mobile/,
+      testIgnore: /amharic\.spec/,
     },
-    { name: "mobile", use: { ...devices["Pixel 7"] }, grep: /@mobile/ },
+    { name: "mobile", use: { ...devices["Pixel 7"] }, grep: /@mobile/, testIgnore: /amharic\.spec/ },
+    // Language tests change saved account preferences, so they run after the flows above
+    // (which share the same demo accounts when E2E_API_MODE=http).
+    {
+      name: "languages",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+      testMatch: /amharic\.spec/,
+      dependencies: ["desktop", "mobile"],
+    },
   ],
   webServer: {
     command:

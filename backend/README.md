@@ -116,7 +116,7 @@ Key decisions:
 - **Serverless-ready.** Pooler-safe connections (no session settings; transaction-scoped locks), small per-instance
   pools released on suspend (`attachDatabasePool`), email sent right after the response (`after`), and a daily cron
   (`/api/v1/internal/cron`, protected by `CRON_SECRET`) for cleanup and email retries.
-- **Language.** Errors follow `Accept-Language` (`am`, the default, or `en`) with the same wording as the web app;
+- **Language.** Errors follow `Accept-Language` (`en`, the default, or `am`) with the same wording as the web app;
   dates in messages and emails use the Ethiopian calendar. Data is stored with ISO dates.
 - **Audit trail.** Payments, member archive/reactivation, plan changes, staff changes and settings changes are
   recorded with the actor, request ID and a short summary — never passwords or tokens.

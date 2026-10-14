@@ -48,7 +48,7 @@ export interface MockDatabase extends DemoDataset {
 }
 
 /** Bump when the seed or schema changes so stale browser copies are replaced. */
-export const MOCK_DB_VERSION = 7;
+export const MOCK_DB_VERSION = 8;
 
 /** A fresh mock database holding the shared demo gym (the same data the backend seed inserts). */
 export function createDatabase(): MockDatabase {

@@ -5,7 +5,7 @@ export const account = {
   language: {
     title: "Language",
     description: "Used on every screen and on printed receipts. Saved to your account.",
-    hints: { am: "The gym's default language", en: "English interface" },
+    hints: { am: "Amharic interface", en: "Default language" },
   },
   appearance: {
     title: "Appearance",

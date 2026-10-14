@@ -7,7 +7,7 @@ export const account: Messages["account"] = {
   language: {
     title: "ቋንቋ",
     description: "በሁሉም ገጾችና በሚታተሙ ደረሰኞች ላይ ይውላል። በመለያዎ ይቀመጣል።",
-    hints: { am: "የጂሙ ነባሪ ቋንቋ", en: "የእንግሊዝኛ ገጽታ" },
+    hints: { am: "የአማርኛ ገጽታ", en: "ነባሪ ቋንቋ" },
   },
   appearance: {
     title: "ገጽታ",

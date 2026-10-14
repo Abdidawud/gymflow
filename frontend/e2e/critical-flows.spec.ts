@@ -20,7 +20,8 @@ const ADMIN = "abdi@adamafitness.com";
 const RECEPTIONIST = "tigist@adamafitness.com";
 
 // These flows assert English copy, so pick English as if on the sign-in screen.
-// Amharic, the default language, is covered in amharic.spec.ts.
+// Set explicitly so an account preference saved by another test can't switch these flows to Amharic;
+// Amharic is covered in amharic.spec.ts.
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("gymflow-locale", "en");

@@ -96,7 +96,7 @@ export async function buildApp(deps: AppDeps, options: { logger?: boolean | obje
   await app.register(rateLimit, {
     global: false,
     errorResponseBuilder: (request, context) =>
-      new AppError(429, "RATE_LIMITED", (request.ctx?.t ?? translator("am"))("tooManyRequests"), {
+      new AppError(429, "RATE_LIMITED", (request.ctx?.t ?? translator("en"))("tooManyRequests"), {
         headers: { "Retry-After": String(Math.ceil(context.ttl / 1000)) },
       }),
   });

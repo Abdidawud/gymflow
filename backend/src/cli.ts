@@ -61,7 +61,7 @@ function temporaryPassword(): string {
 async function createAdmin(config: DatabaseConfig, args: Args) {
   const email = normalizeEmail(flag(args, "email"));
   const name = flag(args, "name")?.trim();
-  const language = flag(args, "language") ?? "am";
+  const language = flag(args, "language") ?? "en";
   const given = flag(args, "password");
   const superAdmin = args.flags.has("super");
   const gymName = flag(args, "gym-name")?.trim();

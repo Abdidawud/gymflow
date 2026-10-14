@@ -1,7 +1,7 @@
 # GymFlow — Frontend
 
 Staff-facing web app for gym membership and payment tracking (Version 1), built with **Next.js 16 (App Router)**,
-**React 19**, **TypeScript** and **Tailwind CSS 4**. The interface is bilingual — **Amharic (default) and English** —
+**React 19**, **TypeScript** and **Tailwind CSS 4**. The interface is bilingual — **English (default) and Amharic** —
 and uses the **Ethiopian calendar** for every date. The API lives in [`../backend`](../backend); business rules and the
 API contract are shared with it through [`../packages/shared`](../packages/shared).
 
@@ -141,7 +141,7 @@ Contract details beyond `backend-database-system-design.md` (DTOs in `packages/s
 
 ## Languages
 
-Amharic is the default; each staff member can switch to English. The interface language follows this order:
+English is the default; each staff member can switch to Amharic (set `NEXT_PUBLIC_DEFAULT_LOCALE=am` to make Amharic the default). The interface language follows this order:
 
 1. A language picked on the sign-in screen is used and saved to the account at sign-in.
 2. Otherwise, signing in applies the language saved on the account, so it follows the person to any device.

@@ -269,7 +269,7 @@ function staff(
     // The demo owner is the super administrator.
     isSuperAdmin: id === DEMO_STAFF_IDS.abdi,
     appearance: "SYSTEM",
-    language: "am",
+    language: "en",
     lastSignInAt: mustChangePassword ? null : gymTimestamp(isActive ? SEED_TODAY : DAWIT_DEACTIVATED, "07:55"),
     createdAt: gymTimestamp(created, "09:00"),
     updatedAt: gymTimestamp(isActive ? created : DAWIT_DEACTIVATED, "17:30"),

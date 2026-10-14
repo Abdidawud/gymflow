@@ -1,5 +1,5 @@
 /**
- * API messages in the request's language (Accept-Language: am | en), worded
+ * API messages in the request's language (Accept-Language: en | am), worded
  * exactly like the web app (frontend/src/i18n/messages) so a server error reads
  * the same as a field check in the browser. Dates use the Ethiopian calendar.
  */
@@ -232,9 +232,9 @@ export function dateText(locale: Locale, date: DateOnly): string {
 
 /**
  * Picks the response language from Accept-Language (the web app sends exactly
- * "am" or "en"); Amharic, the gym's working language, is the default.
+ * "am" or "en"); English is the default.
  */
-export function negotiateLocale(header: string | undefined, fallback: Locale = "am"): Locale {
+export function negotiateLocale(header: string | undefined, fallback: Locale = "en"): Locale {
   if (!header) return fallback;
   const ranked = header
     .split(",")

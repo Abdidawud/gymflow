@@ -1,13 +1,14 @@
 /**
- * Supported interface languages. Amharic is the gym's working language and
- * the default; English is available from the language switcher.
+ * Supported interface languages: English (the default) and Amharic, chosen
+ * from the language switcher and saved per staff account.
  */
 
 import { isLocale, LOCALES, type Locale } from "@gymflow/shared/i18n/locales";
 
 export { isLocale, LOCALES, type Locale };
 
-export const DEFAULT_LOCALE: Locale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE === "en" ? "en" : "am";
+/** Language before anyone chooses one: English unless NEXT_PUBLIC_DEFAULT_LOCALE=am. */
+export const DEFAULT_LOCALE: Locale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE === "am" ? "am" : "en";
 
 export const LOCALE_STORAGE_KEY = "gymflow-locale";
 
