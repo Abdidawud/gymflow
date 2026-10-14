@@ -111,7 +111,7 @@ describe("membership dates (backend design §5)", () => {
       startDate: "2026-10-07",
       endDate: "2026-11-05",
       startIsAutomatic: false,
-      minStartDate: "2026-10-07",
+      minStartDate: "2025-10-07",
     });
   });
 
@@ -131,12 +131,26 @@ describe("membership dates (backend design §5)", () => {
     });
   });
 
-  it("refuses backdated and far-future starts", async () => {
+  it("accepts a start up to a year back, for members who joined before GymFlow", async () => {
     const client = await h.signIn(RECEPTIONIST);
-    expect((await preview(client, MEMBERS.dawit, MONTHLY, "2026-10-06")).body.error.fieldErrors).toHaveProperty(
-      "requestedStartDate",
-    );
+    const p = await preview(client, MEMBERS.sara, MONTHLY, "2026-09-20");
+    expect(p.status).toBe(200);
+    expect(p.body).toMatchObject({ startDate: "2026-09-20", endDate: "2026-10-19", minStartDate: "2025-10-07" });
+    const res = await record(client, MEMBERS.sara, { start: "2026-09-20", receivedDate: "2026-09-20" });
+    expect(res.status).toBe(201);
+    expect(res.body.payment).toMatchObject({ receivedDate: "2026-09-20", membership: { startDate: "2026-09-20" } });
+    // Paid through Oct 19: the member is active today with 12 days left.
+    const member = await client.get(`/members/${MEMBERS.sara}`);
+    expect(member.body.membership).toMatchObject({ status: "ACTIVE", remainingDays: 12 });
+  });
+
+  it("refuses starts more than a year back or ahead, and backdated overlaps", async () => {
+    const client = await h.signIn(RECEPTIONIST);
+    const tooEarly = await preview(client, MEMBERS.dawit, MONTHLY, "2025-10-06");
+    expect(tooEarly.body.error.fieldErrors.requestedStartDate).toBe("Choose a start date within the last 12 months.");
     expect((await preview(client, MEMBERS.dawit, MONTHLY, "2027-12-01")).status).toBe(422);
+    // Dawit's last period ended Sep 30; a start in September overlaps it.
+    expect((await preview(client, MEMBERS.dawit, MONTHLY, "2026-09-15")).body.error.code).toBe("DATE_CONFLICT");
   });
 
   it("rejects a purchase overlapping disconnected future coverage, writing nothing", async () => {

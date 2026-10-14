@@ -17,6 +17,14 @@ export type MembershipStatus = (typeof MEMBERSHIP_STATUSES)[number];
 
 export const DEFAULT_WARNING_DAYS = 7;
 
+/**
+ * How far a new period's start may be from today when staff choose it. Past
+ * starts let the gym enter members who joined before GymFlow (their payment was
+ * received back then); overlap checks still apply.
+ */
+export const MAX_BACKDATE_DAYS = 365;
+export const MAX_ADVANCE_DAYS = 365;
+
 export interface CoveragePeriod {
   startDate: DateOnly;
   endDate: DateOnly;

@@ -23,6 +23,7 @@ import { api } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
 import type { PaymentDetail, PaymentMethod, RecordPaymentRequest } from "@gymflow/shared/api/types";
 import { addDays, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
+import { MAX_BACKDATE_DAYS } from "@gymflow/shared/domain/membership";
 import { formatPhone } from "@gymflow/shared/domain/phone";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
@@ -89,6 +90,8 @@ export function PaymentDrawer({ open, onOpenChange, initialMemberId }: PaymentDr
   const [notice, setNotice] = useState<{ tone: "error" | "warning"; title: MessageKey; message?: string } | null>(null);
   const [result, setResult] = useState<PaymentDetail | null>(null);
   const [startTouched, setStartTouched] = useState(false);
+  // Until staff set the payment date themselves, it follows a backdated start date.
+  const [receivedTouched, setReceivedTouched] = useState(false);
   // One operation key per transaction, reused for retries (backend design §14).
   const operationKey = useRef<string>("");
   const lastRequest = useRef<RecordPaymentRequest | null>(null);
@@ -452,7 +455,10 @@ export function PaymentDrawer({ open, onOpenChange, initialMemberId }: PaymentDr
                           <DateInput
                             {...control}
                             value={field.value}
-                            onChange={field.onChange}
+                            onChange={(date) => {
+                              setReceivedTouched(true);
+                              field.onChange(date);
+                            }}
                             onBlur={field.onBlur}
                             max={gym.today}
                             today={gym.today}
@@ -513,9 +519,15 @@ export function PaymentDrawer({ open, onOpenChange, initialMemberId }: PaymentDr
                             onChange={(date) => {
                               setStartTouched(true);
                               field.onChange(date);
+                              // A member who joined before GymFlow paid when their membership began.
+                              if (!receivedTouched) {
+                                form.setValue("receivedDate", date < gym.today ? date : gym.today, {
+                                  shouldValidate: true,
+                                });
+                              }
                             }}
                             onBlur={field.onBlur}
-                            min={previewData?.minStartDate ?? gym.today}
+                            min={previewData?.minStartDate ?? addDays(gym.today, -MAX_BACKDATE_DAYS)}
                             max={addDays(gym.today, 365)}
                             today={gym.today}
                           />

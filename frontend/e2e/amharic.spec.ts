@@ -28,7 +28,22 @@ test("the app opens in Amharic by default", async ({ page }) => {
 test("the language preference is saved to the account and follows the user", async ({ page }) => {
   await signInAmharic(page);
   await page.goto("/account");
+  // The switch is instant; saving to the account happens in the background. Wait for it before reloading.
+  const http = process.env.E2E_API_MODE === "http";
+  const saved = http
+    ? page.waitForResponse((r) => r.url().includes("/api/v1/account/preferences") && r.request().method() === "PATCH")
+    : null;
   await page.locator("label", { hasText: "English" }).click();
+  if (saved) await saved;
+  else {
+    await page.waitForFunction(() =>
+      (
+        JSON.parse(localStorage.getItem("gymflow:mock-db") ?? "{}") as {
+          staff?: { email: string; language: string }[];
+        }
+      ).staff?.some((s) => s.email === "abdi@adamafitness.com" && s.language === "en"),
+    );
+  }
   await expect(page.getByRole("heading", { level: 1, name: "My Account" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 

@@ -21,7 +21,7 @@ export const api = {
   planDisabled: "This plan is disabled and can't be purchased.",
   chooseEnabledPlan: "Choose an enabled plan.",
   validStartDate: "Choose a valid start date.",
-  startInPast: "Membership can't start in the past. Choose today or a later date.",
+  startTooEarly: "Choose a start date within the last 12 months.",
   startTooFar: "Choose a start date within the next 12 months.",
   overlap: "These dates overlap the membership from {start} to {end}.",
   overlapField: "Overlaps {start} – {end}. Choose {suggested} or later.",

@@ -20,6 +20,8 @@ import { startOfEthiopianMonth } from "@gymflow/shared/domain/ethiopian-calendar
 import {
   evaluateMembership,
   findOverlap,
+  MAX_ADVANCE_DAYS,
+  MAX_BACKDATE_DAYS,
   membershipEndDate,
   proposeStartDate,
 } from "@gymflow/shared/domain/membership";
@@ -677,10 +679,10 @@ export function createMockApi(): GymFlowApi {
     let startDate = proposed.startDate;
     if (!proposed.automatic && input.requestedStartDate) {
       if (!isDateOnly(input.requestedStartDate)) invalid({ requestedStartDate: msg("api.validStartDate") });
-      if (input.requestedStartDate < today()) {
-        invalid({ requestedStartDate: msg("api.startInPast") });
+      if (input.requestedStartDate < addDays(today(), -MAX_BACKDATE_DAYS)) {
+        invalid({ requestedStartDate: msg("api.startTooEarly") });
       }
-      if (daysBetween(today(), input.requestedStartDate) > 365) {
+      if (daysBetween(today(), input.requestedStartDate) > MAX_ADVANCE_DAYS) {
         invalid({ requestedStartDate: msg("api.startTooFar") });
       }
       startDate = input.requestedStartDate;
@@ -727,7 +729,7 @@ export function createMockApi(): GymFlowApi {
       startDate,
       endDate,
       startIsAutomatic: proposed.automatic,
-      minStartDate: proposed.automatic ? startDate : today(),
+      minStartDate: proposed.automatic ? startDate : addDays(today(), -MAX_BACKDATE_DAYS),
       isRenewal: periods.length > 0,
       existingCoverage,
       previewFingerprint,

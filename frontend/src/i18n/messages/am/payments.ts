@@ -23,7 +23,7 @@ export const payments: Messages["payments"] = {
     reference: "የግብይት ማጣቀሻ",
     start: "የአባልነት መጀመሪያ",
     startAutoHint: "አሁን ያለው የተከፈለበት ጊዜ ካበቃ በኋላ ባለው ቀን ይጀምራል፤ ስለዚህ የተከፈለበት ቀን አይባክንም።",
-    startHint: "ዛሬ ወይም ወደፊት ያለ ቀን። ወደኋላ የሚጀምር አባልነት አይፈቀድም።",
+    startHint: "ዛሬ ወይም የወደፊት ቀን፤ GymFlow ከመጀመሩ በፊት ለተመዘገቡ አባላት ደግሞ እስከ 12 ወር ወደኋላ።",
     notes: "ማስታወሻ",
     previewError: "የአባልነት ቀናትን ማስላት አልተቻለም",
     confirmHint: "ሙሉ ክፍያውን ከተቀበሉ በኋላ ብቻ ያረጋግጡ።",

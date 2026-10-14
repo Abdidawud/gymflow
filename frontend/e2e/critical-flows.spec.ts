@@ -117,6 +117,15 @@ test("expired and unpaid purchases start today and can be rescheduled", async ({
   await expect(start).toHaveAttribute("data-value", "2026-10-12");
   const preview = drawer.locator("section[aria-labelledby=payment-preview-heading]");
   await expect(preview).toContainText("Tekemt 8, 2019");
+
+  // A member who joined before GymFlow: back to last month, Meskerem 10 (Sep 20, 2026).
+  await start.click();
+  await calendar.getByRole("button", { name: "Previous month" }).click();
+  await calendar.getByRole("button", { name: "Sunday, Meskerem 10, 2019" }).click();
+  await expect(start).toHaveAttribute("data-value", "2026-09-20");
+  // The payment date follows the backdated start until it is changed by hand.
+  await expect(drawer.getByRole("button", { name: /Payment Date/ })).toHaveAttribute("data-value", "2026-09-20");
+  await expect(preview).toContainText("Meskerem 16, 2019");
 });
 
 test("scheduled member is never presented as valid", async ({ page }) => {

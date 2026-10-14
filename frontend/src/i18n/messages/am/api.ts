@@ -22,7 +22,7 @@ export const api: Messages["api"] = {
   planDisabled: "ይህ ዕቅድ ታግዷል፤ ሊገዛ አይችልም።",
   chooseEnabledPlan: "በሥራ ላይ ያለ ዕቅድ ይምረጡ።",
   validStartDate: "ትክክለኛ የመጀመሪያ ቀን ይምረጡ።",
-  startInPast: "አባልነት ባለፈ ቀን ሊጀምር አይችልም። ዛሬን ወይም ከዚያ በኋላ ያለ ቀን ይምረጡ።",
+  startTooEarly: "ባለፉት 12 ወራት ውስጥ ያለ የመጀመሪያ ቀን ይምረጡ።",
   startTooFar: "በሚቀጥሉት 12 ወራት ውስጥ ያለ የመጀመሪያ ቀን ይምረጡ።",
   overlap: "እነዚህ ቀናት ከ{start} እስከ {end} ካለው አባልነት ጋር ይደራረባሉ።",
   overlapField: "ከ{start} – {end} ጋር ይደራረባል። {suggested} ወይም ከዚያ በኋላ ያለ ቀን ይምረጡ።",

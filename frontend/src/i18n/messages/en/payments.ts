@@ -21,7 +21,7 @@ export const payments = {
     reference: "Transaction Reference",
     start: "Membership Start",
     startAutoHint: "Starts the day after current paid coverage ends, so no paid days are lost.",
-    startHint: "Today or a future date. Backdated memberships aren't supported.",
+    startHint: "Today or a future date — or up to 12 months back for members who joined before GymFlow.",
     notes: "Notes",
     previewError: "Couldn't calculate the membership dates",
     confirmHint: "Confirm only after receiving the full payment.",

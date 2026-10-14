@@ -12,7 +12,13 @@
 
 import { PAYMENT_METHODS, type PaymentPreview, type PaymentMethod } from "@gymflow/shared/api/types";
 import { addDays, daysBetween, isDateOnly, type DateOnly } from "@gymflow/shared/domain/dates";
-import { findOverlap, membershipEndDate, proposeStartDate } from "@gymflow/shared/domain/membership";
+import {
+  findOverlap,
+  MAX_ADVANCE_DAYS,
+  MAX_BACKDATE_DAYS,
+  membershipEndDate,
+  proposeStartDate,
+} from "@gymflow/shared/domain/membership";
 import { sumMoney } from "@gymflow/shared/domain/money";
 import { phoneSearchDigits } from "@gymflow/shared/domain/phone";
 import type { FastifyInstance } from "fastify";
@@ -109,8 +115,9 @@ async function computePreview(
   if (!proposed.automatic && input.requestedStartDate) {
     const requested = input.requestedStartDate;
     if (!isDateOnly(requested)) invalid(t, { requestedStartDate: t("validStartDate") });
-    if (requested < today) invalid(t, { requestedStartDate: t("startInPast") });
-    if (daysBetween(today, requested) > 365) invalid(t, { requestedStartDate: t("startTooFar") });
+    // Up to a year back, for members who joined before GymFlow.
+    if (requested < addDays(today, -MAX_BACKDATE_DAYS)) invalid(t, { requestedStartDate: t("startTooEarly") });
+    if (daysBetween(today, requested) > MAX_ADVANCE_DAYS) invalid(t, { requestedStartDate: t("startTooFar") });
     startDate = requested;
   }
   const endDate = membershipEndDate(startDate, plan.duration_days);
@@ -163,7 +170,7 @@ async function computePreview(
       startDate,
       endDate,
       startIsAutomatic: proposed.automatic,
-      minStartDate: proposed.automatic ? startDate : today,
+      minStartDate: proposed.automatic ? startDate : addDays(today, -MAX_BACKDATE_DAYS),
       isRenewal: periods.length > 0,
       existingCoverage: periods.filter((p) => p.end_date >= today).map(periodDto),
       previewFingerprint,

@@ -91,6 +91,9 @@ Key decisions:
   end = start + duration − 1 and positive decimal amounts; a trigger requires the payment amount to equal the
   purchased period's price; posted payments, periods and audit events are immutable (triggers, and the application
   role has no UPDATE/DELETE on them).
+- **Backdated starts.** A new period may start up to 12 months in the past (and 12 months ahead), so members who
+  joined before GymFlow can be entered with their real dates; overlap checks still apply, and the web app defaults the
+  payment date to the backdated start. (This extends the design, which only allowed today or later.)
 - **Status is derived, never stored.** Each read loads the periods that matter as of today and applies the shared
   rules, so nothing depends on a nightly job.
 - **Idempotent payments.** `POST /payments` reserves the `Idempotency-Key` in the same transaction that locks the
