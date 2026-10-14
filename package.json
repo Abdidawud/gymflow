@@ -19,6 +19,6 @@
     "check": "npm run typecheck && npm run lint && npm test"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": "24.x"
   }
 }

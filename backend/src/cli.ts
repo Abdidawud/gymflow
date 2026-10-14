@@ -14,7 +14,7 @@ import { generateDemoData } from "@gymflow/shared/demo/seed";
 import { meetsPasswordPolicy } from "@gymflow/shared/domain/password";
 import { isLocale, type Locale } from "@gymflow/shared/i18n/locales";
 import { sql } from "kysely";
-import { loadConfig, type Config } from "./config";
+import { loadDatabaseConfig, type DatabaseConfig } from "./config";
 import { createDb, createPool, type Db } from "./db";
 import { grantAppRole, migrate } from "./db/migrate";
 import { isEmail, normalizeEmail } from "./lib/text";
@@ -41,7 +41,7 @@ function flag(args: Args, name: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-function ownerDb(config: Config) {
+function ownerDb(config: DatabaseConfig) {
   const pool = createPool({
     url: config.database.migrationUrl,
     poolMax: 2,
@@ -58,7 +58,7 @@ function temporaryPassword(): string {
   return `${words[randomInt(words.length)]}${words[randomInt(words.length)]}${symbols[randomInt(symbols.length)]}${randomInt(1000, 10000)}`;
 }
 
-async function createAdmin(config: Config, args: Args) {
+async function createAdmin(config: DatabaseConfig, args: Args) {
   const email = normalizeEmail(flag(args, "email"));
   const name = flag(args, "name")?.trim();
   const language = flag(args, "language") ?? "am";
@@ -103,7 +103,7 @@ async function createAdmin(config: Config, args: Args) {
 }
 
 /** Makes an existing account the super administrator (an active administrator that only its owner can change). */
-async function makeSuperAdmin(config: Config, args: Args) {
+async function makeSuperAdmin(config: DatabaseConfig, args: Args) {
   const email = normalizeEmail(flag(args, "email"));
   if (!isEmail(email)) throw new Error("Usage: admin:super --email you@example.com");
   const { pool, db } = ownerDb(config);
@@ -285,7 +285,7 @@ export async function resetSchema(db: Db): Promise<void> {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const config = loadConfig();
+  const config = loadDatabaseConfig();
   const log = (message: string) => console.warn(message);
 
   switch (args.command) {

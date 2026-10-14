@@ -136,6 +136,45 @@ function parseTrustProxy(value: string): Config["trustProxy"] {
 
 const https = (host: string | undefined) => (host ? `https://${host.replace(/^https?:\/\//, "")}` : null);
 
+function resolveEnvironment(env: NodeJS.ProcessEnv): Config["env"] {
+  const appEnv = env.APP_ENV;
+  if (appEnv && (ENVIRONMENTS as readonly string[]).includes(appEnv)) return appEnv as Config["env"];
+  const nodeEnv = env.NODE_ENV ?? "";
+  return (ENVIRONMENTS as readonly string[]).includes(nodeEnv) ? (nodeEnv as Config["env"]) : "development";
+}
+
+export interface DatabaseConfig {
+  env: Config["env"];
+  isProduction: boolean;
+  database: Config["database"];
+}
+
+/**
+ * Just the database settings, for the CLI (migrations, creating the super
+ * administrator): it doesn't need the web app's secrets or origin.
+ */
+export function loadDatabaseConfig(env: NodeJS.ProcessEnv = process.env): DatabaseConfig {
+  const url = env.GYMFLOW_DATABASE_URL || env.DATABASE_URL;
+  const migrationUrl = env.MIGRATION_DATABASE_URL || env.DATABASE_URL_UNPOOLED || url;
+  if (!migrationUrl) {
+    throw new Error("Set DATABASE_URL (or MIGRATION_DATABASE_URL / DATABASE_URL_UNPOOLED) to the database.");
+  }
+  const appRole = env.DATABASE_APP_ROLE || null;
+  if (appRole && !/^[a-z_][a-z0-9_]*$/.test(appRole)) throw new Error(`Invalid DATABASE_APP_ROLE: ${appRole}`);
+  const environment = resolveEnvironment(env);
+  return {
+    env: environment,
+    isProduction: environment === "production",
+    database: {
+      url: url ?? migrationUrl,
+      migrationUrl,
+      appRole,
+      poolMax: 2,
+      ssl: ["true", "1", "yes"].includes(env.DATABASE_SSL ?? ""),
+    },
+  };
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const parsed = schema.safeParse(env);
   if (!parsed.success) {
@@ -145,10 +184,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const e = parsed.data;
   const databaseUrl = e.GYMFLOW_DATABASE_URL ?? e.DATABASE_URL;
   if (!databaseUrl) throw new Error("Invalid configuration:\n  DATABASE_URL is required.");
-  const nodeEnv = (ENVIRONMENTS as readonly string[]).includes(e.NODE_ENV ?? "")
-    ? (e.NODE_ENV as Config["env"])
-    : "development";
-  const appEnv = e.APP_ENV ?? nodeEnv;
+  const appEnv = resolveEnvironment(env);
   const isProduction = appEnv === "production";
   const onVercel = e.VERCEL === "1";
 

@@ -140,12 +140,14 @@ pins functions to Frankfurt (`fra1`, near Addis Ababa) and schedules the daily m
    | `APP_ORIGIN`            | Only for a custom domain (defaults to the project's production URL)  |
    | `SMTP_URL`, `MAIL_FROM` | For password-recovery email (otherwise recovery emails are not sent) |
 
-4. **Deploy** (push to the production branch, or `vercel --prod`). The build applies migrations before building.
-5. **Super administrator:** from your machine, with the direct database URL:
+4. **Deploy** (push to the production branch, or `vercel --prod`). The build applies migrations before building;
+   without a connected database it still builds (with a warning) and the app answers 503 until you connect one and
+   redeploy.
+5. **Super administrator:** from your machine, with the database's direct URL (Vercel → Storage → your database →
+   `DATABASE_URL_UNPOOLED`):
 
    ```bash
-   DATABASE_URL='<DATABASE_URL_UNPOOLED>' SESSION_SECRET='<any 32+ chars>' APP_ORIGIN=https://<domain> \
-     npm run admin:create -w backend -- --email you@example.com --name "Your Name" --super
+   DATABASE_URL='<DATABASE_URL_UNPOOLED>' npm run admin:create -w backend -- --email you@example.com --name "Your Name" --super
    ```
 
    Sign in with the printed temporary password; you'll choose your own right away.
